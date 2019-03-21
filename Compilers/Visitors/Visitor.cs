@@ -10,6 +10,7 @@ namespace SimpleLang.Visitors
     {
         public virtual void VisitIdNode(IdNode id) { }
         public virtual void VisitIntNumNode(IntNumNode num) { }
+        public virtual void VisitBoolNode(BoolNode v) { }
         public virtual void VisitBinOpNode(BinOpNode binop) { }
         public virtual void VisitAssignNode(AssignNode a) { }
         public virtual void VisitCycleNode(CycleNode c) { }

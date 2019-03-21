@@ -92,6 +92,8 @@ assign 	: ident ASSIGN expr { $$ = new AssignNode($1 as IdNode, $3); }
 		;
 
 expr	: Q { $$ = $1; }
+		| TRUE { $$ = new BoolNode(true);}
+		| FALSE { $$ = new BoolNode(false);  }
 		| expr MORE Q { $$ = new BinOpNode($1,$3,">"); }
 		| expr LESS Q { $$ = new BinOpNode($1,$3,"<"); }
 		| expr EQUAL Q { $$ = new BinOpNode($1,$3,"=="); }

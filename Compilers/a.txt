@@ -6,7 +6,7 @@ if (a) {
 else
 for (a=1 to 5)
     a = 2 * (b * c * 6 * 9);
-while(a) {
+while(true) {
   a = 2 * (b * c);
 }
 a = 2 - (b + c);
