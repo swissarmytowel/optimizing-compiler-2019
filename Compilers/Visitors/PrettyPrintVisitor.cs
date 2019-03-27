@@ -144,5 +144,9 @@ namespace SimpleLang.Visitors
                 Text += Environment.NewLine + IndentStr() + "}";
             }
         }
+        public override void VisitBoolNode(BoolNode v)
+        {
+            Text += v.Value.ToString();
+        }
     }
 }

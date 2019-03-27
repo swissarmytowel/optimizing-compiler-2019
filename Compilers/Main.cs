@@ -67,14 +67,15 @@ namespace SimpleCompiler
 
                     var sameminusv = new SameMinusOptVisitor();
                     parser.root.Visit(sameminusv);
+                    
+                    Console.WriteLine("-------------------------------");
+
+                    var ifNodeWithBoolExpr = new IfNodeWithBoolExprVisitor();
+                    parser.root.Visit(ifNodeWithBoolExpr);
 
                     printv = new PrettyPrintVisitor(true);
                     r.Visit(printv);
                     Console.WriteLine(printv.Text);
-
-                    //var pp = new PrettyPrintVisitor();
-                    //parser.root.Visit(pp);
-                    //Console.WriteLine(pp.Text);
                 }
             }
             catch (FileNotFoundException)
