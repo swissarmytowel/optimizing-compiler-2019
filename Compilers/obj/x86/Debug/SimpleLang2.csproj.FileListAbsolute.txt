@@ -22,3 +22,9 @@ C:\Users\Max\Documents\Study\CD\Compilers\obj\x86\Debug\SimpleLang2.csprojAssemb
 C:\Users\Max\Documents\Study\CD\Compilers\obj\x86\Debug\SimpleLang2.csproj.CoreCompileInputs.cache
 C:\Users\Max\Documents\Study\CD\Compilers\obj\x86\Debug\SimpleLang.exe
 C:\Users\Max\Documents\Study\CD\Compilers\obj\x86\Debug\SimpleLang.pdb
+C:\Users\mihailatoan\Desktop\РОК\optimizing-compiler-2019\Compilers\bin\Debug\SimpleLang.exe
+C:\Users\mihailatoan\Desktop\РОК\optimizing-compiler-2019\Compilers\bin\Debug\SimpleLang.pdb
+C:\Users\mihailatoan\Desktop\РОК\optimizing-compiler-2019\Compilers\obj\x86\Debug\SimpleLang2.csprojAssemblyReference.cache
+C:\Users\mihailatoan\Desktop\РОК\optimizing-compiler-2019\Compilers\obj\x86\Debug\SimpleLang2.csproj.CoreCompileInputs.cache
+C:\Users\mihailatoan\Desktop\РОК\optimizing-compiler-2019\Compilers\obj\x86\Debug\SimpleLang.exe
+C:\Users\mihailatoan\Desktop\РОК\optimizing-compiler-2019\Compilers\obj\x86\Debug\SimpleLang.pdb
