@@ -10,6 +10,7 @@ while(true) {
   a = 2 * (b * c);
 }
 a = 2 - (b + c);
+a = 0 + 3 + 0 + 2 + 0;
 if (true) {
   a = c - c;
 }

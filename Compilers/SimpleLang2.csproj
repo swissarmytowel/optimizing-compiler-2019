@@ -53,6 +53,7 @@
     <Compile Include="Visitors\MaxDeepCycleVistor.cs" />
     <Compile Include="Visitors\MaxOpExprVisitor.cs" />
     <Compile Include="Visitors\OperatorCountVisitor.cs" />
+    <Compile Include="Visitors\PlusZeroExprVisitor.cs" />
     <Compile Include="Visitors\PrettyPrintVisitor.cs" />
     <Compile Include="Visitors\SameMinusOptVisitor.cs" />
     <Compile Include="Visitors\ThreeAdressCodeVisitor.cs" />

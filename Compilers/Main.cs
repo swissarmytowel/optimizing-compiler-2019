@@ -73,6 +73,9 @@ namespace SimpleCompiler
                     var ifNodeWithBoolExpr = new IfNodeWithBoolExprVisitor();
                     parser.root.Visit(ifNodeWithBoolExpr);
 
+                    var plusZeroExpr = new PlusZeroExprVisitor();
+                    parser.root.Visit(plusZeroExpr);
+
                     printv = new PrettyPrintVisitor(true);
                     r.Visit(printv);
                     Console.WriteLine(printv.Text);
