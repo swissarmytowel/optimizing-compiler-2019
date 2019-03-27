@@ -11,9 +11,8 @@ namespace SimpleLang.Visitors
         public string Text = "";
         private int Indent = 0;
         private bool isRoot = false;
-        private bool IsBlockIndentMinus = false;
         private bool IsDisableIndent = false;
-        private Stack<int> BlockIndentStack = new Stack<int>();
+        private bool IsInner = false;
 
         public PrettyPrintVisitor(bool isRoot = false)
         {
@@ -38,7 +37,7 @@ namespace SimpleLang.Visitors
         {
             Text += id.Name;
         }
-        public override void VisitIntNumNode(IntNumNode num) 
+        public override void VisitIntNumNode(IntNumNode num)
         {
             Text += num.Num.ToString();
         }
@@ -52,31 +51,40 @@ namespace SimpleLang.Visitors
         }
         public override void VisitAssignNode(AssignNode a) 
         {
+            bool prevInner = IsInner;
+            if (prevInner)
+                IndentPlus();
             Text += IndentStr();
             a.Id.Visit(this);
             Text += " = ";
             a.Expr.Visit(this);
             Text += ';';
+            if (prevInner)
+                IndentMinus();
+            IsInner = prevInner;
         }
         public override void VisitWhileNode(WhileNode node)
         {
+            bool prevInner = IsInner;
+            if (prevInner)
+                IndentPlus();
             Text += IndentStr() + "while (";
             IsDisableIndent = true;
             node.Expr.Visit(this);
             IsDisableIndent = false;
             Text += ")";
             Text += Environment.NewLine;
-            IndentPlus();
-            IsBlockIndentMinus = true;
+            IsInner = true;
             node.Stat.Visit(this);
-            if (IsBlockIndentMinus)
-            {
+            if (prevInner)
                 IndentMinus();
-                IsBlockIndentMinus = false;
-            }
+            IsInner = prevInner;
         }
         public override void VisitForNode(ForNode node)
         {
+            bool prevInner = IsInner;
+            if (prevInner)
+                IndentPlus();
             Text += IndentStr() + "for (";
             IsDisableIndent = true;
             node.Assign.Visit(this);
@@ -85,18 +93,18 @@ namespace SimpleLang.Visitors
             IsDisableIndent = false;
             Text += ")";
             Text += Environment.NewLine;
-            IndentPlus();
-            IsBlockIndentMinus = true;
+            IsInner = true;
             node.Stat.Visit(this);
-            if (IsBlockIndentMinus)
-            {
-                //IndentMinus();
-                Indent = 0;
-                IsBlockIndentMinus = false;
-            }
+            if (prevInner)
+                IndentMinus();
+            IsInner = prevInner;
         }
         public override void VisitIfNode(IfNode node)
         {
+            bool prevInner = IsInner;
+            if (prevInner)
+                IndentPlus();
+            IsInner = true;
             Text += IndentStr() + "if (";
             IsDisableIndent = true;
             node.Expr.Visit(this);
@@ -108,27 +116,26 @@ namespace SimpleLang.Visitors
             {
                 Text += Environment.NewLine;
                 Text += IndentStr() + "else ";
+                Text += Environment.NewLine;
                 node.Stat2.Visit(this);
             }
+            if (prevInner)
+                IndentMinus();
+            IsInner = prevInner;
         }
         public override void VisitBlockNode(BlockNode bl) 
         {
-            if (IsBlockIndentMinus)
-            {
-                IndentMinus();
-                IsBlockIndentMinus = false;
-            }
+            bool prevInner = IsInner;
+            IsInner = false;
+            var Count = bl.StList.Count;
             bool isFirstIndent = false;
             if (!isRoot)
             {
                 Text += IndentStr() + "{" + Environment.NewLine;
-                BlockIndentStack.Push(Indent);
                 IndentPlus();
                 isFirstIndent = true;
             }
             isRoot = false;
-
-            var Count = bl.StList.Count;
 
             if (Count>0)
                 bl.StList[0].Visit(this);
@@ -140,9 +147,10 @@ namespace SimpleLang.Visitors
             }
             if (isFirstIndent)
             {
-                Indent = BlockIndentStack.Pop();
+                IndentMinus();
                 Text += Environment.NewLine + IndentStr() + "}";
             }
+            IsInner = prevInner;
         }
         public override void VisitBoolNode(BoolNode v)
         {

@@ -18,7 +18,8 @@ for (a=1 to 5)
   for (a=1 to 5){
   a=1;
    for (a=1 to 5)
-   
+   if (a)
     for (a=1 to 5){
       a = 2 * (b * c * 6 * 9)-d;
-a = 1;}}
+a = 1;}else {b = 5;}}
+op = 45;
