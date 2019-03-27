@@ -13,6 +13,7 @@ namespace SimpleLang.Visitors
         private bool isRoot = false;
         private bool IsBlockIndentMinus = false;
         private bool IsDisableIndent = false;
+        private Stack<int> BlockIndentStack = new Stack<int>();
 
         public PrettyPrintVisitor(bool isRoot = false)
         {
@@ -89,7 +90,8 @@ namespace SimpleLang.Visitors
             node.Stat.Visit(this);
             if (IsBlockIndentMinus)
             {
-                IndentMinus();
+                //IndentMinus();
+                Indent = 0;
                 IsBlockIndentMinus = false;
             }
         }
@@ -120,6 +122,7 @@ namespace SimpleLang.Visitors
             if (!isRoot)
             {
                 Text += IndentStr() + "{" + Environment.NewLine;
+                BlockIndentStack.Push(Indent);
                 IndentPlus();
                 isFirstIndent = true;
             }
@@ -137,7 +140,7 @@ namespace SimpleLang.Visitors
             }
             if (isFirstIndent)
             {
-                IndentMinus();
+                Indent = BlockIndentStack.Pop();
                 Text += Environment.NewLine + IndentStr() + "}";
             }
         }
