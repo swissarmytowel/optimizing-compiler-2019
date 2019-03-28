@@ -23,5 +23,7 @@ namespace SimpleLang.ThreeAddressCode.TacNodes
                 return (base.GetHashCode() * 397) ^ (TargetLabel != null ? TargetLabel.GetHashCode() : 0);
             }
         }
+        
+        public override string ToString() => $"{Label}: goto {TargetLabel}";
     }
 }

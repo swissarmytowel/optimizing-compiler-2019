@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Text;
 using SimpleLang.ThreeAddressCode.TacNodes;
 
 namespace SimpleLang.ThreeAddressCode
@@ -28,6 +29,17 @@ namespace SimpleLang.ThreeAddressCode
             {
                 CodeList.Remove(tacNode);
             }
+        }
+
+        public override string ToString()
+        {
+            var builder = new StringBuilder();
+            foreach (var tacNode in CodeList)
+            {
+                builder.Append(tacNode?.ToString());
+            }
+
+            return builder.ToString();
         }
     }
 }

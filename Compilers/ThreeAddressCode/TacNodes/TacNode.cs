@@ -20,5 +20,7 @@ namespace SimpleLang.ThreeAddressCode.TacNodes
         {
             return (Label != null ? Label.GetHashCode() : 0);
         }
+
+        public override string ToString() => $"{Label}:";
     }
 }

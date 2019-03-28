@@ -35,5 +35,7 @@ namespace SimpleLang.ThreeAddressCode.TacNodes
                 return hashCode;
             }
         }
+        
+        public override string ToString() => $"{Label}: {RightPart} = {FirstOperand} {Operation} {SecondOperand}";
     }
 }
