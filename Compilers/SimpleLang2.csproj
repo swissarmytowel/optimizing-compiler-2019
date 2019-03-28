@@ -43,6 +43,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ThreeAddressCode\TacNodes\TacAssignmentNode.cs" />
+    <Compile Include="ThreeAddressCode\TacNodes\TacIfGotoNode.cs" />
+    <Compile Include="ThreeAddressCode\TacNodes\TacGotoNode.cs" />
     <Compile Include="ThreeAddressCode\TacNodes\TacNode.cs" />
     <Compile Include="ThreeAddressCode\ThreeAddressCode.cs" />
     <Compile Include="Visitors\AssignCountVisitor.cs" />
