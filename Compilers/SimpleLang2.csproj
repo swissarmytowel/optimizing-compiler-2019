@@ -43,6 +43,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ThreeAddressCode\TacNodes\TacNode.cs" />
     <Compile Include="Visitors\AssignCountVisitor.cs" />
     <Compile Include="Visitors\AutoVisitor.cs" />
     <Compile Include="Visitors\ChangeVisitor.cs" />
