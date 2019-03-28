@@ -11,17 +11,17 @@ namespace SimpleLang.Visitors
 {
     internal class ThreeAddressCodeVisitor : AutoVisitor
     {
-        public ThreeAddressCode Tac { get; }
+        public ThreeAddressCode ThreeAddressCodeContainer { get; }
 
         public ThreeAddressCodeVisitor()
         {
-            Tac = new ThreeAddressCode();
+            ThreeAddressCodeContainer = new ThreeAddressCode();
         }
         
         public override void VisitAssignNode(AssignNode a)
         {
             var rightPartExpression = GenerateThreeAddressLine(a.Expr);
-            Tac.PushNode(new TacAssignmentNode()
+            ThreeAddressCodeContainer.PushNode(new TacAssignmentNode()
             {
                 Label = TmpNameManager.Instance.GenerateLabel(),
                 LeftPart = a.Id.Name,
@@ -33,29 +33,29 @@ namespace SimpleLang.Visitors
         {
             switch (expression)
             {
-                case IdNode tmp:
+                case IdNode idNode:
                 {
-                    return Tac.CreateAndPushIdNode(tmp);
+                    return ThreeAddressCodeContainer.CreateAndPushIdNode(idNode);
                 }
-                case IntNumNode tmp:
+                case IntNumNode intNumNode:
                 {
-                    return Tac.CreateAndPushIntNumNode(tmp);
+                    return ThreeAddressCodeContainer.CreateAndPushIntNumNode(intNumNode);
                 }
-                case BoolNode tmp:
+                case BoolNode boolNode:
                 {
-                    return Tac.CreateAndPushBoolNode(tmp);
+                    return ThreeAddressCodeContainer.CreateAndPushBoolNode(boolNode);
                 }
-                case BinOpNode tmp:
+                case BinOpNode binOpNode:
                 {
-                    var leftPart = GenerateThreeAddressLine(tmp.Left);
-                    var rightPart = GenerateThreeAddressLine(tmp.Right);
+                    var leftPart = GenerateThreeAddressLine(binOpNode.Left);
+                    var rightPart = GenerateThreeAddressLine(binOpNode.Right);
                     var tmpName = TmpNameManager.Instance.GenerateTmpVariableName();
-                    Tac.PushNode(new TacAssignmentNode()
+                    ThreeAddressCodeContainer.PushNode(new TacAssignmentNode()
                     {
                         Label = TmpNameManager.Instance.GenerateLabel(),
                         LeftPart = tmpName,
                         FirstOperand = leftPart,
-                        Operation = tmp.Op,
+                        Operation = binOpNode.Op,
                         SecondOperand = rightPart
                     });
                     return tmpName;
@@ -71,7 +71,7 @@ namespace SimpleLang.Visitors
             var firstLabel = TmpNameManager.Instance.GenerateLabel();
             var secondLabel = TmpNameManager.Instance.GenerateLabel();
             
-            Tac.PushNode(new TacIfGotoNode()
+            ThreeAddressCodeContainer.PushNode(new TacIfGotoNode()
             {
                 Label = TmpNameManager.Instance.GenerateLabel(),
                 Condition = conditionalExpression,
@@ -79,19 +79,19 @@ namespace SimpleLang.Visitors
             });
             
             c.Stat2?.Visit(this);
-            Tac.PushNode(new TacGotoNode()
+            ThreeAddressCodeContainer.PushNode(new TacGotoNode()
             {
                 Label = TmpNameManager.Instance.GenerateLabel(),
                 TargetLabel = secondLabel
             });
             
-            Tac.PushNode(new TacEmptyNode()
+            ThreeAddressCodeContainer.PushNode(new TacEmptyNode()
             {
                 Label = firstLabel
             });
             c.Stat1.Visit(this);
             
-            Tac.PushNode(new TacEmptyNode()
+            ThreeAddressCodeContainer.PushNode(new TacEmptyNode()
             {
                 Label = secondLabel
             });

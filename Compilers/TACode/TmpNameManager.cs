@@ -2,7 +2,7 @@ namespace SimpleLang.TACode
 {
     public class TmpNameManager
     {
-        public static TmpNameManager Instance = new TmpNameManager();
+        public static readonly TmpNameManager Instance = new TmpNameManager();
 
         private int _currentVariableCounter = 0;
         private int _currentLabelCounter = 0;

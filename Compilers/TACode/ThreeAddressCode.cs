@@ -7,31 +7,38 @@ namespace SimpleLang.TACode
 {
     public class ThreeAddressCode
     {
-        public LinkedList<TacNode> CodeList { get; }
+        public LinkedList<TacNode> TACodeLines { get; }
 
         public ThreeAddressCode()
         {
-            CodeList = new LinkedList<TacNode>();
+            TACodeLines = new LinkedList<TacNode>();
         }
 
         public void PushNode(TacNode node)
         {
-            CodeList.AddLast(node);
+            TACodeLines.AddLast(node);
         }
 
         public void RemoveNode(TacNode node)
         {
-            CodeList.Remove(node);
+            TACodeLines.Remove(node);
         }
 
         public void RemoveNodes(IEnumerable<TacNode> nodes)
         {
             foreach (var tacNode in nodes)
             {
-                CodeList.Remove(tacNode);
+                TACodeLines.Remove(tacNode);
             }
         }
-
+        
+        public void PushNodes(IEnumerable<TacNode> nodes)
+        {
+            foreach (var tacNode in nodes)
+            {
+                TACodeLines.AddLast(tacNode);
+            }
+        }
         #region Convenience methods
 
         public string CreateAndPushBoolNode(BoolNode node)
@@ -83,7 +90,7 @@ namespace SimpleLang.TACode
         public override string ToString()
         {
             var builder = new StringBuilder();
-            foreach (var tacNode in CodeList)
+            foreach (var tacNode in TACodeLines)
             {
                 builder.Append(tacNode?.ToString() + "\n");
             }

@@ -4,7 +4,7 @@ namespace SimpleLang.TACode.TacNodes
     {
         public string Condition { get; set; }
 
-        protected bool Equals(TacIfGotoNode other)
+        private bool Equals(TacIfGotoNode other)
         {
             return base.Equals(other) && string.Equals(Condition, other.Condition);
         }

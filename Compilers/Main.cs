@@ -82,7 +82,7 @@ namespace SimpleCompiler
                     
                     var tac = new ThreeAddressCodeVisitor();
                     r.Visit(tac);
-                    Console.WriteLine(tac.Tac);
+                    Console.WriteLine(tac.ThreeAddressCodeContainer);
                 }
             }
             catch (FileNotFoundException)
