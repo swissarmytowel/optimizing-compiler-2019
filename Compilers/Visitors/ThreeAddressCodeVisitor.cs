@@ -24,7 +24,7 @@ namespace SimpleLang.Visitors
             ThreeAddressCodeContainer.PushNode(new TacAssignmentNode()
             {
                 Label = TmpNameManager.Instance.GenerateLabel(),
-                LeftPart = a.Id.Name,
+                LeftPartIdentifier = a.Id.Name,
                 FirstOperand = rightPartExpression
             });
         }
@@ -53,7 +53,7 @@ namespace SimpleLang.Visitors
                     ThreeAddressCodeContainer.PushNode(new TacAssignmentNode()
                     {
                         Label = TmpNameManager.Instance.GenerateLabel(),
-                        LeftPart = tmpName,
+                        LeftPartIdentifier = tmpName,
                         FirstOperand = leftPart,
                         Operation = binOpNode.Op,
                         SecondOperand = rightPart
