@@ -2,7 +2,8 @@
 // a = 1 =>
 // L1: t1 = 1
 // L2: a = t1
-#define SINGLE_TAC_ASSIGN_COMMANDS_REQUIRED 
+
+#define SINGLE_TAC_ASSIGN_COMMANDS_REQUIRED
 
 using System;
 using System.Linq;
@@ -63,6 +64,7 @@ namespace SimpleLang.Visitors
         }
 
         private int depth = 0;
+
         private string GenerateThreeAddressLine(ExprNode expression)
         {
             switch (expression)
@@ -131,7 +133,7 @@ namespace SimpleLang.Visitors
                 Label = secondLabel
             });
         }
-        
+
         public override void VisitWhileNode(WhileNode c)
         {
             var conditionalExpression = GenerateThreeAddressLine(c.Expr);
@@ -158,44 +160,15 @@ namespace SimpleLang.Visitors
 
         public override void VisitForNode(ForNode c)
         {
-            
             c.Assign.Visit(this);
             string conditionalExpression;
-            switch (c.Expr)
-            {
-                case IdNode idNode:
-                    conditionalExpression = TmpNameManager.Instance.GenerateTmpVariableName();
-                    ThreeAddressCodeContainer.PushNode(new TacAssignmentNode()
-                    {
-                        Label = TmpNameManager.Instance.GenerateLabel(),
-                        LeftPartIdentifier = TmpNameManager.Instance.GenerateTmpVariableName(),
-                        FirstOperand = c.Assign.Id.Name,
-                        Operation = "<",
-                        SecondOperand = idNode.Name
-                    });
-                    break;
-                case IntNumNode intNumNode:
-                    conditionalExpression = TmpNameManager.Instance.GenerateTmpVariableName();
-                    ThreeAddressCodeContainer.PushNode(new TacAssignmentNode()
-                    {
-                        Label = TmpNameManager.Instance.GenerateLabel(),
-                        LeftPartIdentifier = TmpNameManager.Instance.GenerateTmpVariableName(),
-                        FirstOperand = c.Assign.Id.Name,
-                        Operation = "<",
-                        SecondOperand = intNumNode.Num.ToString()
-                    });
-                    break;
-                default:
-                    conditionalExpression = GenerateThreeAddressLine(c.Expr);
-                    break;
-            }
-            
+
             var startOfForStatementLabel = TmpNameManager.Instance.GenerateLabel();
             ThreeAddressCodeContainer.PushNode(new TacEmptyNode()
             {
                 Label = startOfForStatementLabel
             });
-            
+
             c.Stat.Visit(this);
             ThreeAddressCodeContainer.PushNode(new TacAssignmentNode()
             {
@@ -205,11 +178,35 @@ namespace SimpleLang.Visitors
                 Operation = "+",
                 SecondOperand = "1"
             });
-            
+
+            switch (c.Expr)
+            {
+                case IdNode idNode:
+                    conditionalExpression = idNode.Name;
+                    break;
+                case IntNumNode intNumNode:
+                    conditionalExpression = intNumNode.Num.ToString();
+                    break;
+                default:
+                    conditionalExpression = GenerateThreeAddressLine(c.Expr);
+                    break;
+            }
+
+            var conditionalExpressionID = TmpNameManager.Instance.GenerateTmpVariableName();
+
+            ThreeAddressCodeContainer.PushNode(new TacAssignmentNode()
+            {
+                Label = TmpNameManager.Instance.GenerateLabel(),
+                LeftPartIdentifier = conditionalExpressionID,
+                FirstOperand = c.Assign.Id.Name,
+                Operation = "<",
+                SecondOperand = conditionalExpression
+            });
+
             ThreeAddressCodeContainer.PushNode(new TacIfGotoNode()
             {
                 Label = TmpNameManager.Instance.GenerateLabel(),
-                Condition = conditionalExpression,
+                Condition = conditionalExpressionID,
                 TargetLabel = startOfForStatementLabel
             });
         }
