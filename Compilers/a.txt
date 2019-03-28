@@ -1,3 +1,4 @@
-for (a=1 to 5)
-  for (i=1 to 5){
-  s=1;}
+a = 1;
+while(a==0){
+a = a - 1;
+}

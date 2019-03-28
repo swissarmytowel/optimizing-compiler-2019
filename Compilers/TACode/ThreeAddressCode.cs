@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Collections.Generic;
 using System.Text;
 using ProgramTree;
@@ -8,7 +9,7 @@ namespace SimpleLang.TACode
     /// <summary>
     /// Three-address code container wrapper
     /// </summary>
-    public class ThreeAddressCode
+    public class ThreeAddressCode: IEnumerable<TacNode>
     {
         /// <summary>
         /// Linked list representation of the tac code lines
@@ -130,6 +131,16 @@ namespace SimpleLang.TACode
 
         #endregion
 
+        public IEnumerator<TacNode> GetEnumerator()
+        {
+            return TACodeLines.GetEnumerator();
+        }
+        
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return TACodeLines.GetEnumerator();
+        }
+        
         public override string ToString()
         {
             var builder = new StringBuilder();
