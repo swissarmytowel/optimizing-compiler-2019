@@ -1,5 +1,3 @@
-using ProgramTree;
-
 namespace SimpleLang.TACode.TacNodes
 {
     /// <inheritdoc />

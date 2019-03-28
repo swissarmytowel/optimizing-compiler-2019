@@ -5,12 +5,7 @@
 
 #define SINGLE_TAC_ASSIGN_COMMANDS_REQUIRED
 
-using System;
-using System.Linq;
-using System.Text;
 using ProgramTree;
-using System.Collections.Generic;
-using System.Runtime.Remoting.Messaging;
 using SimpleLang.TACode;
 using SimpleLang.TACode.TacNodes;
 
@@ -169,16 +164,33 @@ namespace SimpleLang.Visitors
             // As we will need the resulting last tmp ID for conditional goto jump later
             var conditionalExpression = GenerateThreeAddressLine(c.Expr);
             
-            // Creating starting and ending labels
-            var startOfWhileStatementLabel = TmpNameManager.Instance.GenerateLabel();
-            var endOfWhileStatementLabel = TmpNameManager.Instance.GenerateLabel();
+            // Label to the initial conditional jump check (bool expression under while())
+            var conditionalCheckLabel = TmpNameManager.Instance.GenerateLabel();
             
+            // Creating starting and ending labels
+            var endOfWhileStatementLabel = TmpNameManager.Instance.GenerateLabel();
+            var startOfWhileBodyLabel = TmpNameManager.Instance.GenerateLabel();
+
             // Create conditional jump statement at the starting position of while
             ThreeAddressCodeContainer.PushNode(new TacIfGotoNode()
             {
-                Label = startOfWhileStatementLabel,
+                Label = conditionalCheckLabel,
                 Condition = conditionalExpression,
+                TargetLabel = startOfWhileBodyLabel
+            });
+            
+            // Exiting goto jump. If condition is false -- then this line will execute
+            // And jump out of while body
+            ThreeAddressCodeContainer.PushNode(new TacGotoNode()
+            {
+                Label = TmpNameManager.Instance.GenerateLabel(),
                 TargetLabel = endOfWhileStatementLabel
+            });
+            
+            // Main body entry point
+            ThreeAddressCodeContainer.PushNode(new TacEmptyNode()
+            {
+                Label = startOfWhileBodyLabel
             });
             
             // Traversing while block contents and generating TAC
@@ -188,7 +200,7 @@ namespace SimpleLang.Visitors
             ThreeAddressCodeContainer.PushNode(new TacGotoNode()
             {
                 Label = TmpNameManager.Instance.GenerateLabel(),
-                TargetLabel = startOfWhileStatementLabel
+                TargetLabel = conditionalCheckLabel
             });
            
             // Placing exiting label at the end of while
