@@ -1,4 +1,10 @@
-﻿using System;
+﻿// Undefine, if the following behavior is desired:
+// a = 1 =>
+// L1: t1 = 1
+// L2: a = t1
+#define SINGLE_TAC_ASSIGN_COMMANDS_REQUIRED 
+
+using System;
 using System.Linq;
 using System.Text;
 using ProgramTree;
@@ -6,12 +12,6 @@ using System.Collections.Generic;
 using System.Runtime.Remoting.Messaging;
 using SimpleLang.TACode;
 using SimpleLang.TACode.TacNodes;
-
-// Undefine, if the following behavior is desired:
-// a = 1 =>
-// L1: t1 = 1
-// L2: a = t1
-#define SINGLE_TAC_ASSIGN_COMMANDS_REQUIRED 
 
 namespace SimpleLang.Visitors
 {
@@ -158,7 +158,60 @@ namespace SimpleLang.Visitors
 
         public override void VisitForNode(ForNode c)
         {
-            base.VisitForNode(c);
+            
+            c.Assign.Visit(this);
+            string conditionalExpression;
+            switch (c.Expr)
+            {
+                case IdNode idNode:
+                    conditionalExpression = TmpNameManager.Instance.GenerateTmpVariableName();
+                    ThreeAddressCodeContainer.PushNode(new TacAssignmentNode()
+                    {
+                        Label = TmpNameManager.Instance.GenerateLabel(),
+                        LeftPartIdentifier = TmpNameManager.Instance.GenerateTmpVariableName(),
+                        FirstOperand = c.Assign.Id.Name,
+                        Operation = "<",
+                        SecondOperand = idNode.Name
+                    });
+                    break;
+                case IntNumNode intNumNode:
+                    conditionalExpression = TmpNameManager.Instance.GenerateTmpVariableName();
+                    ThreeAddressCodeContainer.PushNode(new TacAssignmentNode()
+                    {
+                        Label = TmpNameManager.Instance.GenerateLabel(),
+                        LeftPartIdentifier = TmpNameManager.Instance.GenerateTmpVariableName(),
+                        FirstOperand = c.Assign.Id.Name,
+                        Operation = "<",
+                        SecondOperand = intNumNode.Num.ToString()
+                    });
+                    break;
+                default:
+                    conditionalExpression = GenerateThreeAddressLine(c.Expr);
+                    break;
+            }
+            
+            var startOfForStatementLabel = TmpNameManager.Instance.GenerateLabel();
+            ThreeAddressCodeContainer.PushNode(new TacEmptyNode()
+            {
+                Label = startOfForStatementLabel
+            });
+            
+            c.Stat.Visit(this);
+            ThreeAddressCodeContainer.PushNode(new TacAssignmentNode()
+            {
+                Label = TmpNameManager.Instance.GenerateLabel(),
+                LeftPartIdentifier = c.Assign.Id.Name,
+                FirstOperand = c.Assign.Id.Name,
+                Operation = "+",
+                SecondOperand = "1"
+            });
+            
+            ThreeAddressCodeContainer.PushNode(new TacIfGotoNode()
+            {
+                Label = TmpNameManager.Instance.GenerateLabel(),
+                Condition = conditionalExpression,
+                TargetLabel = startOfForStatementLabel
+            });
         }
     }
 }
