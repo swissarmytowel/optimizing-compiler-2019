@@ -1,12 +1,13 @@
 using System.Collections.Generic;
 using System.Text;
+using ProgramTree;
 using SimpleLang.TACode.TacNodes;
 
 namespace SimpleLang.TACode
 {
     public class ThreeAddressCode
     {
-        public LinkedList<TacNode> CodeList { get; set; }
+        public LinkedList<TacNode> CodeList { get; }
 
         public ThreeAddressCode()
         {
@@ -30,6 +31,40 @@ namespace SimpleLang.TACode
                 CodeList.Remove(tacNode);
             }
         }
+
+        #region Convenience methods
+
+        public void CreateAndPushBoolNode(BoolNode node, string tmpName)
+        {
+            PushNode(new TacAssignmentNode()
+            {
+                Label = TmpNameManager.Instance.GenerateLabel(),
+                LeftPart = tmpName,
+                FirstOperand = node.Value.ToString()
+            });
+        }
+        
+        public void CreateAndPushIdNode(IdNode node, string tmpName)
+        {
+            PushNode(new TacAssignmentNode()
+            {
+                Label = TmpNameManager.Instance.GenerateLabel(),
+                LeftPart = tmpName,
+                FirstOperand = node.Name.ToString()
+            });
+        }
+        
+        public void CreateAndPushIntNumNode(IntNumNode node, string tmpName)
+        {
+            PushNode(new TacAssignmentNode()
+            {
+                Label = TmpNameManager.Instance.GenerateLabel(),
+                LeftPart = tmpName,
+                FirstOperand = node.Num.ToString()
+            });
+        }
+        
+        #endregion
 
         public override string ToString()
         {

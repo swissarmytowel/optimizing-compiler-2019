@@ -40,32 +40,17 @@ namespace SimpleLang.Visitors
             {
                 case IdNode tmp:
                 {
-                    Tac.PushNode(new TacAssignmentNode()
-                    {
-                        Label = TmpNameManager.Instance.GenerateLabel(),
-                        LeftPart = tmpName,
-                        FirstOperand = tmp.Name
-                    });
+                    Tac.CreateAndPushIdNode(tmp, tmpName);
                     break;
                 }
                 case IntNumNode tmp:
                 {
-                    Tac.PushNode(new TacAssignmentNode()
-                    {
-                        Label = TmpNameManager.Instance.GenerateLabel(),
-                        LeftPart = tmpName,
-                        FirstOperand = tmp.Num.ToString()
-                    });
+                    Tac.CreateAndPushIntNumNode(tmp, tmpName);
                     break;
                 }
                 case BoolNode tmp:
                 {
-                    Tac.PushNode(new TacAssignmentNode()
-                    {
-                        Label = TmpNameManager.Instance.GenerateLabel(),
-                        LeftPart = tmpName,
-                        FirstOperand = tmp.Value.ToString()
-                    });
+                    Tac.CreateAndPushBoolNode(tmp, tmpName);
                     break;
                 }
                 case BinOpNode tmp:
