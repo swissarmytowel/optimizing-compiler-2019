@@ -44,6 +44,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="TACode\TacNodes\TacAssignmentNode.cs" />
+    <Compile Include="TACode\TacNodes\TacEmptyNode.cs" />
     <Compile Include="TACode\TacNodes\TacIfGotoNode.cs" />
     <Compile Include="TACode\TacNodes\TacGotoNode.cs" />
     <Compile Include="TACode\TacNodes\TacNode.cs" />

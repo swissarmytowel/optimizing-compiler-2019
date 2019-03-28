@@ -3,6 +3,7 @@ using System.Linq;
 using System.Text;
 using ProgramTree;
 using System.Collections.Generic;
+using System.Runtime.Remoting.Messaging;
 using SimpleLang.TACode;
 using SimpleLang.TACode.TacNodes;
 
@@ -65,7 +66,35 @@ namespace SimpleLang.Visitors
         
         public override void VisitIfNode(IfNode c)
         {
-            base.VisitIfNode(c);
+            var conditionalExpression = GenerateThreeAddressLine(c.Expr);
+
+            var firstLabel = TmpNameManager.Instance.GenerateLabel();
+            var secondLabel = TmpNameManager.Instance.GenerateLabel();
+            
+            Tac.PushNode(new TacIfGotoNode()
+            {
+                Label = TmpNameManager.Instance.GenerateLabel(),
+                Condition = conditionalExpression,
+                TargetLabel = firstLabel
+            });
+            
+            c.Stat2?.Visit(this);
+            Tac.PushNode(new TacGotoNode()
+            {
+                Label = TmpNameManager.Instance.GenerateLabel(),
+                TargetLabel = secondLabel
+            });
+            
+            Tac.PushNode(new TacEmptyNode()
+            {
+                Label = firstLabel
+            });
+            c.Stat1.Visit(this);
+            
+            Tac.PushNode(new TacEmptyNode()
+            {
+                Label = secondLabel
+            });
         }
     }
 }

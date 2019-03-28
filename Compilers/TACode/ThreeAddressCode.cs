@@ -70,6 +70,14 @@ namespace SimpleLang.TACode
             return tmpName;
         }
 
+        public void CreateAndPushEmptyNode(EmptyNode node)
+        {
+            PushNode(new TacEmptyNode()
+            {
+                Label = TmpNameManager.Instance.GenerateLabel()
+            });
+        }
+        
         #endregion
 
         public override string ToString()
