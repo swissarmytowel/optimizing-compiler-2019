@@ -34,36 +34,42 @@ namespace SimpleLang.TACode
 
         #region Convenience methods
 
-        public void CreateAndPushBoolNode(BoolNode node, string tmpName)
+        public string CreateAndPushBoolNode(BoolNode node)
         {
+            var tmpName = TmpNameManager.Instance.GenerateTmpVariableName();
             PushNode(new TacAssignmentNode()
             {
                 Label = TmpNameManager.Instance.GenerateLabel(),
                 LeftPart = tmpName,
                 FirstOperand = node.Value.ToString()
             });
+            return tmpName;
         }
-        
-        public void CreateAndPushIdNode(IdNode node, string tmpName)
+
+        public string CreateAndPushIdNode(IdNode node)
         {
+            var tmpName = TmpNameManager.Instance.GenerateTmpVariableName();
             PushNode(new TacAssignmentNode()
             {
                 Label = TmpNameManager.Instance.GenerateLabel(),
                 LeftPart = tmpName,
                 FirstOperand = node.Name.ToString()
             });
+            return tmpName;
         }
-        
-        public void CreateAndPushIntNumNode(IntNumNode node, string tmpName)
+
+        public string CreateAndPushIntNumNode(IntNumNode node)
         {
+            var tmpName = TmpNameManager.Instance.GenerateTmpVariableName();
             PushNode(new TacAssignmentNode()
             {
                 Label = TmpNameManager.Instance.GenerateLabel(),
                 LeftPart = tmpName,
                 FirstOperand = node.Num.ToString()
             });
+            return tmpName;
         }
-        
+
         #endregion
 
         public override string ToString()

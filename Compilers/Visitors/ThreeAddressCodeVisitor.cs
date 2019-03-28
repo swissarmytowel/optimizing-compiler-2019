@@ -8,18 +8,13 @@ using SimpleLang.TACode.TacNodes;
 
 namespace SimpleLang.Visitors
 {
-    class ThreeAddressCodeVisitor : AutoVisitor
+    internal class ThreeAddressCodeVisitor : AutoVisitor
     {
         public ThreeAddressCode Tac { get; }
 
         public ThreeAddressCodeVisitor()
         {
             Tac = new ThreeAddressCode();
-        }
-        
-        public override void VisitBinOpNode(BinOpNode binop)
-        {
-            base.VisitBinOpNode(binop);
         }
         
         public override void VisitAssignNode(AssignNode a)
@@ -35,28 +30,25 @@ namespace SimpleLang.Visitors
 
         private string GenerateThreeAddressLine(ExprNode expression)
         {
-            var tmpName = TmpNameManager.Instance.GenerateTmpVariableName();
             switch (expression)
             {
                 case IdNode tmp:
                 {
-                    Tac.CreateAndPushIdNode(tmp, tmpName);
-                    break;
+                    return Tac.CreateAndPushIdNode(tmp);
                 }
                 case IntNumNode tmp:
                 {
-                    Tac.CreateAndPushIntNumNode(tmp, tmpName);
-                    break;
+                    return Tac.CreateAndPushIntNumNode(tmp);
                 }
                 case BoolNode tmp:
                 {
-                    Tac.CreateAndPushBoolNode(tmp, tmpName);
-                    break;
+                    return Tac.CreateAndPushBoolNode(tmp);
                 }
                 case BinOpNode tmp:
                 {
                     var leftPart = GenerateThreeAddressLine(tmp.Left);
                     var rightPart = GenerateThreeAddressLine(tmp.Right);
+                    var tmpName = TmpNameManager.Instance.GenerateTmpVariableName();
                     Tac.PushNode(new TacAssignmentNode()
                     {
                         Label = TmpNameManager.Instance.GenerateLabel(),
@@ -65,11 +57,10 @@ namespace SimpleLang.Visitors
                         Operation = tmp.Op,
                         SecondOperand = rightPart
                     });
-                    break;
+                    return tmpName;
                 }
             }
-
-            return tmpName;
+            return default(string);
         }
         
         public override void VisitIfNode(IfNode c)
