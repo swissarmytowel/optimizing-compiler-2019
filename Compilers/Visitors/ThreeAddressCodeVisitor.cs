@@ -131,5 +131,34 @@ namespace SimpleLang.Visitors
                 Label = secondLabel
             });
         }
+        
+        public override void VisitWhileNode(WhileNode c)
+        {
+            var conditionalExpression = GenerateThreeAddressLine(c.Expr);
+            var startOfWhileStatementLabel = TmpNameManager.Instance.GenerateLabel();
+            var endOfWhileStatementLabel = TmpNameManager.Instance.GenerateLabel();
+
+            ThreeAddressCodeContainer.PushNode(new TacIfGotoNode()
+            {
+                Label = startOfWhileStatementLabel,
+                Condition = conditionalExpression,
+                TargetLabel = endOfWhileStatementLabel
+            });
+            c.Stat.Visit(this);
+            ThreeAddressCodeContainer.PushNode(new TacGotoNode()
+            {
+                Label = TmpNameManager.Instance.GenerateLabel(),
+                TargetLabel = startOfWhileStatementLabel
+            });
+            ThreeAddressCodeContainer.PushNode(new TacEmptyNode()
+            {
+                Label = endOfWhileStatementLabel
+            });
+        }
+
+        public override void VisitForNode(ForNode c)
+        {
+            base.VisitForNode(c);
+        }
     }
 }
