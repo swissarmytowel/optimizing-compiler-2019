@@ -1,4 +1,4 @@
-namespace SimpleLang.ThreeAddressCode
+namespace SimpleLang.TACode
 {
     public class TmpNameManager
     {

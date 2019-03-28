@@ -1,4 +1,4 @@
-namespace SimpleLang.ThreeAddressCode.TacNodes
+namespace SimpleLang.TACode.TacNodes
 {
     public abstract class TacNode
     {

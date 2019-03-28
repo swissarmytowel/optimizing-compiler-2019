@@ -79,6 +79,10 @@ namespace SimpleCompiler
                     printv = new PrettyPrintVisitor(true);
                     r.Visit(printv);
                     Console.WriteLine(printv.Text);
+                    
+                    var tac = new ThreeAddressCodeVisitor();
+                    r.Visit(tac);
+                    Console.WriteLine(tac.Tac);
                 }
             }
             catch (FileNotFoundException)

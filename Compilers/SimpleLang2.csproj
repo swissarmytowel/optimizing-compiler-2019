@@ -43,12 +43,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ThreeAddressCode\TacNodes\TacAssignmentNode.cs" />
-    <Compile Include="ThreeAddressCode\TacNodes\TacIfGotoNode.cs" />
-    <Compile Include="ThreeAddressCode\TacNodes\TacGotoNode.cs" />
-    <Compile Include="ThreeAddressCode\TacNodes\TacNode.cs" />
-    <Compile Include="ThreeAddressCode\ThreeAddressCode.cs" />
-    <Compile Include="ThreeAddressCode\TmpNameManager.cs" />
+    <Compile Include="TACode\TacNodes\TacAssignmentNode.cs" />
+    <Compile Include="TACode\TacNodes\TacIfGotoNode.cs" />
+    <Compile Include="TACode\TacNodes\TacGotoNode.cs" />
+    <Compile Include="TACode\TacNodes\TacNode.cs" />
+    <Compile Include="TACode\ThreeAddressCode.cs" />
+    <Compile Include="TACode\TmpNameManager.cs" />
     <Compile Include="Visitors\AssignCountVisitor.cs" />
     <Compile Include="Visitors\AutoVisitor.cs" />
     <Compile Include="Visitors\ChangeVisitor.cs" />
@@ -62,7 +62,7 @@
     <Compile Include="Visitors\PlusZeroExprVisitor.cs" />
     <Compile Include="Visitors\PrettyPrintVisitor.cs" />
     <Compile Include="Visitors\SameMinusOptVisitor.cs" />
-    <Compile Include="Visitors\ThreeAdressCodeVisitor.cs" />
+    <Compile Include="Visitors\ThreeAddressCodeVisitor.cs" />
     <Compile Include="Visitors\Visitor.cs" />
     <Compile Include="Main.cs" />
     <Compile Include="Parser\ParserHelper.cs" />

@@ -1,4 +1,4 @@
-namespace SimpleLang.ThreeAddressCode.TacNodes
+namespace SimpleLang.TACode.TacNodes
 {
     public class TacIfGotoNode : TacGotoNode
     {

@@ -1,8 +1,8 @@
 using System.Collections.Generic;
 using System.Text;
-using SimpleLang.ThreeAddressCode.TacNodes;
+using SimpleLang.TACode.TacNodes;
 
-namespace SimpleLang.ThreeAddressCode
+namespace SimpleLang.TACode
 {
     public class ThreeAddressCode
     {
@@ -36,7 +36,7 @@ namespace SimpleLang.ThreeAddressCode
             var builder = new StringBuilder();
             foreach (var tacNode in CodeList)
             {
-                builder.Append(tacNode?.ToString());
+                builder.Append(tacNode?.ToString() + "\n");
             }
 
             return builder.ToString();
