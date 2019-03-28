@@ -7,6 +7,12 @@ using System.Runtime.Remoting.Messaging;
 using SimpleLang.TACode;
 using SimpleLang.TACode.TacNodes;
 
+// Undefine, if the following behavior is desired:
+// a = 1 =>
+// L1: t1 = 1
+// L2: a = t1
+#define SINGLE_TAC_ASSIGN_COMMANDS_REQUIRED 
+
 namespace SimpleLang.Visitors
 {
     internal class ThreeAddressCodeVisitor : AutoVisitor
@@ -17,10 +23,37 @@ namespace SimpleLang.Visitors
         {
             ThreeAddressCodeContainer = new ThreeAddressCode();
         }
-        
+
         public override void VisitAssignNode(AssignNode a)
         {
-            var rightPartExpression = GenerateThreeAddressLine(a.Expr);
+            string rightPartExpression = null;
+#if SINGLE_TAC_ASSIGN_COMMANDS_REQUIRED
+            switch (a.Expr)
+            {
+                case IdNode idNode:
+                {
+                    rightPartExpression = idNode.ToString();
+                    break;
+                }
+                case IntNumNode intNumNode:
+                {
+                    rightPartExpression = intNumNode.ToString();
+                    break;
+                }
+                case BoolNode boolNode:
+                {
+                    rightPartExpression = boolNode.ToString();
+                    break;
+                }
+                default:
+                {
+                    rightPartExpression = GenerateThreeAddressLine(a.Expr);
+                    break;
+                }
+            }
+#else
+            rightPartExpression = GenerateThreeAddressLine(a.Expr);
+#endif
             ThreeAddressCodeContainer.PushNode(new TacAssignmentNode()
             {
                 Label = TmpNameManager.Instance.GenerateLabel(),
@@ -29,6 +62,7 @@ namespace SimpleLang.Visitors
             });
         }
 
+        private int depth = 0;
         private string GenerateThreeAddressLine(ExprNode expression)
         {
             switch (expression)
@@ -61,36 +95,37 @@ namespace SimpleLang.Visitors
                     return tmpName;
                 }
             }
+
             return default(string);
         }
-        
+
         public override void VisitIfNode(IfNode c)
         {
             var conditionalExpression = GenerateThreeAddressLine(c.Expr);
 
             var firstLabel = TmpNameManager.Instance.GenerateLabel();
             var secondLabel = TmpNameManager.Instance.GenerateLabel();
-            
+
             ThreeAddressCodeContainer.PushNode(new TacIfGotoNode()
             {
                 Label = TmpNameManager.Instance.GenerateLabel(),
                 Condition = conditionalExpression,
                 TargetLabel = firstLabel
             });
-            
+
             c.Stat2?.Visit(this);
             ThreeAddressCodeContainer.PushNode(new TacGotoNode()
             {
                 Label = TmpNameManager.Instance.GenerateLabel(),
                 TargetLabel = secondLabel
             });
-            
+
             ThreeAddressCodeContainer.PushNode(new TacEmptyNode()
             {
                 Label = firstLabel
             });
             c.Stat1.Visit(this);
-            
+
             ThreeAddressCodeContainer.PushNode(new TacEmptyNode()
             {
                 Label = secondLabel
