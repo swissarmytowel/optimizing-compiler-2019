@@ -3,6 +3,7 @@ using System.IO;
 using System.Text;
 using System.Reflection;
 using System.Collections.Generic;
+using SimpleLang.TACode.TacNodes;
 using SimpleScanner;
 using SimpleParser;
 using SimpleLang.Visitors;
@@ -79,6 +80,10 @@ namespace SimpleCompiler
                     printv = new PrettyPrintVisitor(true);
                     r.Visit(printv);
                     Console.WriteLine(printv.Text);
+                    
+                    var threeAddressCodeVisitor = new ThreeAddressCodeVisitor();
+                    r.Visit(threeAddressCodeVisitor);
+                    Console.WriteLine(threeAddressCodeVisitor);
                 }
             }
             catch (FileNotFoundException)
