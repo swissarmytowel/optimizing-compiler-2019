@@ -173,12 +173,16 @@ namespace SimpleLang.Visitors
 
         public override void VisitWhileNode(WhileNode c)
         {
+        // Label to the initial conditional jump check (right above bool expression under while())
+            var conditionalCheckLabel = TmpNameManager.Instance.GenerateLabel();
+            TACodeContainer.PushNode(new TacEmptyNode()
+            {
+                Label = conditionalCheckLabel
+            });
+
             // Separate conditional expression from the rest of the generation
             // As we will need the resulting last tmp ID for conditional goto jump later
             var conditionalExpression = GenerateThreeAddressLine(c.Expr);
-            
-            // Label to the initial conditional jump check (bool expression under while())
-            var conditionalCheckLabel = TmpNameManager.Instance.GenerateLabel();
             
             // Creating starting and ending labels
             var endOfWhileStatementLabel = TmpNameManager.Instance.GenerateLabel();
@@ -187,7 +191,7 @@ namespace SimpleLang.Visitors
             // Create conditional jump statement at the starting position of while
             TACodeContainer.PushNode(new TacIfGotoNode()
             {
-                Label = conditionalCheckLabel,
+                Label = TmpNameManager.Instance.GenerateLabel(),
                 Condition = conditionalExpression,
                 TargetLabel = startOfWhileBodyLabel
             });
