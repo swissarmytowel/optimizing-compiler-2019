@@ -1,8 +1,9 @@
+using System.Linq;
+using System.Text;
 using System.Collections;
 using System.Collections.Generic;
-using System.Text;
-using ProgramTree;
 using SimpleLang.TACode.TacNodes;
+using ProgramTree;
 
 namespace SimpleLang.TACode
 {
@@ -15,7 +16,13 @@ namespace SimpleLang.TACode
         /// Linked list representation of the tac code lines
         /// </summary>
         public LinkedList<TacNode> TACodeLines { get; }
-
+        
+        public TacNode this[string label]
+        {
+            get => GetNodeByLabel(label);
+            set => SetNodeByLabel(label, value);
+        }
+        
         public ThreeAddressCode()
         {
             TACodeLines = new LinkedList<TacNode>();
@@ -31,7 +38,21 @@ namespace SimpleLang.TACode
         }
 
         /// <summary>
-        /// Remove a node (a representation of TAC code line) from a container 
+        /// Push multiple nodes to the end of the container
+        /// </summary>
+        /// <param name="nodes">Enumerable, containing nodes to be pushed</param>
+        public void PushNodes(IEnumerable<TacNode> nodes)
+        {
+            foreach (var tacNode in nodes)
+            {
+                TACodeLines.AddLast(tacNode);
+            }
+        }
+        
+        /// <summary>
+        /// Remove a node (a representation of TAC code line) from a container
+        /// <exception>InvalidOperationException</exception>
+        /// <exception>ArgumentNullException</exception>
         /// </summary>
         /// <param name="node">Node to be removed</param>
         public void RemoveNode(TacNode node)
@@ -40,7 +61,24 @@ namespace SimpleLang.TACode
         }
 
         /// <summary>
-        /// Remove multiple nodes from a container 
+        /// Remove a node by label
+        /// <exception>InvalidOperationException</exception>
+        /// <exception>ArgumentNullException</exception>
+        /// </summary>
+        /// <param name="label">Label of a node to be removed</param>
+        public void RemoveNodeByLabel(string label)
+        {
+            var labeledNode = TACodeLines.FirstOrDefault(node => string.Equals(node.Label, label));
+            if (labeledNode != null)
+            {
+                TACodeLines.Remove(labeledNode);
+            }
+        }
+        
+        /// <summary>
+        /// Remove multiple nodes from a container
+        /// <exception>InvalidOperationException</exception>
+        /// <exception>ArgumentNullException</exception>
         /// </summary>
         /// <param name="nodes">Enumerable, containing nodes to be removed</param>
         public void RemoveNodes(IEnumerable<TacNode> nodes)
@@ -50,16 +88,36 @@ namespace SimpleLang.TACode
                 TACodeLines.Remove(tacNode);
             }
         }
+        
+        /// <summary>
+        /// Acquire node from TAC code list by label
+        /// </summary>
+        /// <param name="label">Desired label</param>
+        /// <returns>Node found, if not => null</returns>
+        public TacNode GetNodeByLabel(string label)
+        {
+            return TACodeLines.FirstOrDefault(node => string.Equals(node.Label, label));
+        }
 
         /// <summary>
-        /// Push multiple nodes to the end of the container
+        /// Set node from TAC code list by label. if not in TAC code list => push new node of @param:value
+        /// <remarks>Very inefficient.</remarks>
+        /// TODO: Tune efficiency
         /// </summary>
-        /// <param name="nodes">Enumerable, containing nodes to be pushed</param>
-        public void PushNodes(IEnumerable<TacNode> nodes)
+        /// <param name="label">Desired label</param>
+        /// <param name="value">Node to be set at found cell</param>
+        public void SetNodeByLabel(string label, TacNode value)
         {
-            foreach (var tacNode in nodes)
+            var labeledNode = TACodeLines.FirstOrDefault(node => string.Equals(node.Label, label));
+            if (labeledNode != null)
             {
-                TACodeLines.AddLast(tacNode);
+                var tmp = TACodeLines.Find(labeledNode);
+                TACodeLines.AddBefore(tmp, value);
+                TACodeLines.Remove(tmp);
+            }
+            else
+            {
+                PushNode(value);
             }
         }
 

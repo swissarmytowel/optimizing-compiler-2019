@@ -5,6 +5,13 @@
 
 #define SINGLE_TAC_ASSIGN_COMMANDS_REQUIRED
 
+// Undefine, if the following behavior is desired:
+// while(a == 0) =>
+// L1: t1 = a
+// L2: t2 = 0
+// L3: t3 = t1 == t2
+#define SINGLE_TAC_EXPRESSION_COMMANDS_REQUIRED
+
 using ProgramTree;
 using SimpleLang.TACode;
 using SimpleLang.TACode.TacNodes;
@@ -20,47 +27,48 @@ namespace SimpleLang.Visitors
         /// TAC container
         /// For details look at the class definition at SimpleLang.TACode.ThreeAddressCode.cs
         /// </summary>
-        public ThreeAddressCode ThreeAddressCodeContainer { get; }
+        // ReSharper disable once InconsistentNaming
+        public ThreeAddressCode TACodeContainer { get; }
 
         public ThreeAddressCodeVisitor()
         {
-            ThreeAddressCodeContainer = new ThreeAddressCode();
+            TACodeContainer = new ThreeAddressCode();
         }
+        
+        /// <summary>
+        /// Managing tac generation for trivial expression cases, that are already TAC-like
+        /// E.g. a = 1 + b, while(a == 0) so on.
+        /// </summary>
+        /// <param name="node">Expression node to be parsed</param>
+        /// <returns>Identifier of the last tmp variable generated</returns>
+        private string ManageTrivialCases(ExprNode node)
+        {
+            switch (node)
+            {
+                case IdNode idNode:
+                    return idNode.ToString();
 
+                case IntNumNode intNumNode:
+                    return intNumNode.ToString();
+
+                case BoolNode boolNode:
+                    return boolNode.ToString();
+
+                default:
+                    // if the default case is hit, Expr is complex, and TAC simplification can't be done
+                    return GenerateThreeAddressLine(node);
+            }
+        }
         public override void VisitAssignNode(AssignNode a)
         {
             string rightPartExpression = null;
+            // If should try to simplify the TAC for a trivial assignment 
 #if SINGLE_TAC_ASSIGN_COMMANDS_REQUIRED
-            // Switching expression to see if it is of any primitive kind
-            // And if so, skip TAC generation to avoid additional tmp variables creation
-            switch (a.Expr)
-            {
-                case IdNode idNode:
-                {
-                    rightPartExpression = idNode.ToString();
-                    break;
-                }
-                case IntNumNode intNumNode:
-                {
-                    rightPartExpression = intNumNode.ToString();
-                    break;
-                }
-                case BoolNode boolNode:
-                {
-                    rightPartExpression = boolNode.ToString();
-                    break;
-                }
-                default:
-                {
-                    // if the default case is hit, Expr is complex, and TAC simplification can't be done
-                    rightPartExpression = GenerateThreeAddressLine(a.Expr);
-                    break;
-                }
-            }
+            rightPartExpression = ManageTrivialCases(a.Expr);
 #else
             rightPartExpression = GenerateThreeAddressLine(a.Expr);
 #endif
-            ThreeAddressCodeContainer.PushNode(new TacAssignmentNode()
+            TACodeContainer.PushNode(new TacAssignmentNode()
             {
                 Label = TmpNameManager.Instance.GenerateLabel(),
                 LeftPartIdentifier = a.Id.Name,
@@ -77,30 +85,35 @@ namespace SimpleLang.Visitors
         {
             switch (expression)
             {
-                // Trivial cases
+                // Trivial cases. Each switch branch generate simple corresponding node
                 case IdNode idNode:
                 {
-                    return ThreeAddressCodeContainer.CreateAndPushIdNode(idNode);
+                    return TACodeContainer.CreateAndPushIdNode(idNode);
                 }
                 case IntNumNode intNumNode:
                 {
-                    return ThreeAddressCodeContainer.CreateAndPushIntNumNode(intNumNode);
+                    return TACodeContainer.CreateAndPushIntNumNode(intNumNode);
                 }
                 case BoolNode boolNode:
                 {
-                    return ThreeAddressCodeContainer.CreateAndPushBoolNode(boolNode);
+                    return TACodeContainer.CreateAndPushBoolNode(boolNode);
                 }
                 // Complex case, when a part of an expr is a binary operation
                 case BinOpNode binOpNode:
                 {
+                    
+#if SINGLE_TAC_EXPRESSION_COMMANDS_REQUIRED
+                    var leftPart = ManageTrivialCases(binOpNode.Left);
+                    var rightPart = ManageTrivialCases(binOpNode.Right);
+#else
                     // Recursive traversing left & right parts of BinOp
                     var leftPart = GenerateThreeAddressLine(binOpNode.Left);
                     var rightPart = GenerateThreeAddressLine(binOpNode.Right);
-                    
+#endif
                     // Creating and pushing the resulting binOp between 
                     // already generated above TAC variables
                     var tmpName = TmpNameManager.Instance.GenerateTmpVariableName();
-                    ThreeAddressCodeContainer.PushNode(new TacAssignmentNode()
+                    TACodeContainer.PushNode(new TacAssignmentNode()
                     {
                         Label = TmpNameManager.Instance.GenerateLabel(),
                         LeftPartIdentifier = tmpName,
@@ -125,7 +138,7 @@ namespace SimpleLang.Visitors
             var mainIfBlockStartLabel = TmpNameManager.Instance.GenerateLabel();
             var exitingLabel = TmpNameManager.Instance.GenerateLabel();
 
-            ThreeAddressCodeContainer.PushNode(new TacIfGotoNode()
+            TACodeContainer.PushNode(new TacIfGotoNode()
             {
                 Label = TmpNameManager.Instance.GenerateLabel(),
                 Condition = conditionalExpression,
@@ -136,14 +149,14 @@ namespace SimpleLang.Visitors
             c.Stat2?.Visit(this);
             
             // Creating goto jump towards an exit of the loop. That's the case, when we hit 'else'
-            ThreeAddressCodeContainer.PushNode(new TacGotoNode()
+            TACodeContainer.PushNode(new TacGotoNode()
             {
                 Label = TmpNameManager.Instance.GenerateLabel(),
                 TargetLabel = exitingLabel
             });
             
             // Pushing main if block starting label to denote entry point for conditional jump
-            ThreeAddressCodeContainer.PushNode(new TacEmptyNode()
+            TACodeContainer.PushNode(new TacEmptyNode()
             {
                 Label = mainIfBlockStartLabel
             });
@@ -152,7 +165,7 @@ namespace SimpleLang.Visitors
             c.Stat1.Visit(this);
             
             // Placing the exit label at the end of if-else section
-            ThreeAddressCodeContainer.PushNode(new TacEmptyNode()
+            TACodeContainer.PushNode(new TacEmptyNode()
             {
                 Label = exitingLabel
             });
@@ -172,7 +185,7 @@ namespace SimpleLang.Visitors
             var startOfWhileBodyLabel = TmpNameManager.Instance.GenerateLabel();
 
             // Create conditional jump statement at the starting position of while
-            ThreeAddressCodeContainer.PushNode(new TacIfGotoNode()
+            TACodeContainer.PushNode(new TacIfGotoNode()
             {
                 Label = conditionalCheckLabel,
                 Condition = conditionalExpression,
@@ -181,14 +194,14 @@ namespace SimpleLang.Visitors
             
             // Exiting goto jump. If condition is false -- then this line will execute
             // And jump out of while body
-            ThreeAddressCodeContainer.PushNode(new TacGotoNode()
+            TACodeContainer.PushNode(new TacGotoNode()
             {
                 Label = TmpNameManager.Instance.GenerateLabel(),
                 TargetLabel = endOfWhileStatementLabel
             });
             
             // Main body entry point
-            ThreeAddressCodeContainer.PushNode(new TacEmptyNode()
+            TACodeContainer.PushNode(new TacEmptyNode()
             {
                 Label = startOfWhileBodyLabel
             });
@@ -197,14 +210,14 @@ namespace SimpleLang.Visitors
             c.Stat.Visit(this);
            
             // Placing upward jump to the entry point of the while statement
-            ThreeAddressCodeContainer.PushNode(new TacGotoNode()
+            TACodeContainer.PushNode(new TacGotoNode()
             {
                 Label = TmpNameManager.Instance.GenerateLabel(),
                 TargetLabel = conditionalCheckLabel
             });
            
             // Placing exiting label at the end of while
-            ThreeAddressCodeContainer.PushNode(new TacEmptyNode()
+            TACodeContainer.PushNode(new TacEmptyNode()
             {
                 Label = endOfWhileStatementLabel
             });
@@ -218,14 +231,14 @@ namespace SimpleLang.Visitors
             
             // Setting entry point label
             var startOfForStatementLabel = TmpNameManager.Instance.GenerateLabel();
-            ThreeAddressCodeContainer.PushNode(new TacEmptyNode()
+            TACodeContainer.PushNode(new TacEmptyNode()
             {
                 Label = startOfForStatementLabel
             });
             
             // Traversing main for block and generating TAC
             c.Stat.Visit(this);
-            ThreeAddressCodeContainer.PushNode(new TacAssignmentNode()
+            TACodeContainer.PushNode(new TacAssignmentNode()
             {
                 Label = TmpNameManager.Instance.GenerateLabel(),
                 LeftPartIdentifier = c.Assign.Id.Name,
@@ -250,23 +263,25 @@ namespace SimpleLang.Visitors
                     break;
             }
             // Generating ID for loop conditional expression and creating corresponding TAC node
-            var conditionalExpressionID = TmpNameManager.Instance.GenerateTmpVariableName();
+            var conditionalExpressionId = TmpNameManager.Instance.GenerateTmpVariableName();
             
-            ThreeAddressCodeContainer.PushNode(new TacAssignmentNode()
+            TACodeContainer.PushNode(new TacAssignmentNode()
             {
                 Label = TmpNameManager.Instance.GenerateLabel(),
-                LeftPartIdentifier = conditionalExpressionID,
+                LeftPartIdentifier = conditionalExpressionId,
                 FirstOperand = c.Assign.Id.Name,
                 Operation = "<",
                 SecondOperand = conditionalExpression
             });
             // Creating conditional jump towards a label of loop entry point
-            ThreeAddressCodeContainer.PushNode(new TacIfGotoNode()
+            TACodeContainer.PushNode(new TacIfGotoNode()
             {
                 Label = TmpNameManager.Instance.GenerateLabel(),
-                Condition = conditionalExpressionID,
+                Condition = conditionalExpressionId,
                 TargetLabel = startOfForStatementLabel
             });
         }
+
+        public override string ToString() => TACodeContainer.ToString();
     }
 }
