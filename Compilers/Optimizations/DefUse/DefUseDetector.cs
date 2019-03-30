@@ -23,12 +23,13 @@ namespace SimpleLang.Optimizations.DefUse
                     {
                         Definitions[assignmentNode.LeftPartIdentifier] = assignmentNode.Label;
 
-                        AddSingleAssignmentUsageEntry(assignmentNode.FirstOperand, assignmentNode.Label);
+                        if (IsVariable(assignmentNode.FirstOperand))
+                        {
+                            AddSingleAssignmentUsageEntry(assignmentNode.FirstOperand, assignmentNode.Label);
+                        }
                         if (assignmentNode.SecondOperand != null)
                         {
-                            var isNotConstant = !int.TryParse(assignmentNode.SecondOperand, out _)
-                                                && !double.TryParse(assignmentNode.SecondOperand, out _);
-                            if (isNotConstant)
+                            if (IsVariable(assignmentNode.SecondOperand))
                                 AddSingleAssignmentUsageEntry(assignmentNode.SecondOperand, assignmentNode.Label);
                         }
 
@@ -51,6 +52,12 @@ namespace SimpleLang.Optimizations.DefUse
                         break;
                 }
             }
+        }
+
+        private bool IsVariable(string expression)
+        {
+            return int.TryParse(expression, out _) == false && double.TryParse(expression, out _) == false 
+                                                            && bool.TryParse(expression, out _) == false;
         }
 
         private void AddSingleAssignmentUsageEntry(string operand, string label)
