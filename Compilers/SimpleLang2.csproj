@@ -44,6 +44,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Optimizations\DefUse\DefUseDetector.cs" />
+    <Compile Include="Optimizations\DefUse\DefUseTacOptimizer.cs" />
     <Compile Include="TACode\TacNodes\TacAssignmentNode.cs" />
     <Compile Include="TACode\TacNodes\TacEmptyNode.cs" />
     <Compile Include="TACode\TacNodes\TacIfGotoNode.cs" />

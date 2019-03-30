@@ -85,10 +85,18 @@ namespace SimpleCompiler
                     
                     var threeAddressCodeVisitor = new ThreeAddressCodeVisitor();
                     r.Visit(threeAddressCodeVisitor);
+                    
+                    Console.WriteLine("======= BEFORE DV OPTIMIZATION =======");
                     Console.WriteLine(threeAddressCodeVisitor);
-                    var detector = new DefUseDetector();
-                    detector.DetectAndFillDefUse(threeAddressCodeVisitor.TACodeContainer);
-                    Console.WriteLine(detector);
+                    
+//                    var detector = new DefUseDetector();
+//                    detector.DetectAndFillDefUse(threeAddressCodeVisitor.TACodeContainer);
+//                    Console.WriteLine(detector);
+                    var defUseOptimizer = new DefUseTacOptimizer();
+                    defUseOptimizer.DeadVariablesOptimization(threeAddressCodeVisitor.TACodeContainer);
+                    
+                    Console.WriteLine("======= AFTER DV OPTIMIZATION =======");
+                    Console.WriteLine(threeAddressCodeVisitor);
                 }
             }
             catch (FileNotFoundException)
