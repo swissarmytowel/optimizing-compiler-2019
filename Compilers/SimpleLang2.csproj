@@ -79,6 +79,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="a.txt" />
+    <Content Include="Optimizations\README.md" />
     <Content Include="TACode\DOCUMENTATION.md" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
