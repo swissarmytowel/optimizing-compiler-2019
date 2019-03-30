@@ -17,12 +17,15 @@ namespace SimpleLang.TACode
         /// </summary>
         public LinkedList<TacNode> TACodeLines { get; }
         
+        
         public TacNode this[string label]
         {
             get => GetNodeByLabel(label);
             set => SetNodeByLabel(label, value);
         }
-        
+
+        public LinkedListNode<TacNode> Last => TACodeLines.Last;
+
         public ThreeAddressCode()
         {
             TACodeLines = new LinkedList<TacNode>();
