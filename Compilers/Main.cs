@@ -91,6 +91,7 @@ namespace SimpleCompiler
 
                     var bblocks = new BasicBlocks(threeAddressCodeVisitor.TACodeContainer);
                     bblocks.SplitTACode();
+                    Console.WriteLine("Splitting into basic blocks finished");
                 }
             }
             catch (FileNotFoundException)

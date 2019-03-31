@@ -104,16 +104,16 @@ namespace SimpleLang.TACode
         /// </summary>
         /// <param name="label">Desired label</param>
         /// <returns>Position of node found, if not => -1</returns>
-        public int GetNodePositonByLabel(string label)
-        {
-            var position = 0;
-            foreach (var node in TACodeLines)
-            {
-                if (string.Equals(node.Label, label)) return position;
-                position++;
-            }
-            return -1;
-        }
+        //public int GetNodePositonByLabel(string label)
+        //{
+        //    var position = 0;
+        //    foreach (var node in TACodeLines)
+        //    {
+        //        if (string.Equals(node.Label, label)) return position;
+        //        position++;
+        //    }
+        //    return -1;
+        //}
         /// <summary>
         /// Set node from TAC code list by label. if not in TAC code list => push new node of @param:value
         /// <remarks>Very inefficient.</remarks>

@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Linq;
 using System.Collections.Generic;
 
 using SimpleLang.TACode.TacNodes;
@@ -19,40 +18,55 @@ namespace SimpleLang.Optimizations
             RawTACode = TACode;
         }
 
-        private List<int> FindLeaders(List<TacNode> tacNodes)
+        private List<string> FindLeaders()
         {
-            var position = 0;
             var previousGoto = false;
-            var res = new List<int>();
+            var leaderLabels = new List<string>{ "L1" };
 
-            foreach (var tacItem in tacNodes)
+            var currentNode = RawTACode.TACodeLines.First;
+            var next = currentNode.Next;
+
+            while(next != null)
             {
-                if (position == 0 || previousGoto)
-                    res.Add(position);
-                else if (tacItem is TacGotoNode gotoNode)
+                var currentElement = currentNode.Value;
+                if (currentElement is TacEmptyNode || previousGoto)
                 {
-                    var targetPostiion = RawTACode.GetNodePositonByLabel(gotoNode.TargetLabel);
-                    res.Add(targetPostiion);
-                    previousGoto = true;
+                    leaderLabels.Add(currentNode.Previous.Value.Label);
+                    leaderLabels.Add(currentElement.Label);
                 }
-                else previousGoto = false;
-                position++;
+                previousGoto = currentElement is TacGotoNode;
+                currentNode = next;
+                next = currentNode.Next;
             }
-            res.Sort();
-            return res;
+            leaderLabels.Add(RawTACode.TACodeLines.Last.Value.Label);
+            return leaderLabels;
         }
 
         public void SplitTACode()
         {
-            var tacNodes = RawTACode.TACodeLines.ToList();
-            var leaderNodes = FindLeaders(tacNodes);
+            var leaderLabels = FindLeaders();
+            var leaderPos = 0;
+            var basicBlock = new List<TacNode>();
 
-            for(int i = 0;i < leaderNodes.Count - 1;i++)
+            foreach(var currentElement in RawTACode)
             {
-                var currentIndex = leaderNodes[i];
-                var nextIndex = leaderNodes[i + 1];
-                var block = tacNodes.GetRange(currentIndex, nextIndex - currentIndex);
-                BasicBlockItems.Add(block);
+                if (string.Equals(currentElement.Label, leaderLabels[leaderPos]))
+                {
+                    if (leaderPos < leaderLabels.Count - 1 && string.Equals(currentElement.Label, leaderLabels[leaderPos + 1]))
+                    {
+                        BasicBlockItems.Add(new List<TacNode> { currentElement });
+                        leaderPos++;
+                    }
+                    else if (basicBlock.Count > 0)
+                    {
+                        basicBlock.Add(currentElement);
+                        BasicBlockItems.Add(basicBlock);
+                        basicBlock = new List<TacNode>();
+                    }
+                    else basicBlock.Add(currentElement);
+                    leaderPos++;
+
+                } else basicBlock.Add(currentElement);
             }
         }
 
