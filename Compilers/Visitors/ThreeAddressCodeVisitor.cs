@@ -286,6 +286,11 @@ namespace SimpleLang.Visitors
             });
         }
 
+        public override void VisitEmptyNode(EmptyNode w)
+        {
+            TACodeContainer.CreateAndPushEmptyNode(w);
+        }
+
         public override string ToString() => TACodeContainer.ToString();
     }
 }
