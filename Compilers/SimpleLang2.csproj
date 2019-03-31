@@ -72,8 +72,7 @@
     <Compile Include="Parser\ShiftReduceParserCode.cs" />
     <Compile Include="Parser\SimpleLex.cs" />
     <Compile Include="Parser\SimpleYacc.cs" />
-    <Compile Include="BBOptimizations\BasicBlocks.cs" />
-    <Compile Include="BBOptimizations\BasicBlock.cs" />
+    <Compile Include="Optimizations\BasicBlocks.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Parser\SimpleLex.lex" />
@@ -83,9 +82,6 @@
     <Content Include="a.txt" />
     <Content Include="Optimizations\README.md" />
     <Content Include="TACode\README.md" />
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="BBOptimizations\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
