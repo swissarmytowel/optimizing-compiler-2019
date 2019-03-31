@@ -3,10 +3,12 @@ using System.IO;
 using System.Text;
 using System.Reflection;
 using System.Collections.Generic;
+
 using SimpleLang.TACode.TacNodes;
 using SimpleScanner;
 using SimpleParser;
 using SimpleLang.Visitors;
+using SimpleLang.Optimizations;
 
 namespace SimpleCompiler
 {
@@ -37,6 +39,8 @@ namespace SimpleCompiler
                 else
                 {
                     Console.WriteLine("Синтаксическое дерево построено");
+
+                    // TODO: add loop through all tree optimizations
 
                     var avis = new AssignCountVisitor();
                     parser.root.Visit(avis);
@@ -84,6 +88,10 @@ namespace SimpleCompiler
                     var threeAddressCodeVisitor = new ThreeAddressCodeVisitor();
                     r.Visit(threeAddressCodeVisitor);
                     Console.WriteLine(threeAddressCodeVisitor);
+
+                    var bblocks = new BasicBlocks(threeAddressCodeVisitor.TACodeContainer);
+                    bblocks.SplitTACode();
+                    Console.WriteLine("Splitting into basic blocks finished");
                 }
             }
             catch (FileNotFoundException)
