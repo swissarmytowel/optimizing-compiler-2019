@@ -89,8 +89,8 @@ namespace SimpleCompiler
                     r.Visit(threeAddressCodeVisitor);
                     Console.WriteLine(threeAddressCodeVisitor);
 
-                    var bblocks = new BasicBlocks(threeAddressCodeVisitor.TACodeContainer);
-                    bblocks.SplitTACode();
+                    var bblocks = new BasicBlocks();
+                    bblocks.SplitTACode(threeAddressCodeVisitor.TACodeContainer);
                     Console.WriteLine("Splitting into basic blocks finished");
                 }
             }
