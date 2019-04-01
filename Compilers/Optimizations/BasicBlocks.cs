@@ -9,16 +9,14 @@ namespace SimpleLang.Optimizations
 
     public class BasicBlocks
     {
-        public List<List<TacNode>> BasicBlockItems { get; set; }
-        private ThreeAddressCode RawTACode { get; }
+        public List<ThreeAddressCode> BasicBlockItems { get; set; }
 
-        public BasicBlocks(ThreeAddressCode TACode)
+        public BasicBlocks()
         {
-            BasicBlockItems = new List<List<TacNode>>();
-            RawTACode = TACode;
+            BasicBlockItems = new List<ThreeAddressCode>();
         }
 
-        private List<string> FindLeaders()
+        private List<string> FindLeaders(ThreeAddressCode RawTACode)
         {
             var previousGoto = false;
             var leaderLabels = new List<string>{ "L1" };
@@ -42,11 +40,11 @@ namespace SimpleLang.Optimizations
             return leaderLabels;
         }
 
-        public void SplitTACode()
+        public void SplitTACode(ThreeAddressCode RawTACode)
         {
-            var leaderLabels = FindLeaders();
+            var leaderLabels = FindLeaders(RawTACode);
             var leaderPos = 0;
-            var basicBlock = new List<TacNode>();
+            var basicBlock = new ThreeAddressCode();
 
             foreach(var currentElement in RawTACode)
             {
@@ -54,19 +52,21 @@ namespace SimpleLang.Optimizations
                 {
                     if (leaderPos < leaderLabels.Count - 1 && string.Equals(currentElement.Label, leaderLabels[leaderPos + 1]))
                     {
-                        BasicBlockItems.Add(new List<TacNode> { currentElement });
+                        basicBlock.PushNode(currentElement);
+                        BasicBlockItems.Add(basicBlock);
+                        basicBlock = new ThreeAddressCode();
                         leaderPos++;
                     }
-                    else if (basicBlock.Count > 0)
+                    else if (basicBlock.TACodeLines.Count > 0)
                     {
-                        basicBlock.Add(currentElement);
+                        basicBlock.PushNode(currentElement);
                         BasicBlockItems.Add(basicBlock);
-                        basicBlock = new List<TacNode>();
+                        basicBlock = new ThreeAddressCode();
                     }
-                    else basicBlock.Add(currentElement);
+                    else basicBlock.PushNode(currentElement);
                     leaderPos++;
 
-                } else basicBlock.Add(currentElement);
+                } else basicBlock.PushNode(currentElement);
             }
         }
 
