@@ -75,8 +75,11 @@ namespace SimpleCompiler
                     var sameminusv = new SameMinusOptVisitor();
                     parser.root.Visit(sameminusv);
 
-                    var zeroMulVisitors = new ZeroMulOptVisitor();
-                    parser.root.Visit(zeroMulVisitors);
+                    var zeroMulVisitor = new ZeroMulOptVisitor();
+                    parser.root.Visit(zeroMulVisitor);
+
+                    var compareFalseVisitor = new CompareToItselfFalseOptVisitor();
+                    parser.root.Visit(compareFalseVisitor);
 
                     Console.WriteLine("-------------------------------");
 
