@@ -43,6 +43,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Optimizations\Interfaces\IOptimizer.cs" />
     <Compile Include="TACode\TacNodes\TacAssignmentNode.cs" />
     <Compile Include="TACode\TacNodes\TacEmptyNode.cs" />
     <Compile Include="TACode\TacNodes\TacIfGotoNode.cs" />
