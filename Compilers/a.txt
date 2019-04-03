@@ -2,3 +2,11 @@ for (i = 1 to 5){
     for (j = 1 to 5)
         a = 23;
 }
+
+a = 0 * ( b + c );
+
+if (false) {
+    a = 24;
+} else {
+    a = 25;
+}

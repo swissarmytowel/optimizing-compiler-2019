@@ -72,7 +72,13 @@ namespace SimpleCompiler
 
                     var sameminusv = new SameMinusOptVisitor();
                     parser.root.Visit(sameminusv);
-                    
+
+                    var zeroProdVisitor = new ZeroProdOptVisitor();
+                    parser.root.Visit(zeroProdVisitor);
+
+                    var falseStatementVisitor = new FalseStatementOptVisitor();
+                    parser.root.Visit(falseStatementVisitor);
+
                     Console.WriteLine("-------------------------------");
 
                     var ifNodeWithBoolExpr = new IfNodeWithBoolExprVisitor();

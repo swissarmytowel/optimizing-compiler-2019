@@ -74,6 +74,7 @@
     <Compile Include="Parser\SimpleYacc.cs" />
     <Compile Include="Optimizations\BasicBlocks.cs" />
     <Compile Include="Visitors\ZeroProdOptVisitor.cs" />
+    <Compile Include="Visitors\FalseStatementOptVisitor.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Parser\SimpleLex.lex" />
