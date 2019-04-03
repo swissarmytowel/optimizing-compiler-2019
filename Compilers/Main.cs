@@ -30,9 +30,11 @@ namespace SimpleCompiler
                 var b = parser.Parse();
                 var r = parser.root;
                 // Console.WriteLine(r);
+                Console.WriteLine("Исходный текст программы");
                 var printv = new PrettyPrintVisitor(true);
                 r.Visit(printv);
                 Console.WriteLine(printv.Text);
+                Console.WriteLine("-------------------------------");
 
                 if (!b)
                     Console.WriteLine("Ошибка");
@@ -72,7 +74,10 @@ namespace SimpleCompiler
 
                     var sameminusv = new SameMinusOptVisitor();
                     parser.root.Visit(sameminusv);
-                    
+
+                    var zeroMulVisitors = new ZeroMulOptVisitor();
+                    parser.root.Visit(zeroMulVisitors);
+
                     Console.WriteLine("-------------------------------");
 
                     var ifNodeWithBoolExpr = new IfNodeWithBoolExprVisitor();
@@ -81,17 +86,20 @@ namespace SimpleCompiler
                     var plusZeroExpr = new PlusZeroExprVisitor();
                     parser.root.Visit(plusZeroExpr);
 
+                    Console.WriteLine("Оптимизированная программа");
                     printv = new PrettyPrintVisitor(true);
                     r.Visit(printv);
                     Console.WriteLine(printv.Text);
-                    
+                    Console.WriteLine("-------------------------------");
+
+
                     var threeAddressCodeVisitor = new ThreeAddressCodeVisitor();
                     r.Visit(threeAddressCodeVisitor);
                     Console.WriteLine(threeAddressCodeVisitor);
 
                     var bblocks = new BasicBlocks();
                     bblocks.SplitTACode(threeAddressCodeVisitor.TACodeContainer);
-                    Console.WriteLine("Splitting into basic blocks finished");
+                    Console.WriteLine("Разбиение на базовые блоки завершилось");
                 }
             }
             catch (FileNotFoundException)
