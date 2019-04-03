@@ -73,6 +73,8 @@
     <Compile Include="Parser\SimpleLex.cs" />
     <Compile Include="Parser\SimpleYacc.cs" />
     <Compile Include="Optimizations\BasicBlocks.cs" />
+    <Compile Include="Visitors\ZeroMulOptVisitor.cs" />
+    <Compile Include="Visitors\CompareToItselfFalseOptVisitor.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Parser\SimpleLex.lex" />
