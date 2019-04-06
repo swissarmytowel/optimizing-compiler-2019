@@ -101,17 +101,16 @@ namespace SimpleCompiler
                     var threeAddressCodeVisitor = new ThreeAddressCodeVisitor();
                     r.Visit(threeAddressCodeVisitor);
                     
-                    Console.WriteLine("======= BEFORE DV OPTIMIZATION =======");
+                    Console.WriteLine("======= DV =======");
                     Console.WriteLine(threeAddressCodeVisitor);
+
+                    //var detector = new DefUseDetector();
+                    //detector.DetectAndFillDefUse(threeAddressCodeVisitor.TACodeContainer);
+                    //Console.WriteLine("======= Detector 1 =======");
+                    //Console.WriteLine(detector);
+                    //Console.WriteLine("======= Detector 2 =======");
+                    //Console.WriteLine(detector.ToString2());
                     
-//                    var detector = new DefUseDetector();
-//                    detector.DetectAndFillDefUse(threeAddressCodeVisitor.TACodeContainer);
-//                    Console.WriteLine(detector);
-                    var defUseOptimizer = new DefUseTacOptimizer();
-                    defUseOptimizer.DeadVariablesOptimization(threeAddressCodeVisitor.TACodeContainer);
-                    
-                    Console.WriteLine("======= AFTER DV OPTIMIZATION =======");
-                    Console.WriteLine(threeAddressCodeVisitor);
 
                     var bblocks = new BasicBlocks();
                     bblocks.SplitTACode(threeAddressCodeVisitor.TACodeContainer);

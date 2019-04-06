@@ -43,8 +43,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Optimizations\DefUse\DefUseConstPropagation.cs" />
+    <Compile Include="Optimizations\DefUse\DefUseCopyPropagation.cs" />
     <Compile Include="Optimizations\DefUse\DefUseDetector.cs" />
-    <Compile Include="Optimizations\DefUse\DefUseTacOptimizer.cs" />
     <Compile Include="Optimizations\Interfaces\IOptimizer.cs" />
     <Compile Include="TACode\TacNodes\TacAssignmentNode.cs" />
     <Compile Include="TACode\TacNodes\TacEmptyNode.cs" />
