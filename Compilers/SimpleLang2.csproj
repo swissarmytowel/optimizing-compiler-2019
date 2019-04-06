@@ -45,6 +45,7 @@
   <ItemGroup>
     <Compile Include="Optimizations\DefUse\DefUseDetector.cs" />
     <Compile Include="Optimizations\DefUse\DefUseTacOptimizer.cs" />
+    <Compile Include="Optimizations\Interfaces\IOptimizer.cs" />
     <Compile Include="TACode\TacNodes\TacAssignmentNode.cs" />
     <Compile Include="TACode\TacNodes\TacEmptyNode.cs" />
     <Compile Include="TACode\TacNodes\TacIfGotoNode.cs" />
@@ -74,6 +75,9 @@
     <Compile Include="Parser\ShiftReduceParserCode.cs" />
     <Compile Include="Parser\SimpleLex.cs" />
     <Compile Include="Parser\SimpleYacc.cs" />
+    <Compile Include="Optimizations\BasicBlocks.cs" />
+    <Compile Include="Visitors\ZeroMulOptVisitor.cs" />
+    <Compile Include="Visitors\CompareToItselfFalseOptVisitor.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Parser\SimpleLex.lex" />
@@ -82,7 +86,7 @@
   <ItemGroup>
     <Content Include="a.txt" />
     <Content Include="Optimizations\README.md" />
-    <Content Include="TACode\DOCUMENTATION.md" />
+    <Content Include="TACode\README.md" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

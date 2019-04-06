@@ -4,11 +4,13 @@ using System.Text;
 using System.Reflection;
 using System.Collections.Generic;
 using System.Linq;
+using SimpleLang.Optimizations.DefUse;
 using SimpleLang.TACode.TacNodes;
 using SimpleScanner;
 using SimpleParser;
 using SimpleLang.Visitors;
-using SimpleLang.Optimizations.DefUse;
+using SimpleLang.Optimizations;
+
 
 namespace SimpleCompiler
 {
@@ -17,7 +19,7 @@ namespace SimpleCompiler
         public static void Main()
         {
             var DirectoryPath = Directory.GetParent(Directory.GetCurrentDirectory()).Parent.FullName;
-            string FileName = Path.Combine(DirectoryPath, "a.txt");
+            string FileName = Path.Combine(DirectoryPath, "a2.txt");
             try
             {
                 string Text = File.ReadAllText(FileName);
@@ -30,15 +32,19 @@ namespace SimpleCompiler
                 var b = parser.Parse();
                 var r = parser.root;
                 // Console.WriteLine(r);
+                Console.WriteLine("Исходный текст программы");
                 var printv = new PrettyPrintVisitor(true);
                 r.Visit(printv);
                 Console.WriteLine(printv.Text);
+                Console.WriteLine("-------------------------------");
 
                 if (!b)
                     Console.WriteLine("Ошибка");
                 else
                 {
                     Console.WriteLine("Синтаксическое дерево построено");
+
+                    // TODO: add loop through all tree optimizations
 
                     var avis = new AssignCountVisitor();
                     parser.root.Visit(avis);
@@ -70,7 +76,13 @@ namespace SimpleCompiler
 
                     var sameminusv = new SameMinusOptVisitor();
                     parser.root.Visit(sameminusv);
-                    
+
+                    var zeroMulVisitor = new ZeroMulOptVisitor();
+                    parser.root.Visit(zeroMulVisitor);
+
+                    var compareFalseVisitor = new CompareToItselfFalseOptVisitor();
+                    parser.root.Visit(compareFalseVisitor);
+
                     Console.WriteLine("-------------------------------");
 
                     var ifNodeWithBoolExpr = new IfNodeWithBoolExprVisitor();
@@ -79,10 +91,13 @@ namespace SimpleCompiler
                     var plusZeroExpr = new PlusZeroExprVisitor();
                     parser.root.Visit(plusZeroExpr);
 
+                    Console.WriteLine("Оптимизированная программа");
                     printv = new PrettyPrintVisitor(true);
                     r.Visit(printv);
                     Console.WriteLine(printv.Text);
-                    
+                    Console.WriteLine("-------------------------------");
+
+
                     var threeAddressCodeVisitor = new ThreeAddressCodeVisitor();
                     r.Visit(threeAddressCodeVisitor);
                     
@@ -97,6 +112,10 @@ namespace SimpleCompiler
                     
                     Console.WriteLine("======= AFTER DV OPTIMIZATION =======");
                     Console.WriteLine(threeAddressCodeVisitor);
+
+                    var bblocks = new BasicBlocks();
+                    bblocks.SplitTACode(threeAddressCodeVisitor.TACodeContainer);
+                    Console.WriteLine("Разбиение на базовые блоки завершилось");
                 }
             }
             catch (FileNotFoundException)
