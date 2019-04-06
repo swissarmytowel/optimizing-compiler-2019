@@ -108,17 +108,18 @@ namespace SimpleLang.TACode
         /// <param name="value">Node to be set at found cell</param>
         public void SetNodeByLabel(string label, TacNode value)
         {
-            var labeledNode = TACodeLines.FirstOrDefault(node => string.Equals(node.Label, label));
-            if (labeledNode != null)
+            var current = TACodeLines.First;
+            while (current.Next != null)
             {
-                var tmp = TACodeLines.Find(labeledNode);
-                TACodeLines.AddBefore(tmp, value);
-                TACodeLines.Remove(tmp);
+                if (!string.Equals(current.Value.Label, label))
+                {
+                    current = current.Next;
+                    continue;
+                }
+                current.Value = value;
+                return;
             }
-            else
-            {
-                PushNode(value);
-            }
+            PushNode(value);
         }
 
         #region Convenience methods
