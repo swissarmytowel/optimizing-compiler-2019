@@ -4,6 +4,11 @@ namespace SimpleLang.Optimizations.Interfaces
 {
     public interface IOptimizer
     {
-        void Optimize(ThreeAddressCode tac);
+        /// <summary>
+        /// Method to run optimization
+        /// </summary>
+        /// <param name="tac"> Three-address code container</param>
+        /// <returns>Bool value, marking if current optimization was applied successfully</returns>
+        bool Optimize(ThreeAddressCode tac);
     }
 }
