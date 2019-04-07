@@ -51,9 +51,11 @@
     <Compile Include="TACode\TacNodes\TacNode.cs" />
     <Compile Include="TACode\ThreeAddressCode.cs" />
     <Compile Include="TACode\TmpNameManager.cs" />
+    <Compile Include="Visitors\AlwaysElseVisitor.cs" />
     <Compile Include="Visitors\AssignCountVisitor.cs" />
     <Compile Include="Visitors\AutoVisitor.cs" />
     <Compile Include="Visitors\ChangeVisitor.cs" />
+    <Compile Include="Visitors\CheckTruthVisitor.cs" />
     <Compile Include="Visitors\FillParentVisitor.cs" />
     <Compile Include="Visitors\IfNodeWithBoolExprVisitor.cs" />
     <Compile Include="Visitors\IsInnerCycleVisitor.cs" />
