@@ -1,47 +1,63 @@
-﻿using SimpleLang.Optimizations;
+﻿using System.Linq;
+using SimpleLang.Optimizations;
 using SimpleLang.TACode;
+using SimpleLang.TACode.TacNodes;
 using QuickGraph;
 using QuickGraph.Graphviz;
 
 namespace SimpleLang.CFG
 {
-    public class ControlFlowGraph
+    public class ControlFlowGraph : BidirectionalGraph<ThreeAddressCode, Edge<ThreeAddressCode>>
     {
-        private BasicBlocks _blocks;
-        private AdjacencyGraph<ThreeAddressCode, Edge<ThreeAddressCode>> _graph;
-        public BasicBlocks Blocks => _blocks;
-        public AdjacencyGraph<ThreeAddressCode, Edge<ThreeAddressCode>> Graph => _graph;
+        public BasicBlocks Blocks { get; private set; }
 
-        public ControlFlowGraph()
-        {
-            _graph = new AdjacencyGraph<ThreeAddressCode, Edge<ThreeAddressCode>>();
-        }
+        public ControlFlowGraph() : base(false) { }
 
         public void BuildFrom(ThreeAddressCode tac)
         {
-            _graph.Clear();
-            _blocks = new BasicBlocks();
-            _blocks.SplitTACode(tac);
-
+            Blocks = new BasicBlocks();
+            Blocks.SplitTACode(tac);
             Build();
         }
 
         public void BuildFrom(BasicBlocks blocks)
         {
-            _graph.Clear();
-            _blocks = blocks;
-
+            Blocks = blocks;
             Build();
         }
 
         private void Build()
         {
-            
+            Clear();
+
+            AddVertexRange(Blocks.BasicBlockItems);
+
+            var blocksCount = Blocks.BasicBlockItems.Count;
+            for (var i = 0; i < blocksCount; ++i)
+            {
+                var currentBlock = Blocks.BasicBlockItems[i];
+
+                if (currentBlock.Last() is TacGotoNode gotoNode)
+                {
+                    var targetBlock = Blocks.BasicBlockItems.Find(
+                        x => x.First().Label == gotoNode.TargetLabel);
+                    AddEdge(new Edge<ThreeAddressCode>(currentBlock, targetBlock));
+
+                    if (!(currentBlock.Last() is TacIfGotoNode))
+                        continue;
+                }
+
+                if (i < blocksCount - 1)
+                {
+                    var nextBlock = Blocks.BasicBlockItems[i + 1];
+                    AddEdge(new Edge<ThreeAddressCode>(currentBlock, nextBlock));
+                }
+            }
         }
 
         public override string ToString()
         {
-            var viz = new GraphvizAlgorithm<ThreeAddressCode, Edge<ThreeAddressCode>>(_graph);
+            var viz = new GraphvizAlgorithm<ThreeAddressCode, Edge<ThreeAddressCode>>(this);
             viz.FormatVertex += VizFormatVertex;
             return viz.Generate(new DotPrinter(), "");
         }
