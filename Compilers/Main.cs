@@ -9,6 +9,7 @@ using SimpleScanner;
 using SimpleParser;
 using SimpleLang.Visitors;
 using SimpleLang.Optimizations;
+using SimpleLang.Optimizations.BooleanOptimization;
 
 namespace SimpleCompiler
 {
@@ -28,11 +29,11 @@ namespace SimpleCompiler
                 Parser parser = new Parser(scanner);
 
                 var b = parser.Parse();
-                var r = parser.root;
+                var root = parser.root;
                 // Console.WriteLine(r);
                 Console.WriteLine("Исходный текст программы");
                 var printv = new PrettyPrintVisitor(true);
-                r.Visit(printv);
+                root.Visit(printv);
                 Console.WriteLine(printv.Text);
                 Console.WriteLine("-------------------------------");
 
@@ -97,18 +98,41 @@ namespace SimpleCompiler
 
                     Console.WriteLine("Оптимизированная программа");
                     printv = new PrettyPrintVisitor(true);
-                    r.Visit(printv);
+                    root.Visit(printv);
                     Console.WriteLine(printv.Text);
                     Console.WriteLine("-------------------------------");
 
 
                     var threeAddressCodeVisitor = new ThreeAddressCodeVisitor();
-                    r.Visit(threeAddressCodeVisitor);
+                    root.Visit(threeAddressCodeVisitor);
                     Console.WriteLine(threeAddressCodeVisitor);
 
                     var bblocks = new BasicBlocks();
                     bblocks.SplitTACode(threeAddressCodeVisitor.TACodeContainer);
                     Console.WriteLine("Разбиение на базовые блоки завершилось");
+
+                    //Console.WriteLine("\n-------------------------------\n");
+
+                    //foreach (var block in bblocks.BasicBlockItems)
+                    //{
+                    //    Console.WriteLine(block);
+                    //}
+
+                    //Console.WriteLine("\n-------------------------------\n");
+
+                    //var booleanOptimizer = new BooleanOptimizer();
+                    //foreach (var block in bblocks.BasicBlockItems)
+                    //{
+                    //    booleanOptimizer.Optimize(block);
+                    //}
+
+                    //foreach (var block in bblocks.BasicBlockItems)
+                    //{
+                    //    Console.WriteLine(block);
+                    //}
+
+                    //bblocks.SplitTACode(threeAddressCodeVisitor.TACodeContainer);
+                    //Console.WriteLine(threeAddressCodeVisitor);
                 }
             }
             catch (FileNotFoundException)

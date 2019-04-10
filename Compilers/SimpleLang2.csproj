@@ -43,7 +43,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Optimizations\Interfaces\IOptimizer.cs" />
     <Compile Include="TACode\TacNodes\TacAssignmentNode.cs" />
     <Compile Include="TACode\TacNodes\TacEmptyNode.cs" />
     <Compile Include="TACode\TacNodes\TacIfGotoNode.cs" />
@@ -78,6 +77,11 @@
     <Compile Include="Optimizations\BasicBlocks.cs" />
     <Compile Include="Visitors\ZeroMulOptVisitor.cs" />
     <Compile Include="Visitors\CompareToItselfFalseOptVisitor.cs" />
+    <Compile Include="Optimizations\BooleanOptimization\IRule.cs" />
+    <Compile Include="Optimizations\BooleanOptimization\IOptimizer.cs" />
+    <Compile Include="Optimizations\Interfaces\BooleanOptimizer.cs" />
+    <Compile Include="Optimizations\BooleanOptimization\OrRuleOptimization.cs" />
+    <Compile Include="Optimizations\BooleanOptimization\AndRuleOptimization.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Parser\SimpleLex.lex" />
@@ -87,6 +91,10 @@
     <Content Include="a.txt" />
     <Content Include="Optimizations\README.md" />
     <Content Include="TACode\README.md" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Optimizations\BooleanOptimization\" />
+    <Folder Include="Optimizations\Interfaces\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
