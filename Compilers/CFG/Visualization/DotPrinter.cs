@@ -1,7 +1,7 @@
 ﻿using QuickGraph.Graphviz;
 using QuickGraph.Graphviz.Dot;
 
-namespace SimpleLang.CFG
+namespace SimpleLang.CFG.Visualization
 {
     public sealed class DotPrinter : IDotEngine
     {

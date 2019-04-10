@@ -1,9 +1,11 @@
-﻿using System.Linq;
+﻿using System.IO;
+using System.Linq;
 using SimpleLang.Optimizations;
 using SimpleLang.TACode;
 using SimpleLang.TACode.TacNodes;
 using QuickGraph;
 using QuickGraph.Graphviz;
+using SimpleLang.CFG.Visualization;
 
 namespace SimpleLang.CFG
 {
@@ -13,20 +15,20 @@ namespace SimpleLang.CFG
 
         public ControlFlowGraph() : base(false) { }
 
-        public void BuildFrom(ThreeAddressCode tac)
+        public void Construct(ThreeAddressCode tac)
         {
             Blocks = new BasicBlocks();
             Blocks.SplitTACode(tac);
-            Build();
+            Construct();
         }
 
-        public void BuildFrom(BasicBlocks blocks)
+        public void Construct(BasicBlocks blocks)
         {
             Blocks = blocks;
-            Build();
+            Construct();
         }
 
-        private void Build()
+        private void Construct()
         {
             Clear();
 
@@ -55,16 +57,28 @@ namespace SimpleLang.CFG
             }
         }
 
+        public void SaveToFile(string fileName)
+        {
+            if (string.IsNullOrEmpty(fileName))
+                return;
+
+            var directoryName = Path.GetDirectoryName(fileName);
+            if (!string.IsNullOrEmpty(directoryName) && !Directory.Exists(directoryName))
+                Directory.CreateDirectory(directoryName);
+            
+            File.WriteAllText(fileName, ToString());
+        }
+
         public override string ToString()
         {
-            var viz = new GraphvizAlgorithm<ThreeAddressCode, Edge<ThreeAddressCode>>(this);
-            viz.FormatVertex += VizFormatVertex;
-            return viz.Generate(new DotPrinter(), "");
+            var graphviz = new GraphvizAlgorithm<ThreeAddressCode, Edge<ThreeAddressCode>>(this);
+            graphviz.FormatVertex += VizFormatVertex;
+            return graphviz.Generate(new DotPrinter(), "");
         }
 
         private static void VizFormatVertex<TVertex>(object sender, FormatVertexEventArgs<TVertex> e)
         {
-            e.VertexFormatter.Label = e.Vertex.ToString();
+            e.VertexFormatter.Label = $"Basic block:\n{e.Vertex}";
         }
     }
 }

@@ -114,6 +114,7 @@ namespace SimpleCompiler
                     var cfg = new ControlFlowGraph();
                     cfg.Construct(threeAddressCodeVisitor.TACodeContainer);
                     Console.WriteLine(cfg);
+                    cfg.SaveToFile(@"cfg.txt");
                 }
             }
             catch (FileNotFoundException)
