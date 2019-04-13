@@ -119,7 +119,7 @@ namespace SimpleLang.Optimizations.DefUse
         /// <param name="tmpUses">Temporary usages dictionary</param>
         private void FillTmpUsagesForNode(string operand, string label, IDictionary<string, List<string>> tmpUses)
         {
-            if (!IsVariable(operand)) return;
+            if (!Utility.Utility.IsVariable(operand)) return;
             if (tmpUses.ContainsKey(operand))
             {
                 tmpUses[operand].Add(label);
@@ -131,7 +131,7 @@ namespace SimpleLang.Optimizations.DefUse
 
         private void FillTmpUsagesForNode(string operand, LinkedListTacNode node, IDictionary<string, List<LinkedListTacNode>> tmpUses)
         {
-            if (!IsVariable(operand)) return;
+            if (!Utility.Utility.IsVariable(operand)) return;
             if (tmpUses.ContainsKey(operand))
             {
                 tmpUses[operand].Add(node);
@@ -167,15 +167,7 @@ namespace SimpleLang.Optimizations.DefUse
             }
         }
 
-        /// <summary>
-        /// Checking if an operand (expression) is a variable, not a bool, int or double value
-        /// </summary>
-        /// <param name="expression">operand to be checked</param>
-        /// <returns>If operand is a variable</returns>
-        private bool IsVariable(string expression) => int.TryParse(expression, out _) == false
-                                                      && double.TryParse(expression, out _) == false
-                                                      && bool.TryParse(expression, out _) == false;
-
+        
         public override string ToString()
         {
             var builder = new StringBuilder();

@@ -54,6 +54,7 @@
     <Compile Include="TACode\TacNodes\TacNode.cs" />
     <Compile Include="TACode\ThreeAddressCode.cs" />
     <Compile Include="TACode\TmpNameManager.cs" />
+    <Compile Include="Utility\Utility.cs" />
     <Compile Include="Visitors\AssignCountVisitor.cs" />
     <Compile Include="Visitors\AutoVisitor.cs" />
     <Compile Include="Visitors\ChangeVisitor.cs" />

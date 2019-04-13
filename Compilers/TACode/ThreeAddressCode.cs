@@ -25,6 +25,7 @@ namespace SimpleLang.TACode
         }
 
         public LinkedListNode<TacNode> Last => TACodeLines.Last;
+        public LinkedListNode<TacNode> First => TACodeLines.First;
 
         public ThreeAddressCode()
         {

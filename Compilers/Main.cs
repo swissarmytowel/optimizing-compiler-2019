@@ -19,7 +19,7 @@ namespace SimpleCompiler
         public static void Main()
         {
             var DirectoryPath = Directory.GetParent(Directory.GetCurrentDirectory()).Parent.FullName;
-            string FileName = Path.Combine(DirectoryPath, "a2.txt");
+            string FileName = Path.Combine(DirectoryPath, "a3.txt");
             try
             {
                 string Text = File.ReadAllText(FileName);
@@ -104,17 +104,24 @@ namespace SimpleCompiler
                     Console.WriteLine("======= DV =======");
                     Console.WriteLine(threeAddressCodeVisitor);
 
-                    //var detector = new DefUseDetector();
-                    //detector.DetectAndFillDefUse(threeAddressCodeVisitor.TACodeContainer);
+                    var detector = new DefUseDetector();
+                    detector.DetectAndFillDefUse(threeAddressCodeVisitor.TACodeContainer);
                     //Console.WriteLine("======= Detector 1 =======");
                     //Console.WriteLine(detector);
                     //Console.WriteLine("======= Detector 2 =======");
                     //Console.WriteLine(detector.ToString2());
-                    
+                    var constPropagationOptimizer = new DefUseConstPropagation(detector);
+                    var result = constPropagationOptimizer.Optimize(threeAddressCodeVisitor.TACodeContainer);
 
-                    var bblocks = new BasicBlocks();
-                    bblocks.SplitTACode(threeAddressCodeVisitor.TACodeContainer);
-                    Console.WriteLine("Разбиение на базовые блоки завершилось");
+                    Console.WriteLine("======= After const propagation =======");
+                    Console.WriteLine(threeAddressCodeVisitor);
+
+                    result = constPropagationOptimizer.Optimize(threeAddressCodeVisitor.TACodeContainer);
+                    Console.WriteLine("======= After const propagation =======");
+                    Console.WriteLine(threeAddressCodeVisitor);
+                    //var bblocks = new BasicBlocks();
+                    //bblocks.SplitTACode(threeAddressCodeVisitor.TACodeContainer);
+                    //Console.WriteLine("Разбиение на базовые блоки завершилось");
                 }
             }
             catch (FileNotFoundException)
