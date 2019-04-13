@@ -3,7 +3,7 @@ using System.IO;
 using System.Text;
 using System.Reflection;
 using System.Collections.Generic;
-
+using SimpleLang.CFG;
 using SimpleLang.TACode.TacNodes;
 using SimpleScanner;
 using SimpleParser;
@@ -114,6 +114,12 @@ namespace SimpleCompiler
                     var bblocks = new BasicBlocks();
                     bblocks.SplitTACode(threeAddressCodeVisitor.TACodeContainer);
                     Console.WriteLine("Разбиение на базовые блоки завершилось");
+                    Console.WriteLine();
+
+                    var cfg = new ControlFlowGraph();
+                    cfg.Construct(threeAddressCodeVisitor.TACodeContainer);
+                    Console.WriteLine(cfg);
+                    cfg.SaveToFile(@"cfg.txt");
                 }
             }
             catch (FileNotFoundException)
