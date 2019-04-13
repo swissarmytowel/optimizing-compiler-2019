@@ -37,17 +37,29 @@ namespace ProgramTree
         }
         public override string ToString() => Num.ToString();
     }
-    public class BoolNode : ExprNode
+    public class DoubleNumNode : ExprNode
     {
-        public bool Value { get; set; }
-        public BoolNode(bool value) { Value = value; }
+        public double Num { get; set; }
+        public DoubleNumNode(double num) { Num = num; }
         public override void Visit(Visitor v)
         {
-            v.VisitBoolNode(this);
+            v.VisitDoubleNumNode(this);
         }
-        public override string ToString() => Value.ToString();
+        public override string ToString() => Num.ToString();
+
     }
 
+    public class UnOpNode : ExprNode
+    {
+        public ExprNode Unary { get; set; }
+        public string Op { get; set; }
+        public UnOpNode(ExprNode unary,  string op)  {Unary = unary; Op = op; }
+        public override void Visit(Visitor v)
+        {
+            v.VisitUnOpNode(this);
+        }
+        public override string ToString() => "("+ Op + Unary + ")";
+    }
     public class BinOpNode : ExprNode
     {
         public ExprNode Left { get; set; }
@@ -65,7 +77,70 @@ namespace ProgramTree
         }
         public override string ToString() => "(" + Left + Op + Right + ")";
     }
+    //public abstract class LogicExprNode : Node { }
+    public class BoolNode : ExprNode
+    {
+        public bool Value { get; set; }
+        public BoolNode(bool val) { Value = val; }
+        public override void Visit(Visitor v)
+        {
+            v.VisitBoolNode(this);
+        }
+        public override string ToString() => Value.ToString();
 
+    }
+   /* public class LogicIdNode : ExprNode
+    {
+        public IdNode Name { get; set; }
+        public LogicIdNode(IdNode val) { Name = val; }
+        public override void Visit(Visitor v)
+        {
+            v.VisitLogicIdNode(this);
+        }
+        public override string ToString()
+        {
+            return Name.ToString();
+        }
+    }*/
+
+    public class LogicOpNode : ExprNode
+    {
+        public ExprNode Left { get; set; }
+        public ExprNode Right { get; set; }
+        public string Operation { get; set; }
+        public LogicOpNode(ExprNode Left, ExprNode Right, string op)
+        {
+            this.Left = Left;
+            this.Right = Right;
+            Operation = op;
+        }
+        public override void Visit(Visitor v)
+        {
+            v.VisitLogicOpNode(this);
+        }
+        public override string ToString()
+        {
+            return "(" + Left.ToString() + " " + Operation + " " + Right.ToString() + ")";
+        }
+    }
+
+    public class LogicNotNode : ExprNode
+    {
+        public ExprNode LogExpr { get; set; }
+        public SimpleParser.Tokens Operation { get; set; }
+        public LogicNotNode(ExprNode LogExpr)
+        {
+            this.LogExpr = LogExpr;
+        }
+        public override void Visit(Visitor v)
+        {
+            v.VisitLogicNotNode(this);
+        }
+        public override string ToString()
+        {
+            return "!" + LogExpr.ToString();
+        }
+    }
     public abstract class StatementNode : Node // базовый класс для всех операторов
     {
     }

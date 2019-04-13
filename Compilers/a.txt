@@ -2,9 +2,11 @@ c = a != a;
 k = 8 + 90;
 d = 0 * n;
 bm = v > v;
-p = 2 < 3;
-if (false){
+bm = v < v;
+if (!a==0){
  a = 2;
-}{
+}
+{
  m = 3;
 }
+a = true && False;

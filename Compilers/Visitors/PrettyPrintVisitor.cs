@@ -13,6 +13,7 @@ namespace SimpleLang.Visitors
         private bool isRoot = false;
         private bool IsDisableIndent = false;
         private bool IsInner = false;
+        private bool isUnOp = false;
 
         public PrettyPrintVisitor(bool isRoot = false)
         {
@@ -43,11 +44,25 @@ namespace SimpleLang.Visitors
         }
         public override void VisitBinOpNode(BinOpNode binop) 
         {
-            Text += "(";
+            if (!isUnOp) Text += "(";
             binop.Left.Visit(this);
             Text += " " + binop.Op + " ";
             binop.Right.Visit(this);
             Text += ")";
+            isUnOp = false;
+        }
+
+        public override void VisitUnOpNode(UnOpNode unop)
+        {
+
+            
+            if (unop.Unary is BinOpNode)
+            {
+                Text += "(";
+                isUnOp = true;
+            }
+            Text +=  unop.Op;
+            unop.Unary.Visit(this);
         }
         public override void VisitAssignNode(AssignNode a) 
         {

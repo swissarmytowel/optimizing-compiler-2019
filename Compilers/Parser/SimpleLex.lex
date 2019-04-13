@@ -39,6 +39,7 @@ ID {Alpha}{AlphaDigit}*
 "-" { return (int)Tokens.MINUS; }
 "*" { return (int)Tokens.MULT; }
 "/" { return (int)Tokens.DIV; }
+"%" { return (int)Tokens.MOD; }
 "(" { return (int)Tokens.OPEN_BRACKET; }
 ")" { return (int)Tokens.CLOSE_BRACKET; }
 "," { return (int)Tokens.COMMA; }
@@ -46,13 +47,13 @@ ID {Alpha}{AlphaDigit}*
 "}"  { return (int)Tokens.CLOSE_BLOCK; }
 "["	 { return (int)Tokens.OPEN_SQUARE; }
 "]"  { return (int)Tokens.CLOSE_SQUARE; }
-"!"  { return (int)Tokens.NO; }
 "&&"  { return (int)Tokens.AND; }
 "||"  { return (int)Tokens.OR; }
 ">"  { return (int)Tokens.MORE; }
 "<"  { return (int)Tokens.LESS; }
 "=="  { return (int)Tokens.EQUAL; }
 "!="  { return (int)Tokens.NOT_EQUAL; }
+"!"  { return (int)Tokens.NOT; }
 ">="  { return (int)Tokens.MORE_EQUAL; }
 "<="  { return (int)Tokens.LESS_EQUAL; }
 

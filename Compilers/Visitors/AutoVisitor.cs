@@ -16,6 +16,23 @@ namespace SimpleLang.Visitors
             binop.Left.Visit(this);
             binop.Right.Visit(this);
         }
+        public override void VisitUnOpNode(UnOpNode unop)
+        {
+            unop.Unary.Visit(this);
+        }
+        /*public override void VisitLogicIdNode(LogicIdNode lid)
+        {
+            lid.Name.Visit(this);
+        }*/
+        public override void VisitLogicOpNode(LogicOpNode lop)
+        {
+            lop.Left.Visit(this);
+            lop.Right.Visit(this);
+        }
+        public override void VisitLogicNotNode(LogicNotNode lnot)
+        {
+            lnot.LogExpr.Visit(this);
+        }
         public override void VisitAssignNode(AssignNode a) 
         {
             // для каких-то визиторов порядок может быть обратный - вначале обойти выражение, потом - идентификатор
