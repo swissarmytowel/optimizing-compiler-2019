@@ -106,10 +106,10 @@ namespace SimpleCompiler
                     r.Visit(threeAddressCodeVisitor);
                     Console.WriteLine(threeAddressCodeVisitor);
 
-                    var gotoOpt = new GotoOptimization();
-                    gotoOpt.Optimize(threeAddressCodeVisitor.TACodeContainer);
-                    Console.WriteLine("goto optimization");
-                    Console.WriteLine(threeAddressCodeVisitor.TACodeContainer);
+                    //var gotoOpt = new GotoOptimization();
+                    //gotoOpt.Optimize(threeAddressCodeVisitor.TACodeContainer);
+                    //Console.WriteLine("goto optimization");
+                    //Console.WriteLine(threeAddressCodeVisitor.TACodeContainer);
 
                     var bblocks = new BasicBlocks();
                     bblocks.SplitTACode(threeAddressCodeVisitor.TACodeContainer);

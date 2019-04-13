@@ -77,7 +77,7 @@ namespace ProgramTree
         }
         public override string ToString() => "(" + Left + Op + Right + ")";
     }
-    //public abstract class LogicExprNode : Node { }
+
     public class BoolNode : ExprNode
     {
         public bool Value { get; set; }
@@ -89,19 +89,7 @@ namespace ProgramTree
         public override string ToString() => Value.ToString();
 
     }
-   /* public class LogicIdNode : ExprNode
-    {
-        public IdNode Name { get; set; }
-        public LogicIdNode(IdNode val) { Name = val; }
-        public override void Visit(Visitor v)
-        {
-            v.VisitLogicIdNode(this);
-        }
-        public override string ToString()
-        {
-            return Name.ToString();
-        }
-    }*/
+
 
     public class LogicOpNode : ExprNode
     {
