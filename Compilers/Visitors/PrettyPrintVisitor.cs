@@ -169,7 +169,20 @@ namespace SimpleLang.Visitors
         }
         public override void VisitBoolNode(BoolNode v)
         {
-            Text += v.Value.ToString();
+            Text += v.Value.ToString().ToLower();
+        }
+        public override void VisitLogicNotNode(LogicNotNode v)
+        {
+            Text += "!";
+            v.LogExpr.Visit(this);
+        }
+        public override void VisitLogicOpNode(LogicOpNode v)
+        {
+            Text += "(";
+            v.Left.Visit(this);
+            Text += " " + v.Operation + " ";
+            v.Right.Visit(this);
+            Text += ")";
         }
     }
 }
