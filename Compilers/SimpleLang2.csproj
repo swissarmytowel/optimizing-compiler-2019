@@ -93,6 +93,7 @@
     <Compile Include="Optimizations\BasicBlocks.cs" />
     <Compile Include="Visitors\ZeroMulOptVisitor.cs" />
     <Compile Include="Visitors\CompareToItselfFalseOptVisitor.cs" />
+    <Compile Include="Optimizations\UnreachableCodeOpt.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

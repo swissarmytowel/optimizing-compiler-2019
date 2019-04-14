@@ -5,7 +5,6 @@ using System.Collections.Generic;
 using SimpleLang.TACode.TacNodes;
 using SimpleLang.TACode;
 
-
 namespace SimpleLang.Optimizations
 {
 
