@@ -57,6 +57,7 @@
   <ItemGroup>
     <Compile Include="CFG\ControlFlowGraph.cs" />
     <Compile Include="CFG\Visualization\DotPrinter.cs" />
+    <Compile Include="Optimizations\AlgebraicIdentityOptimization.cs" />
     <Compile Include="Optimizations\ConvConstOptimization.cs" />
     <Compile Include="Optimizations\GotoOptimization.cs" />
     <Compile Include="Optimizations\Interfaces\IOptimizer.cs" />

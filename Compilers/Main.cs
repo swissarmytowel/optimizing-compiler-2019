@@ -111,6 +111,11 @@ namespace SimpleCompiler
                     Console.WriteLine("goto optimization");
                     Console.WriteLine(threeAddressCodeVisitor.TACodeContainer);
 
+                    var algOpt = new AlgebraicIdentityOptimization();
+                    algOpt.Optimize(threeAddressCodeVisitor.TACodeContainer);
+                    Console.WriteLine("algebraic identity optimization");
+                    Console.WriteLine(threeAddressCodeVisitor.TACodeContainer);
+
                     var bblocks = new BasicBlocks();
                     bblocks.SplitTACode(threeAddressCodeVisitor.TACodeContainer);
                     Console.WriteLine("Разбиение на базовые блоки завершилось");
