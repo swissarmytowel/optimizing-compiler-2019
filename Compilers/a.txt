@@ -1,3 +1,5 @@
+a = true || false;
 for (i=1 to 10)
     for (j=1 to 10)
-        c = 45;
+        if(a)
+          c = 45;
