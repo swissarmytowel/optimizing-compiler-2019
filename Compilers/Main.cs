@@ -21,6 +21,7 @@ namespace SimpleCompiler
             try
             {
                 string Text = File.ReadAllText(FileName);
+                Text = Text.Replace('\t', ' ');
 
                 Scanner scanner = new Scanner();
                 scanner.SetSource(Text, 0);
