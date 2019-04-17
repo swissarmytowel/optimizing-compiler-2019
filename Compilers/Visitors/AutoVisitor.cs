@@ -9,12 +9,29 @@ namespace SimpleLang.Visitors
     // базовая логика обхода без действий
     // Если нужны действия или другая логика обхода, то соответствующие методы надо переопределять
     // При переопределении методов для задания действий необходимо не забывать обходить подузлы
-    class AutoVisitor: Visitor
+    public class AutoVisitor: Visitor
     {
         public override void VisitBinOpNode(BinOpNode binop) 
         {
             binop.Left.Visit(this);
             binop.Right.Visit(this);
+        }
+        public override void VisitUnOpNode(UnOpNode unop)
+        {
+            unop.Unary.Visit(this);
+        }
+        /*public override void VisitLogicIdNode(LogicIdNode lid)
+        {
+            lid.Name.Visit(this);
+        }*/
+        public override void VisitLogicOpNode(LogicOpNode lop)
+        {
+            lop.Left.Visit(this);
+            lop.Right.Visit(this);
+        }
+        public override void VisitLogicNotNode(LogicNotNode lnot)
+        {
+            lnot.LogExpr.Visit(this);
         }
         public override void VisitAssignNode(AssignNode a) 
         {

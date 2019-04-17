@@ -5,6 +5,7 @@ using System.Reflection;
 using System.Collections.Generic;
 using System.Linq;
 using SimpleLang.Optimizations.DefUse;
+using SimpleLang.CFG;
 using SimpleLang.TACode.TacNodes;
 using SimpleScanner;
 using SimpleParser;
@@ -23,6 +24,7 @@ namespace SimpleCompiler
             try
             {
                 string Text = File.ReadAllText(FileName);
+                Text = Text.Replace('\t', ' ');
 
                 Scanner scanner = new Scanner();
                 scanner.SetSource(Text, 0);
@@ -91,6 +93,12 @@ namespace SimpleCompiler
                     var plusZeroExpr = new PlusZeroExprVisitor();
                     parser.root.Visit(plusZeroExpr);
 
+                    var alwaysElse = new AlwaysElseVisitor();
+                    parser.root.Visit(alwaysElse);
+
+                    var checkTruth = new CheckTruthVisitor();
+                    parser.root.Visit(checkTruth);
+
                     Console.WriteLine("Оптимизированная программа");
                     printv = new PrettyPrintVisitor(true);
                     r.Visit(printv);
@@ -103,7 +111,6 @@ namespace SimpleCompiler
                     
                     Console.WriteLine("======= DV =======");
                     Console.WriteLine(threeAddressCodeVisitor);
-
                     var detector = new DefUseDetector();
                     detector.DetectAndFillDefUse(threeAddressCodeVisitor.TACodeContainer);
                     //Console.WriteLine("======= Detector 1 =======");
@@ -122,6 +129,25 @@ namespace SimpleCompiler
                     //var bblocks = new BasicBlocks();
                     //bblocks.SplitTACode(threeAddressCodeVisitor.TACodeContainer);
                     //Console.WriteLine("Разбиение на базовые блоки завершилось");
+                    var emptyopt = new EmptyNodeOptimization();
+                    emptyopt.Optimize(threeAddressCodeVisitor.TACodeContainer);
+                    Console.WriteLine("Empty node optimization");
+                    Console.WriteLine(threeAddressCodeVisitor.TACodeContainer);
+
+                    var gotoOpt = new GotoOptimization();
+                    gotoOpt.Optimize(threeAddressCodeVisitor.TACodeContainer);
+                    Console.WriteLine("Goto optimization");
+                    Console.WriteLine(threeAddressCodeVisitor.TACodeContainer);
+
+                    var bblocks = new BasicBlocks();
+                    bblocks.SplitTACode(threeAddressCodeVisitor.TACodeContainer);
+                    Console.WriteLine("Разбиение на базовые блоки завершилось");
+                    Console.WriteLine();
+
+                    var cfg = new ControlFlowGraph();
+                    cfg.Construct(threeAddressCodeVisitor.TACodeContainer);
+                    Console.WriteLine(cfg);
+                    cfg.SaveToFile(@"cfg.txt");
                 }
             }
             catch (FileNotFoundException)
