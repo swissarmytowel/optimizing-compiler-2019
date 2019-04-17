@@ -134,7 +134,6 @@ namespace SimpleLang.TACode
             var tmpName = TmpNameManager.Instance.GenerateTmpVariableName();
             PushNode(new TacAssignmentNode()
             {
-                Label = TmpNameManager.Instance.GenerateLabel(),
                 LeftPartIdentifier = tmpName,
                 FirstOperand = node.Value.ToString()
             });
@@ -151,7 +150,6 @@ namespace SimpleLang.TACode
             var tmpName = TmpNameManager.Instance.GenerateTmpVariableName();
             PushNode(new TacAssignmentNode()
             {
-                Label = TmpNameManager.Instance.GenerateLabel(),
                 LeftPartIdentifier = tmpName,
                 FirstOperand = node.Name.ToString()
             });
@@ -168,7 +166,6 @@ namespace SimpleLang.TACode
             var tmpName = TmpNameManager.Instance.GenerateTmpVariableName();
             PushNode(new TacAssignmentNode()
             {
-                Label = TmpNameManager.Instance.GenerateLabel(),
                 LeftPartIdentifier = tmpName,
                 FirstOperand = node.Num.ToString()
             });
@@ -184,7 +181,6 @@ namespace SimpleLang.TACode
         {
             PushNode(new TacEmptyNode()
             {
-                Label = TmpNameManager.Instance.GenerateLabel()
             });
         }
 

@@ -88,18 +88,18 @@ namespace SimpleCompiler
 
                     var plusZeroExpr = new PlusZeroExprVisitor();
                     parser.root.Visit(plusZeroExpr);
-
-                    var alwaysElse = new AlwaysElseVisitor();
-                    parser.root.Visit(alwaysElse);
-
-                    var checkTruth = new CheckTruthVisitor();
-                    parser.root.Visit(checkTruth);
-
-                    Console.WriteLine("Оптимизированная программа");
-                    printv = new PrettyPrintVisitor(true);
-                    r.Visit(printv);
-                    Console.WriteLine(printv.Text);
-                    Console.WriteLine("-------------------------------");
+//
+//                    var alwaysElse = new AlwaysElseVisitor();
+//                    parser.root.Visit(alwaysElse);
+//
+//                    var checkTruth = new CheckTruthVisitor();
+//                    parser.root.Visit(checkTruth);
+//
+//                    Console.WriteLine("Оптимизированная программа");
+//                    printv = new PrettyPrintVisitor(true);
+//                    r.Visit(printv);
+//                    Console.WriteLine(printv.Text);
+//                    Console.WriteLine("-------------------------------");
 
 
                     var threeAddressCodeVisitor = new ThreeAddressCodeVisitor();

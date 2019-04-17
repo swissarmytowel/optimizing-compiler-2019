@@ -70,7 +70,6 @@ namespace SimpleLang.Visitors
 #endif
             TACodeContainer.PushNode(new TacAssignmentNode()
             {
-                Label = TmpNameManager.Instance.GenerateLabel(),
                 LeftPartIdentifier = a.Id.Name,
                 FirstOperand = rightPartExpression
             });
@@ -115,7 +114,6 @@ namespace SimpleLang.Visitors
                     var tmpName = TmpNameManager.Instance.GenerateTmpVariableName();
                     TACodeContainer.PushNode(new TacAssignmentNode()
                     {
-                        Label = TmpNameManager.Instance.GenerateLabel(),
                         LeftPartIdentifier = tmpName,
                         FirstOperand = leftPart,
                         Operation = binOpNode.Op,
@@ -140,7 +138,6 @@ namespace SimpleLang.Visitors
 
             TACodeContainer.PushNode(new TacIfGotoNode()
             {
-                Label = TmpNameManager.Instance.GenerateLabel(),
                 Condition = conditionalExpression,
                 TargetLabel = mainIfBlockStartLabel
             });
@@ -151,7 +148,6 @@ namespace SimpleLang.Visitors
             // Creating goto jump towards an exit of the loop. That's the case, when we hit 'else'
             TACodeContainer.PushNode(new TacGotoNode()
             {
-                Label = TmpNameManager.Instance.GenerateLabel(),
                 TargetLabel = exitingLabel
             });
             
@@ -191,7 +187,6 @@ namespace SimpleLang.Visitors
             // Create conditional jump statement at the starting position of while
             TACodeContainer.PushNode(new TacIfGotoNode()
             {
-                Label = TmpNameManager.Instance.GenerateLabel(),
                 Condition = conditionalExpression,
                 TargetLabel = startOfWhileBodyLabel
             });
@@ -200,7 +195,6 @@ namespace SimpleLang.Visitors
             // And jump out of while body
             TACodeContainer.PushNode(new TacGotoNode()
             {
-                Label = TmpNameManager.Instance.GenerateLabel(),
                 TargetLabel = endOfWhileStatementLabel
             });
             
@@ -216,7 +210,6 @@ namespace SimpleLang.Visitors
             // Placing upward jump to the entry point of the while statement
             TACodeContainer.PushNode(new TacGotoNode()
             {
-                Label = TmpNameManager.Instance.GenerateLabel(),
                 TargetLabel = conditionalCheckLabel
             });
            
@@ -244,7 +237,6 @@ namespace SimpleLang.Visitors
             c.Stat.Visit(this);
             TACodeContainer.PushNode(new TacAssignmentNode()
             {
-                Label = TmpNameManager.Instance.GenerateLabel(),
                 LeftPartIdentifier = c.Assign.Id.Name,
                 FirstOperand = c.Assign.Id.Name,
                 Operation = "+",
@@ -271,7 +263,6 @@ namespace SimpleLang.Visitors
             
             TACodeContainer.PushNode(new TacAssignmentNode()
             {
-                Label = TmpNameManager.Instance.GenerateLabel(),
                 LeftPartIdentifier = conditionalExpressionId,
                 FirstOperand = c.Assign.Id.Name,
                 Operation = "<",
@@ -280,7 +271,6 @@ namespace SimpleLang.Visitors
             // Creating conditional jump towards a label of loop entry point
             TACodeContainer.PushNode(new TacIfGotoNode()
             {
-                Label = TmpNameManager.Instance.GenerateLabel(),
                 Condition = conditionalExpressionId,
                 TargetLabel = startOfForStatementLabel
             });

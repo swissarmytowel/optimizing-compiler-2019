@@ -9,7 +9,7 @@ namespace SimpleLang.TACode.TacNodes
         /// <summary>
         /// Current TAC code line label
         /// </summary>
-        public string Label { get; set; }
+        public string Label { get; set; } = null;
 
         #region IDE-generated equality members
         
@@ -32,6 +32,6 @@ namespace SimpleLang.TACode.TacNodes
 
         #endregion
         
-        public override string ToString() => $"{Label}:";
+        public override string ToString() => Label != null ? Label + ": " : "";
     }
 }
