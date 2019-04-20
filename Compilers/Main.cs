@@ -22,6 +22,7 @@ namespace SimpleCompiler
             try
             {
                 string Text = File.ReadAllText(FileName);
+                Text = Text.Replace('\t', ' ');
 
                 Scanner scanner = new Scanner();
                 scanner.SetSource(Text, 0);
@@ -107,10 +108,15 @@ namespace SimpleCompiler
                     r.Visit(threeAddressCodeVisitor);
                     Console.WriteLine(threeAddressCodeVisitor);
 
-                    //var gotoOpt = new GotoOptimization();
-                    //gotoOpt.Optimize(threeAddressCodeVisitor.TACodeContainer);
-                    //Console.WriteLine("goto optimization");
-                    //Console.WriteLine(threeAddressCodeVisitor.TACodeContainer);
+                    var emptyopt = new EmptyNodeOptimization();
+                    emptyopt.Optimize(threeAddressCodeVisitor.TACodeContainer);
+                    Console.WriteLine("Empty node optimization");
+                    Console.WriteLine(threeAddressCodeVisitor.TACodeContainer);
+
+                    var gotoOpt = new GotoOptimization();
+                    gotoOpt.Optimize(threeAddressCodeVisitor.TACodeContainer);
+                    Console.WriteLine("Goto optimization");
+                    Console.WriteLine(threeAddressCodeVisitor.TACodeContainer);
 
                     var bblocks = new BasicBlocks();
                     bblocks.SplitTACode(threeAddressCodeVisitor.TACodeContainer);
