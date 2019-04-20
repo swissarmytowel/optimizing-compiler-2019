@@ -119,12 +119,6 @@ namespace SimpleCompiler
 
                     var unreachableCodeOpt = new UnreachableCodeOpt();
                     var testTAC = new ThreeAddressCode();
-                    testTAC.PushNode(new TacIfGotoNode { Label = "L1", Condition = "True", TargetLabel = "L4" });
-                    testTAC.PushNode(new TacIfGotoNode { Label = "L2", Condition = "True", TargetLabel = "L3" });
-                    testTAC.PushNode(new TacIfGotoNode { Label = "L3", Condition = "True", TargetLabel = "L3" });
-                    testTAC.PushNode(new TacEmptyNode { Label="L4"});
-
-                    unreachableCodeOpt.Optimize(testTAC);
 
                     var cfg = new ControlFlowGraph();
                     cfg.Construct(threeAddressCodeVisitor.TACodeContainer);
