@@ -50,6 +50,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="OptimizationTests\ConstsConvolutionTests.cs" />
+    <Compile Include="OptimizationTests\LVNTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

@@ -4,7 +4,7 @@ using SimpleLang.Visitors;
 using SimpleLang.Optimizations;
 using SimpleLang.TACode.TacNodes;
 
-namespace UnitTests
+namespace UnitTests.OptimizationTests
 {
     [TestClass]
     public class ConstsConvolutionTests

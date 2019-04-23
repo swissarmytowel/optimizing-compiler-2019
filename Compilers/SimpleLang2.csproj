@@ -61,8 +61,13 @@
     <Compile Include="CFG\ControlFlowGraph.cs" />
     <Compile Include="CFG\Visualization\DotPrinter.cs" />
     <Compile Include="Optimizations\ConvConstOptimization.cs" />
+    <Compile Include="Optimizations\CopyPropagationOptimization.cs" />
+    <Compile Include="Optimizations\DeadCodeOptimization.cs" />
+    <Compile Include="Optimizations\DefUseSetForBlocks.cs" />
+    <Compile Include="Optimizations\EmptyNodeOptimization.cs" />
     <Compile Include="Optimizations\GotoOptimization.cs" />
     <Compile Include="Optimizations\Interfaces\IOptimizer.cs" />
+    <Compile Include="Optimizations\LocalValueNumberingOptimization.cs" />
     <Compile Include="TACode\TacNodes\TacAssignmentNode.cs" />
     <Compile Include="TACode\TacNodes\TacEmptyNode.cs" />
     <Compile Include="TACode\TacNodes\TacIfGotoNode.cs" />
