@@ -3,7 +3,7 @@ using System.IO;
 using System.Text;
 using System.Reflection;
 using System.Collections.Generic;
-
+using SimpleLang.CFG;
 using SimpleLang.TACode.TacNodes;
 using SimpleScanner;
 using SimpleParser;
@@ -21,6 +21,7 @@ namespace SimpleCompiler
             try
             {
                 string Text = File.ReadAllText(FileName);
+                Text = Text.Replace('\t', ' ');
 
                 Scanner scanner = new Scanner();
                 scanner.SetSource(Text, 0);
@@ -101,14 +102,35 @@ namespace SimpleCompiler
 //                    Console.WriteLine(printv.Text);
 //                    Console.WriteLine("-------------------------------");
 
+                    Console.WriteLine("Оптимизированная программа");
+                    printv = new PrettyPrintVisitor(true);
+                    r.Visit(printv);
+                    Console.WriteLine(printv.Text);
+                    Console.WriteLine("-------------------------------");
 
                     var threeAddressCodeVisitor = new ThreeAddressCodeVisitor();
                     r.Visit(threeAddressCodeVisitor);
                     Console.WriteLine(threeAddressCodeVisitor);
 
+                    var emptyopt = new EmptyNodeOptimization();
+                    emptyopt.Optimize(threeAddressCodeVisitor.TACodeContainer);
+                    Console.WriteLine("Empty node optimization");
+                    Console.WriteLine(threeAddressCodeVisitor.TACodeContainer);
+
+                    var gotoOpt = new GotoOptimization();
+                    gotoOpt.Optimize(threeAddressCodeVisitor.TACodeContainer);
+                    Console.WriteLine("Goto optimization");
+                    Console.WriteLine(threeAddressCodeVisitor.TACodeContainer);
+
                     var bblocks = new BasicBlocks();
                     bblocks.SplitTACode(threeAddressCodeVisitor.TACodeContainer);
                     Console.WriteLine("Разбиение на базовые блоки завершилось");
+                    Console.WriteLine();
+
+                    var cfg = new ControlFlowGraph();
+                    cfg.Construct(threeAddressCodeVisitor.TACodeContainer);
+                    Console.WriteLine(cfg);
+                    cfg.SaveToFile(@"cfg.txt");
                 }
             }
             catch (FileNotFoundException)

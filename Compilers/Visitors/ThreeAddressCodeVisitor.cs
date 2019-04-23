@@ -21,7 +21,7 @@ namespace SimpleLang.Visitors
     /// <summary>
     /// Visitor to generate Three-address code from current language code
     /// </summary>
-    internal class ThreeAddressCodeVisitor : AutoVisitor
+    public class ThreeAddressCodeVisitor : AutoVisitor
     {
         /// <summary>
         /// TAC container
