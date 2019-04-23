@@ -17,7 +17,7 @@ namespace SimpleCompiler
         public static void Main()
         {
             var DirectoryPath = Directory.GetParent(Directory.GetCurrentDirectory()).Parent.FullName;
-            string FileName = Path.Combine(DirectoryPath, "a.txt");
+            string FileName = Path.Combine(DirectoryPath, "_a.txt");
             try
             {
                 string Text = File.ReadAllText(FileName);

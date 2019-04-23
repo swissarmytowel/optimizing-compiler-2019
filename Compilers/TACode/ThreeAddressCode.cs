@@ -23,6 +23,9 @@ namespace SimpleLang.TACode
             set => SetNodeByLabel(label, value);
         }
         
+        public LinkedListNode<TacNode> First => TACodeLines.First;
+        public LinkedListNode<TacNode> Last => TACodeLines.Last;
+
         public ThreeAddressCode()
         {
             TACodeLines = new LinkedList<TacNode>();

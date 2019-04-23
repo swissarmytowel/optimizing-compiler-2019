@@ -1,17 +1,5 @@
-﻿// Undefine, if the following behavior is desired:
-// a = 1 =>
-// L1: t1 = 1
-// L2: a = t1
-
-#define SINGLE_TAC_ASSIGN_COMMANDS_REQUIRED
-
-// Undefine, if the following behavior is desired:
-// while(a == 0) =>
-// L1: t1 = a
-// L2: t2 = 0
-// L3: t3 = t1 == t2
-#define SINGLE_TAC_EXPRESSION_COMMANDS_REQUIRED
-
+﻿using System;
+using System.Linq;
 using ProgramTree;
 using SimpleLang.TACode;
 using SimpleLang.TACode.TacNodes;
@@ -63,11 +51,7 @@ namespace SimpleLang.Visitors
         {
             string rightPartExpression = null;
             // If should try to simplify the TAC for a trivial assignment 
-#if SINGLE_TAC_ASSIGN_COMMANDS_REQUIRED
             rightPartExpression = ManageTrivialCases(a.Expr);
-#else
-            rightPartExpression = GenerateThreeAddressLine(a.Expr);
-#endif
             TACodeContainer.PushNode(new TacAssignmentNode()
             {
                 LeftPartIdentifier = a.Id.Name,
@@ -101,14 +85,9 @@ namespace SimpleLang.Visitors
                 case BinOpNode binOpNode:
                 {
                     
-#if SINGLE_TAC_EXPRESSION_COMMANDS_REQUIRED
                     var leftPart = ManageTrivialCases(binOpNode.Left);
                     var rightPart = ManageTrivialCases(binOpNode.Right);
-#else
-                    // Recursive traversing left & right parts of BinOp
-                    var leftPart = GenerateThreeAddressLine(binOpNode.Left);
-                    var rightPart = GenerateThreeAddressLine(binOpNode.Right);
-#endif
+                    
                     // Creating and pushing the resulting binOp between 
                     // already generated above TAC variables
                     var tmpName = TmpNameManager.Instance.GenerateTmpVariableName();
@@ -117,6 +96,24 @@ namespace SimpleLang.Visitors
                         LeftPartIdentifier = tmpName,
                         FirstOperand = leftPart,
                         Operation = binOpNode.Op,
+                        SecondOperand = rightPart
+                    });
+                    return tmpName;
+                }
+                case LogicOpNode logicOpNode:
+                {
+                    
+                    var leftPart = ManageTrivialCases(logicOpNode.Left);
+                    var rightPart = ManageTrivialCases(logicOpNode.Right);
+                    
+                    // Creating and pushing the resulting binOp between 
+                    // already generated above TAC variables
+                    var tmpName = TmpNameManager.Instance.GenerateTmpVariableName();
+                    TACodeContainer.PushNode(new TacAssignmentNode()
+                    {
+                        LeftPartIdentifier = tmpName,
+                        FirstOperand = leftPart,
+                        Operation = logicOpNode.Operation,
                         SecondOperand = rightPart
                     });
                     return tmpName;
@@ -132,6 +129,7 @@ namespace SimpleLang.Visitors
             // As we will need the resulting last tmp ID for conditional goto jump later
             var conditionalExpression = GenerateThreeAddressLine(c.Expr);
             
+            Console.WriteLine("COND!    " + conditionalExpression);
             // Generating 'else' clause and exiting labels
             var mainIfBlockStartLabel = TmpNameManager.Instance.GenerateLabel();
             var exitingLabel = TmpNameManager.Instance.GenerateLabel();
