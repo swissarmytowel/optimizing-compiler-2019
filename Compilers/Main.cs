@@ -9,6 +9,7 @@ using SimpleScanner;
 using SimpleParser;
 using SimpleLang.Visitors;
 using SimpleLang.Optimizations;
+using System.Linq;
 
 namespace SimpleCompiler
 {
@@ -17,7 +18,7 @@ namespace SimpleCompiler
         public static void Main()
         {
             var DirectoryPath = Directory.GetParent(Directory.GetCurrentDirectory()).Parent.FullName;
-            string FileName = Path.Combine(DirectoryPath, "_a.txt");
+            string FileName = Path.Combine(DirectoryPath, "a.txt");
             try
             {
                 string Text = File.ReadAllText(FileName);
@@ -126,6 +127,11 @@ namespace SimpleCompiler
                     bblocks.SplitTACode(threeAddressCodeVisitor.TACodeContainer);
                     Console.WriteLine("Разбиение на базовые блоки завершилось");
                     Console.WriteLine();
+
+                    var varsForBlocks = Enumerable.Repeat(new string[] { "a", "t1", "t2" }, bblocks.BasicBlockItems.Count);
+                    var defUseSet = new DefUseSetForBlocks(bblocks, varsForBlocks);
+                    Console.WriteLine("DefUSeSet для базовых блоков");
+                    Console.WriteLine(defUseSet);
 
                     var cfg = new ControlFlowGraph();
                     cfg.Construct(threeAddressCodeVisitor.TACodeContainer);
