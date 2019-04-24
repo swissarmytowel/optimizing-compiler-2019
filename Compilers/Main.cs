@@ -132,6 +132,13 @@ namespace SimpleCompiler
                     result = constPropagationOptimizer.Optimize(threeAddressCodeVisitor.TACodeContainer);
                     Console.WriteLine("======= After const propagation =======");
                     Console.WriteLine(threeAddressCodeVisitor);
+
+                    var copyPropagationOptimizer = new DefUseCopyPropagation(detector);
+                    result = copyPropagationOptimizer.Optimize(threeAddressCodeVisitor.TACodeContainer);
+
+                    Console.WriteLine("======= After copy propagation =======");
+                    Console.WriteLine(threeAddressCodeVisitor);
+
                     //var bblocks = new BasicBlocks();
                     //bblocks.SplitTACode(threeAddressCodeVisitor.TACodeContainer);
                     //Console.WriteLine("Разбиение на базовые блоки завершилось");
