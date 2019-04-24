@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using ProgramTree;
 using SimpleLang.TACode;
@@ -49,6 +50,7 @@ namespace SimpleLang.Visitors
         }
         public override void VisitAssignNode(AssignNode a)
         {
+
             string rightPartExpression = null;
             // If should try to simplify the TAC for a trivial assignment 
             rightPartExpression = ManageTrivialCases(a.Expr);
@@ -66,20 +68,26 @@ namespace SimpleLang.Visitors
         /// <returns>Last tmp identifier left from TAC decomposition</returns>
         private string GenerateThreeAddressLine(ExprNode expression)
         {
+            string label = null;
+            if (TACodeContainer.Last != null && TACodeContainer.Last.Value.IsUtility)
+            {
+                label = TACodeContainer.Last.Value.Label;
+                TACodeContainer.RemoveNode(TACodeContainer.Last.Value);
+            }
             switch (expression)
             {
                 // Trivial cases. Each switch branch generate simple corresponding node
                 case IdNode idNode:
                 {
-                    return TACodeContainer.CreateAndPushIdNode(idNode);
+                    return TACodeContainer.CreateAndPushIdNode(idNode, label);
                 }
                 case IntNumNode intNumNode:
                 {
-                    return TACodeContainer.CreateAndPushIntNumNode(intNumNode);
+                    return TACodeContainer.CreateAndPushIntNumNode(intNumNode, label);
                 }
                 case BoolNode boolNode:
                 {
-                    return TACodeContainer.CreateAndPushBoolNode(boolNode);
+                    return TACodeContainer.CreateAndPushBoolNode(boolNode, label);
                 }
                 // Complex case, when a part of an expr is a binary operation
                 case BinOpNode binOpNode:
@@ -93,6 +101,7 @@ namespace SimpleLang.Visitors
                     var tmpName = TmpNameManager.Instance.GenerateTmpVariableName();
                     TACodeContainer.PushNode(new TacAssignmentNode()
                     {
+                        Label = label,
                         LeftPartIdentifier = tmpName,
                         FirstOperand = leftPart,
                         Operation = binOpNode.Op,
@@ -111,6 +120,7 @@ namespace SimpleLang.Visitors
                     var tmpName = TmpNameManager.Instance.GenerateTmpVariableName();
                     TACodeContainer.PushNode(new TacAssignmentNode()
                     {
+                        Label = label,
                         LeftPartIdentifier = tmpName,
                         FirstOperand = leftPart,
                         Operation = logicOpNode.Operation,
@@ -125,11 +135,11 @@ namespace SimpleLang.Visitors
 
         public override void VisitIfNode(IfNode c)
         {
+            var lastNodeBeforeGeneration = TACodeContainer.Last;
             // Separate conditional expression from the rest of the generation
             // As we will need the resulting last tmp ID for conditional goto jump later
             var conditionalExpression = GenerateThreeAddressLine(c.Expr);
             
-            Console.WriteLine("COND!    " + conditionalExpression);
             // Generating 'else' clause and exiting labels
             var mainIfBlockStartLabel = TmpNameManager.Instance.GenerateLabel();
             var exitingLabel = TmpNameManager.Instance.GenerateLabel();
@@ -152,7 +162,8 @@ namespace SimpleLang.Visitors
             // Pushing main if block starting label to denote entry point for conditional jump
             TACodeContainer.PushNode(new TacEmptyNode()
             {
-                Label = mainIfBlockStartLabel
+                Label = mainIfBlockStartLabel,
+                IsUtility = true
             });
             
             // Traversing main if block and generating TAC
@@ -161,17 +172,42 @@ namespace SimpleLang.Visitors
             // Placing the exit label at the end of if-else section
             TACodeContainer.PushNode(new TacEmptyNode()
             {
-                Label = exitingLabel
+                Label = exitingLabel,
+                IsUtility = true
             });
+           
+            ClashUtilityLabels(lastNodeBeforeGeneration);
+        }
+
+        private void ClashUtilityLabels(LinkedListNode<TacNode> lastNodeBeforeGeneration)
+        {
+            var nodesToRemove = new List<TacNode>();
+            lastNodeBeforeGeneration = lastNodeBeforeGeneration ?? TACodeContainer.First;
+            while (lastNodeBeforeGeneration != null)
+            {
+                if (lastNodeBeforeGeneration.Value is TacEmptyNode label)
+                {
+                    if (lastNodeBeforeGeneration.Next != null)
+                    {
+                        lastNodeBeforeGeneration.Next.Value.Label = label.Label;
+                        nodesToRemove.Add(label);
+                    }
+                }
+                lastNodeBeforeGeneration = lastNodeBeforeGeneration.Next;
+            }
+            TACodeContainer.RemoveNodes(nodesToRemove);
         }
 
         public override void VisitWhileNode(WhileNode c)
         {
+            var lastNodeBeforeGeneration = TACodeContainer.Last;
+
         // Label to the initial conditional jump check (right above bool expression under while())
             var conditionalCheckLabel = TmpNameManager.Instance.GenerateLabel();
             TACodeContainer.PushNode(new TacEmptyNode()
             {
-                Label = conditionalCheckLabel
+                Label = conditionalCheckLabel,
+                IsUtility = true
             });
 
             // Separate conditional expression from the rest of the generation
@@ -199,7 +235,8 @@ namespace SimpleLang.Visitors
             // Main body entry point
             TACodeContainer.PushNode(new TacEmptyNode()
             {
-                Label = startOfWhileBodyLabel
+                Label = startOfWhileBodyLabel,
+                IsUtility = true
             });
             
             // Traversing while block contents and generating TAC
@@ -214,12 +251,17 @@ namespace SimpleLang.Visitors
             // Placing exiting label at the end of while
             TACodeContainer.PushNode(new TacEmptyNode()
             {
-                Label = endOfWhileStatementLabel
+                Label = endOfWhileStatementLabel,
+                IsUtility = true
             });
+            
+            ClashUtilityLabels(lastNodeBeforeGeneration);
         }
 
         public override void VisitForNode(ForNode c)
         {
+            var lastNodeBeforeGeneration = TACodeContainer.Last;
+
             // Traversing initial counter assignment and generating TAC
             c.Assign.Visit(this);
             string conditionalExpression;
@@ -228,7 +270,8 @@ namespace SimpleLang.Visitors
             var startOfForStatementLabel = TmpNameManager.Instance.GenerateLabel();
             TACodeContainer.PushNode(new TacEmptyNode()
             {
-                Label = startOfForStatementLabel
+                Label = startOfForStatementLabel,
+                IsUtility = true
             });
             
             // Traversing main for block and generating TAC
@@ -272,6 +315,8 @@ namespace SimpleLang.Visitors
                 Condition = conditionalExpressionId,
                 TargetLabel = startOfForStatementLabel
             });
+            
+            ClashUtilityLabels(lastNodeBeforeGeneration);
         }
 
         public override void VisitEmptyNode(EmptyNode w)

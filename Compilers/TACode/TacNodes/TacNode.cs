@@ -11,6 +11,8 @@ namespace SimpleLang.TACode.TacNodes
         /// </summary>
         public string Label { get; set; } = null;
 
+        public bool IsUtility { get; set; } = false;
+        
         #region IDE-generated equality members
         
         protected bool Equals(TacNode other)

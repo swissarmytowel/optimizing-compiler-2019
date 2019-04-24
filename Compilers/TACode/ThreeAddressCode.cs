@@ -131,12 +131,14 @@ namespace SimpleLang.TACode
         /// Create TAC representation of an AST BoolNode and push it to the end of the container
         /// </summary>
         /// <param name="node">AST Boolean Node</param>
+        /// <param name="label">Custom specified label for a code line</param>
         /// <returns>Identifier (left side of an assignment operation) of the current TAC line</returns>
-        public string CreateAndPushBoolNode(BoolNode node)
+        public string CreateAndPushBoolNode(BoolNode node, string label=null)
         {
             var tmpName = TmpNameManager.Instance.GenerateTmpVariableName();
             PushNode(new TacAssignmentNode()
             {
+                Label = label,
                 LeftPartIdentifier = tmpName,
                 FirstOperand = node.Value.ToString()
             });
@@ -147,12 +149,14 @@ namespace SimpleLang.TACode
         /// Create TAC representation of an AST IdNode and push it to the end of the container
         /// </summary>
         /// <param name="node">AST Identifier Node</param>
+        /// <param name="label">Custom specified label for a code line</param>
         /// <returns>Identifier (left side of an assignment operation) of the current TAC line</returns>
-        public string CreateAndPushIdNode(IdNode node)
+        public string CreateAndPushIdNode(IdNode node, string label=null)
         {
             var tmpName = TmpNameManager.Instance.GenerateTmpVariableName();
             PushNode(new TacAssignmentNode()
             {
+                Label = label,
                 LeftPartIdentifier = tmpName,
                 FirstOperand = node.Name.ToString()
             });
@@ -163,12 +167,14 @@ namespace SimpleLang.TACode
         /// Create TAC representation of an AST BoolNode and push it to the end of the container
         /// </summary>
         /// <param name="node">AST Boolean Node</param>
+        /// <param name="label">Custom specified label for a code line</param>
         /// <returns>Identifier (left side of an assignment operation) of the current TAC line</returns>
-        public string CreateAndPushIntNumNode(IntNumNode node)
+        public string CreateAndPushIntNumNode(IntNumNode node, string label=null)
         {
             var tmpName = TmpNameManager.Instance.GenerateTmpVariableName();
             PushNode(new TacAssignmentNode()
             {
+                Label = label,
                 LeftPartIdentifier = tmpName,
                 FirstOperand = node.Num.ToString()
             });
@@ -179,11 +185,13 @@ namespace SimpleLang.TACode
         /// Create TAC representation of an AST EmptyNode and push it to the end of the container
         /// </summary>
         /// <param name="node">AST Empty Node</param>
+        /// <param name="label">Custom specified label for a code line</param>
         /// <returns>Identifier (left side of an assignment operation) of the current TAC line</returns>
-        public void CreateAndPushEmptyNode(EmptyNode node)
+        public void CreateAndPushEmptyNode(EmptyNode node, string label=null)
         {
             PushNode(new TacEmptyNode()
             {
+                Label = label
             });
         }
 
