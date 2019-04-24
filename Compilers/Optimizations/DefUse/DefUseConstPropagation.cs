@@ -9,13 +9,13 @@ using VarNodePair = System.Tuple<string, System.Collections.Generic.LinkedListNo
 
 namespace SimpleLang.Optimizations.DefUse
 {
-    class DefUseConstPropagation : IOptimizer
+    public class DefUseConstPropagation : IOptimizer
     {
-        private DefUseDetector detector;
+        private readonly DefUseDetector _detector;
 
-        public DefUseConstPropagation(DefUseDetector _detector)
+        public DefUseConstPropagation(DefUseDetector detector)
         {
-            detector = _detector;
+            _detector = detector;
         }
 
         public bool Optimize(ThreeAddressCode tac)
@@ -32,13 +32,13 @@ namespace SimpleLang.Optimizations.DefUse
                     {
 
                         var key = new VarNodePair(assignment.LeftPartIdentifier, node);
-                        if (detector.DefNodes.ContainsKey(key))
+                        if (_detector.Definitions.ContainsKey(key))
                         {
-                            foreach (var usage in detector.DefNodes[key])
+                            foreach (var usage in _detector.Definitions[key])
                             {
                                 ChangeByConst(usage.Value, assignment);
                             }
-                            detector.DefNodes.Remove(key);
+                            _detector.Definitions.Remove(key);
                         }
                     }
                 }
@@ -49,9 +49,9 @@ namespace SimpleLang.Optimizations.DefUse
             return !initialTac.Equals(tac.ToString());
         }
 
-        private void ChangeByConst(TacNode _tacNode, TacAssignmentNode replacingNode)
+        private void ChangeByConst(TacNode node, TacAssignmentNode replacingNode)
         {
-            switch (_tacNode) {
+            switch (node) {
                 case TacAssignmentNode assNode:
                     if (assNode.FirstOperand.Equals(replacingNode.LeftPartIdentifier))
                     {
