@@ -21,6 +21,7 @@ namespace SimpleCompiler
         {
             var DirectoryPath = Directory.GetParent(Directory.GetCurrentDirectory()).Parent.FullName;
             string FileName = Path.Combine(DirectoryPath, "a3.txt");
+            
             try
             {
                 string Text = File.ReadAllText(FileName);
@@ -92,19 +93,24 @@ namespace SimpleCompiler
 
                     var plusZeroExpr = new PlusZeroExprVisitor();
                     parser.root.Visit(plusZeroExpr);
-
-                    var alwaysElse = new AlwaysElseVisitor();
-                    parser.root.Visit(alwaysElse);
-
-                    var checkTruth = new CheckTruthVisitor();
-                    parser.root.Visit(checkTruth);
+//
+//                    var alwaysElse = new AlwaysElseVisitor();
+//                    parser.root.Visit(alwaysElse);
+//
+//                    var checkTruth = new CheckTruthVisitor();
+//                    parser.root.Visit(checkTruth);
+//
+//                    Console.WriteLine("Оптимизированная программа");
+//                    printv = new PrettyPrintVisitor(true);
+//                    r.Visit(printv);
+//                    Console.WriteLine(printv.Text);
+//                    Console.WriteLine("-------------------------------");
 
                     Console.WriteLine("Оптимизированная программа");
                     printv = new PrettyPrintVisitor(true);
                     r.Visit(printv);
                     Console.WriteLine(printv.Text);
                     Console.WriteLine("-------------------------------");
-
 
                     var threeAddressCodeVisitor = new ThreeAddressCodeVisitor();
                     r.Visit(threeAddressCodeVisitor);

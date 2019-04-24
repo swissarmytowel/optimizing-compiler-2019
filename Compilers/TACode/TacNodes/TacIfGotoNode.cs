@@ -13,7 +13,7 @@ namespace SimpleLang.TACode.TacNodes
         public string Condition { get; set; }
 
         #region IDE-generated equality members
-        
+
         private bool Equals(TacIfGotoNode other)
         {
             return base.Equals(other) && string.Equals(Condition, other.Condition);
@@ -33,9 +33,9 @@ namespace SimpleLang.TACode.TacNodes
                 return (base.GetHashCode() * 397) ^ (Condition != null ? Condition.GetHashCode() : 0);
             }
         }
-        
+
         #endregion
-        
-        public override string ToString() => $"{Label}: if {Condition} goto {TargetLabel}";
+
+        public override string ToString() => (Label != null ? Label + ": " : "") + $"if {Condition} goto {TargetLabel}";
     }
 }
