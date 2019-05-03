@@ -7,6 +7,6 @@ namespace SimpleLang.TACode.TacNodes
     /// </summary>
     public class TacEmptyNode : TacNode
     {
-        
+//        public override string ToString() => base.ToString() + "\n";
     }
 }

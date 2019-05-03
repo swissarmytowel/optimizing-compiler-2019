@@ -10,6 +10,7 @@ using SimpleScanner;
 using SimpleParser;
 using SimpleLang.Visitors;
 using SimpleLang.Optimizations;
+using System.Linq;
 
 namespace SimpleCompiler
 {
@@ -88,21 +89,26 @@ namespace SimpleCompiler
                     //var ifNodeWithBoolExpr = new IfNodeWithBoolExprVisitor();
                     //parser.root.Visit(ifNodeWithBoolExpr);
 
-                    //var plusZeroExpr = new PlusZeroExprVisitor();
-                    //parser.root.Visit(plusZeroExpr);
-
-                    //var alwaysElse = new AlwaysElseVisitor();
-                    //parser.root.Visit(alwaysElse);
-
-                    //var checkTruth = new CheckTruthVisitor();
-                    //parser.root.Visit(checkTruth);
+                    var plusZeroExpr = new PlusZeroExprVisitor();
+                    parser.root.Visit(plusZeroExpr);
+//
+//                    var alwaysElse = new AlwaysElseVisitor();
+//                    parser.root.Visit(alwaysElse);
+//
+//                    var checkTruth = new CheckTruthVisitor();
+//                    parser.root.Visit(checkTruth);
+//
+//                    Console.WriteLine("Оптимизированная программа");
+//                    printv = new PrettyPrintVisitor(true);
+//                    r.Visit(printv);
+//                    Console.WriteLine(printv.Text);
+//                    Console.WriteLine("-------------------------------");
 
                     Console.WriteLine("Оптимизированная программа");
                     printv = new PrettyPrintVisitor(true);
                     r.Visit(printv);
                     Console.WriteLine(printv.Text);
                     Console.WriteLine("-------------------------------");
-
 
                     var threeAddressCodeVisitor = new ThreeAddressCodeVisitor();
                     r.Visit(threeAddressCodeVisitor);
@@ -123,8 +129,10 @@ namespace SimpleCompiler
                     Console.WriteLine("Разбиение на базовые блоки завершилось");
                     Console.WriteLine();
 
-                    var unreachableCodeOpt = new UnreachableCodeOpt();
-                    var testTAC = new ThreeAddressCode();
+                    var varsForBlocks = Enumerable.Repeat(new string[] { "a", "t1", "t2" }, bblocks.BasicBlockItems.Count);
+                    var defUseSet = new DefUseSetForBlocks(bblocks, varsForBlocks);
+                    Console.WriteLine("DefUSeSet для базовых блоков");
+                    Console.WriteLine(defUseSet);
 
                     var cfg = new ControlFlowGraph();
                     cfg.Construct(threeAddressCodeVisitor.TACodeContainer);

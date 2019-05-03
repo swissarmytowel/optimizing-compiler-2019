@@ -9,8 +9,13 @@ namespace SimpleLang.TACode.TacNodes
         /// <summary>
         /// Current TAC code line label
         /// </summary>
-        public string Label { get; set; }
-
+        public string Label { get; set; } = null;
+        /// <summary>
+        /// Indicates if a label was generated as a part of utility generation
+        /// (if/while/for, anything that RESULTS in if-goto or goto TAC commands but are not that in actual code)
+        /// </summary>
+        public bool IsUtility { get; set; } = false;
+        
         #region IDE-generated equality members
         
         protected bool Equals(TacNode other)
@@ -32,6 +37,6 @@ namespace SimpleLang.TACode.TacNodes
 
         #endregion
         
-        public override string ToString() => $"{Label}:";
+        public override string ToString() => Label != null ? Label + ": " : "";
     }
 }

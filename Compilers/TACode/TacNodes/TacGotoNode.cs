@@ -35,6 +35,6 @@ namespace SimpleLang.TACode.TacNodes
         
         #endregion
         
-        public override string ToString() => $"{Label}: goto {TargetLabel}";
+        public override string ToString() => $"{base.ToString()}goto {TargetLabel}";
     }
 }
