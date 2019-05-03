@@ -53,11 +53,13 @@
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
+    <Reference Include="nunit.framework" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CFG\ControlFlowGraph.cs" />
     <Compile Include="CFG\Visualization\DotPrinter.cs" />
     <Compile Include="Optimizations\ConvConstOptimization.cs" />
+    <Compile Include="Optimizations\EmptyNodeOptimization.cs" />
     <Compile Include="Optimizations\GotoOptimization.cs" />
     <Compile Include="Optimizations\Interfaces\IOptimizer.cs" />
     <Compile Include="TACode\TacNodes\TacAssignmentNode.cs" />
@@ -95,6 +97,7 @@
     <Compile Include="Visitors\ZeroMulOptVisitor.cs" />
     <Compile Include="Visitors\CompareToItselfFalseOptVisitor.cs" />
     <Compile Include="Optimizations\UnreachableCodeOpt.cs" />
+    <Compile Include="Optimizations\EliminateTranToTranOpt.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
