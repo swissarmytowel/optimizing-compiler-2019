@@ -11,4 +11,9 @@ namespace SimpleLang.Optimizations.Interfaces
         /// <returns>Bool value, marking if current optimization was applied successfully</returns>
         bool Optimize(ThreeAddressCode tac);
     }
+
+    public interface IBlockOptimizer
+    {
+        bool Optimize(BasicBlocks bb);
+    }
 }
