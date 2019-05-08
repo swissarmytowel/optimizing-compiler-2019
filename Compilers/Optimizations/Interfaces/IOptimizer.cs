@@ -1,3 +1,4 @@
+using SimpleLang.CFG;
 using SimpleLang.TACode;
 
 namespace SimpleLang.Optimizations.Interfaces
@@ -15,5 +16,10 @@ namespace SimpleLang.Optimizations.Interfaces
     public interface IBlockOptimizer
     {
         bool Optimize(BasicBlocks bb);
+    }
+
+    public interface ICFGOptimizer
+    {
+        bool Optimize(ControlFlowGraph cfg);
     }
 }

@@ -55,6 +55,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Optimizations\AvailableExprOptimization.cs" />
     <Compile Include="Optimizations\DefUse\DefUseConstPropagation.cs" />
     <Compile Include="Optimizations\DefUse\DefUseCopyPropagation.cs" />
     <Compile Include="Optimizations\DefUse\DefUseDetector.cs" />

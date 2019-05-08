@@ -5,10 +5,11 @@ using System.Text;
 using SimpleLang.Optimizations.Interfaces;
 using SimpleLang.TACode.TacNodes;
 using SimpleLang.TACode;
+using SimpleLang.CFG;
 
 namespace SimpleLang.Optimizations
 {
-    class AvailableExprOptimization : IBlockOptimizer
+    class AvailableExprOptimization : ICFGOptimizer
     {
         class TacExpr
         {
@@ -24,8 +25,9 @@ namespace SimpleLang.Optimizations
             }
         }
 
-        public bool Optimize(BasicBlocks bb)
+        public bool Optimize(ControlFlowGraph cfg)
         {
+            var bb = cfg.Blocks;
             bool isUsed = false;
             Dictionary<TacExpr, Dictionary<ThreeAddressCode, ThreeAddressCode>> links;
             foreach (var block in bb.BasicBlockItems)
