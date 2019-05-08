@@ -55,6 +55,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Optimizations\DefUse\DefUseConstPropagation.cs" />
+    <Compile Include="Optimizations\DefUse\DefUseCopyPropagation.cs" />
+    <Compile Include="Optimizations\DefUse\DefUseDetector.cs" />
     <Compile Include="CFG\ControlFlowGraph.cs" />
     <Compile Include="CFG\Visualization\DotPrinter.cs" />
     <Compile Include="Optimizations\ConvConstOptimization.cs" />
@@ -72,6 +75,7 @@
     <Compile Include="TACode\TacNodes\TacNode.cs" />
     <Compile Include="TACode\ThreeAddressCode.cs" />
     <Compile Include="TACode\TmpNameManager.cs" />
+    <Compile Include="Utility\Utility.cs" />
     <Compile Include="Visitors\AlwaysElseVisitor.cs" />
     <Compile Include="Visitors\AssignCountVisitor.cs" />
     <Compile Include="Visitors\AutoVisitor.cs" />

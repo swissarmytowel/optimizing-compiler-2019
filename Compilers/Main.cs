@@ -3,6 +3,8 @@ using System.IO;
 using System.Text;
 using System.Reflection;
 using System.Collections.Generic;
+using System.Linq;
+using SimpleLang.Optimizations.DefUse;
 using SimpleLang.CFG;
 using SimpleLang.TACode.TacNodes;
 using SimpleScanner;
@@ -10,6 +12,7 @@ using SimpleParser;
 using SimpleLang.Visitors;
 using SimpleLang.Optimizations;
 using System.Linq;
+
 
 namespace SimpleCompiler
 {
@@ -111,8 +114,34 @@ namespace SimpleCompiler
 
                     var threeAddressCodeVisitor = new ThreeAddressCodeVisitor();
                     r.Visit(threeAddressCodeVisitor);
+                    
+                    Console.WriteLine("======= DV =======");
+                    Console.WriteLine(threeAddressCodeVisitor);
+                    var detector = new DefUseDetector();
+                    detector.DetectAndFillDefUse(threeAddressCodeVisitor.TACodeContainer);
+                    //Console.WriteLine("======= Detector 1 =======");
+                    //Console.WriteLine(detector);
+                    //Console.WriteLine("======= Detector 2 =======");
+                    //Console.WriteLine(detector.ToString2());
+                    var constPropagationOptimizer = new DefUseConstPropagation(detector);
+                    var result = constPropagationOptimizer.Optimize(threeAddressCodeVisitor.TACodeContainer);
+
+                    Console.WriteLine("======= After const propagation =======");
                     Console.WriteLine(threeAddressCodeVisitor);
 
+                    result = constPropagationOptimizer.Optimize(threeAddressCodeVisitor.TACodeContainer);
+                    Console.WriteLine("======= After const propagation =======");
+                    Console.WriteLine(threeAddressCodeVisitor);
+
+                    var copyPropagationOptimizer = new DefUseCopyPropagation(detector);
+                    result = copyPropagationOptimizer.Optimize(threeAddressCodeVisitor.TACodeContainer);
+
+                    Console.WriteLine("======= After copy propagation =======");
+                    Console.WriteLine(threeAddressCodeVisitor);
+
+                    //var bblocks = new BasicBlocks();
+                    //bblocks.SplitTACode(threeAddressCodeVisitor.TACodeContainer);
+                    //Console.WriteLine("Разбиение на базовые блоки завершилось");
                     var emptyopt = new EmptyNodeOptimization();
                     emptyopt.Optimize(threeAddressCodeVisitor.TACodeContainer);
                     Console.WriteLine("Empty node optimization");
