@@ -60,6 +60,7 @@
     <Compile Include="Optimizations\DefUse\DefUseDetector.cs" />
     <Compile Include="CFG\ControlFlowGraph.cs" />
     <Compile Include="CFG\Visualization\DotPrinter.cs" />
+    <Compile Include="Optimizations\AlgebraicIdentityOptimization.cs" />
     <Compile Include="Optimizations\ConvConstOptimization.cs" />
     <Compile Include="Optimizations\CopyPropagationOptimization.cs" />
     <Compile Include="Optimizations\DeadCodeOptimization.cs" />
