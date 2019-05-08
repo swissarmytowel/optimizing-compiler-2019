@@ -1,8 +1,6 @@
 c = 123;
 if (true) {
     c = 3;
-    if (true)
-        f = 9;
 } else {
     c = 456;
 }

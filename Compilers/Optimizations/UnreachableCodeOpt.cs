@@ -27,11 +27,11 @@ namespace SimpleLang.Optimizations
 
             while (!Equals(line.Label, targetLabel))
             {
-                if (targetLabels.Contains(line.Label))
+                /* if (targetLabels.Contains(line.Label))
                 {
                     tacNodesToRemove.Clear();
                     return false;
-                }
+                } */
                 tacNodesToRemove.Add(line);
                 currentNode = currentNode.Next;
                 line = currentNode.Value;

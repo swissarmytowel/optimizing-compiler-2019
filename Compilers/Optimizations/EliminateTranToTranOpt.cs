@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Collections.Generic;
 
 using SimpleLang.Optimizations.Interfaces;
@@ -7,35 +8,48 @@ using SimpleLang.TACode;
 
 namespace SimpleLang.Optimizations
 {
-    public class RemoveTranToTranOpt : IOptimizer
+    public class EliminateTranToTranOpt : IOptimizer
     {
-        private Dictionary<object, int> FindTargets(ThreeAddressCode tac)
+        private List<TacGotoNode> FindGotoNodes(ThreeAddressCode tac)
         {
-            var res = new Dictionary<object, int>();
-            for (var line in tac)
+            var res = new List<TacGotoNode>();
+            var targetLabels = new Dictionary<object, int>();
+            var prohibitedTargets = new HashSet<object>();
+
+            foreach (var line in tac)
             {
-                if (line is TacGotoNode gotoNode)
+                if (line.GetType() == typeof(TacGotoNode))
                 {
-                    if (res.ContainsKey(gotoNode.TargetLabel))
-                        res[gotoNode.TargetLabel]++;
-                    else res.Add() 
+                    var gotoNode = line as TacGotoNode;
+
+                    if (!prohibitedTargets.Contains(gotoNode.TargetLabel))
+                    {
+                        prohibitedTargets.Add(gotoNode.TargetLabel);
+                        res.Add(gotoNode);
+                    }
+                    else res = res.Where(x => x.TargetLabel != gotoNode.TargetLabel).ToList();
                 }
             }
+
+            return res;
         }
 
         public bool Optimize(ThreeAddressCode tac)
         {
             var currentNode = tac.TACodeLines.First;
+            var targets = FindGotoNodes(tac);
 
             while(currentNode != null)
             {
                 var line = currentNode.Value;
+
                 if (line is TacGotoNode gotoNode && tac[gotoNode.TargetLabel] is TacGotoNode tacGoto)
                 {
-                    gotoNode.TargetLabel = tacGoto.TargetLabel
+                    gotoNode.TargetLabel = tacGoto.TargetLabel;
                 }
                 currentNode = currentNode.Next;
             }
+            return true;
         }
     }
 }

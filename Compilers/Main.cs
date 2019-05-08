@@ -124,20 +124,34 @@ namespace SimpleCompiler
                     Console.WriteLine("Goto optimization");
                     Console.WriteLine(threeAddressCodeVisitor.TACodeContainer);
 
-                    var bblocks = new BasicBlocks();
-                    bblocks.SplitTACode(threeAddressCodeVisitor.TACodeContainer);
-                    Console.WriteLine("Разбиение на базовые блоки завершилось");
-                    Console.WriteLine();
+                    //var elimintaion = new RemoveTranToTranOpt();
+                    //elimintaion.Optimize(threeAddressCodeVisitor.TACodeContainer);
+                    //Console.WriteLine("Удаление переходов к переходам завершилось");
 
-                    var varsForBlocks = Enumerable.Repeat(new string[] { "a", "t1", "t2" }, bblocks.BasicBlockItems.Count);
-                    var defUseSet = new DefUseSetForBlocks(bblocks, varsForBlocks);
-                    Console.WriteLine("DefUSeSet для базовых блоков");
-                    Console.WriteLine(defUseSet);
+                    var tmpTac = new ThreeAddressCode();
+                    tmpTac.PushNode(new TacIfGotoNode { Condition = "true", TargetLabel = "L1" });
+                    tmpTac.PushNode(new TacEmptyNode());
+                    tmpTac.PushNode(new TacAssignmentNode { Label="L1", Operation="+", FirstOperand="1", SecondOperand="2" });
 
-                    var cfg = new ControlFlowGraph();
-                    cfg.Construct(threeAddressCodeVisitor.TACodeContainer);
-                    Console.WriteLine(cfg);
-                    cfg.SaveToFile(@"cfg.txt");
+
+                    var unreachableCode = new UnreachableCodeOpt();
+                    var res = unreachableCode.Optimize(tmpTac);
+                    Console.WriteLine(res);
+
+                    //var bblocks = new BasicBlocks();
+                    //bblocks.SplitTACode(threeAddressCodeVisitor.TACodeContainer);
+                    //Console.WriteLine("Разбиение на базовые блоки завершилось");
+                    //Console.WriteLine();
+
+                    //var varsForBlocks = Enumerable.Repeat(new string[] { "a", "t1", "t2" }, bblocks.BasicBlockItems.Count);
+                    //var defUseSet = new DefUseSetForBlocks(bblocks, varsForBlocks);
+                    //Console.WriteLine("DefUSeSet для базовых блоков");
+                    //Console.WriteLine(defUseSet);
+
+                    //var cfg = new ControlFlowGraph();
+                    //cfg.Construct(threeAddressCodeVisitor.TACodeContainer);
+                    //Console.WriteLine(cfg);
+                    //cfg.SaveToFile(@"cfg.txt");
                 }
             }
             catch (FileNotFoundException)
