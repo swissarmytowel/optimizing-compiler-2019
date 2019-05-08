@@ -12,38 +12,44 @@ namespace SimpleLang.Optimizations
             var isOptimized = false;
             var directAssignments = new Dictionary<string, string>();
 
-            var currentNode = tac.TACodeLines.First;
-            while (currentNode != null)
-            {
-                if (currentNode.Value is TacAssignmentNode assignmentNode)
-                {
-                    if (assignmentNode.Operation == null)
-                    {
-                        if (directAssignments.ContainsKey(assignmentNode.LeftPartIdentifier))
-                            directAssignments.Remove(assignmentNode.LeftPartIdentifier);
+            var blocks = new BasicBlocks();
+            blocks.SplitTACode(tac);
 
-                        if (!int.TryParse(assignmentNode.FirstOperand, out int firstOpValue))
+            foreach (var block in blocks)
+            {
+                var currentNode = block.First;
+                while (currentNode != null)
+                {
+                    if (currentNode.Value is TacAssignmentNode assignmentNode)
+                    {
+                        if (assignmentNode.Operation == null)
                         {
-                            var id = assignmentNode.LeftPartIdentifier;
-                            var firstOp = assignmentNode.FirstOperand;
-                            directAssignments.Add(id, firstOp);
+                            if (directAssignments.ContainsKey(assignmentNode.LeftPartIdentifier))
+                                directAssignments.Remove(assignmentNode.LeftPartIdentifier);
+
+                            if (!int.TryParse(assignmentNode.FirstOperand, out int firstOpValue))
+                            {
+                                var id = assignmentNode.LeftPartIdentifier;
+                                var firstOp = assignmentNode.FirstOperand;
+                                directAssignments.Add(id, firstOp);
+                            }
+                        }
+
+                        if (directAssignments.ContainsKey(assignmentNode.FirstOperand))
+                        {
+                            assignmentNode.FirstOperand = directAssignments[assignmentNode.FirstOperand];
+                            isOptimized = true;
+                        }
+
+                        if (assignmentNode.SecondOperand != null && directAssignments.ContainsKey(assignmentNode.SecondOperand))
+                        {
+                            assignmentNode.SecondOperand = directAssignments[assignmentNode.SecondOperand];
+                            isOptimized = true;
                         }
                     }
 
-                    if (directAssignments.ContainsKey(assignmentNode.FirstOperand))
-                    {
-                        assignmentNode.FirstOperand = directAssignments[assignmentNode.FirstOperand];
-                        isOptimized = true;
-                    }
-
-                    if (assignmentNode.SecondOperand != null && directAssignments.ContainsKey(assignmentNode.SecondOperand))
-                    {
-                        assignmentNode.SecondOperand = directAssignments[assignmentNode.SecondOperand];
-                        isOptimized = true;
-                    }
+                    currentNode = currentNode.Next;
                 }
-
-                currentNode = currentNode.Next;
             }
 
             return isOptimized;
