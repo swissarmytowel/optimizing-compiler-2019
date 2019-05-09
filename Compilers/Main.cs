@@ -114,7 +114,18 @@ namespace SimpleCompiler
 
                     var threeAddressCodeVisitor = new ThreeAddressCodeVisitor();
                     r.Visit(threeAddressCodeVisitor);
-                    
+
+                    var cfg = new ControlFlowGraph();
+                    cfg.Construct(threeAddressCodeVisitor.TACodeContainer);
+                    Console.WriteLine(cfg);
+                    cfg.SaveToFile(@"cfg.txt");
+
+                    Console.WriteLine(threeAddressCodeVisitor.TACodeContainer);
+                    var availExprOpt = new AvailableExprOptimization();
+                    availExprOpt.Optimize(cfg);
+                    Console.WriteLine("======= After algebraic identity =======");
+                    Console.WriteLine(threeAddressCodeVisitor.TACodeContainer);
+
                     Console.WriteLine("======= DV =======");
                     Console.WriteLine(threeAddressCodeVisitor);
                     var detector = new DefUseDetector();
@@ -166,17 +177,6 @@ namespace SimpleCompiler
                     var defUseSet = new DefUseSetForBlocks(bblocks, varsForBlocks);
                     Console.WriteLine("DefUSeSet для базовых блоков");
                     Console.WriteLine(defUseSet);
-
-                    var cfg = new ControlFlowGraph();
-                    cfg.Construct(threeAddressCodeVisitor.TACodeContainer);
-                    Console.WriteLine(cfg);
-                    cfg.SaveToFile(@"cfg.txt");
-
-                    Console.WriteLine(threeAddressCodeVisitor.TACodeContainer);
-                    var availExprOpt = new AvailableExprOptimization();
-                    availExprOpt.Optimize(cfg);
-                    Console.WriteLine("algebraic identity optimization");
-                    Console.WriteLine(threeAddressCodeVisitor.TACodeContainer);
                 }
             }
             catch (FileNotFoundException)

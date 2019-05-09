@@ -43,7 +43,6 @@ namespace SimpleLang.Optimizations
 
         private void OptimizationInBlock(TacExpr expr, ThreeAddressCode block, string tmpName)
         {
-            bool isChange = false;
             var taCode = block.TACodeLines.First;
             while (taCode != null)
             {
@@ -53,17 +52,12 @@ namespace SimpleLang.Optimizations
                     TacExpr nodeExpr = new TacExpr(assign.FirstOperand, assign.Operation, assign.SecondOperand);
                     string id = assign.LeftPartIdentifier;
                     if (id == expr.FirstOperand || id == expr.SecondOperand)
-                        isChange = true;
+                        block.TACodeLines.AddAfter(block.TACodeLines.Find(node), expr.CreateAssignNode(tmpName));
                     if (nodeExpr.Equals(expr) && id != tmpName)
                     {
                         assign.FirstOperand = tmpName;
                         assign.Operation = null;
                         assign.SecondOperand = null;
-                        if (isChange)
-                        {
-                            isChange = false;
-                            block.TACodeLines.AddBefore(block.TACodeLines.Find(node), expr.CreateAssignNode(tmpName));
-                        }
                     }
                 }
                 taCode = taCode.Next;
@@ -96,8 +90,10 @@ namespace SimpleLang.Optimizations
                                     break;
                                 if (targetNode is TacAssignmentNode targetAssign)
                                 {
+                                    string targetAssignId = targetAssign.LeftPartIdentifier;
+                                    bool isNeedAdditionaly = targetAssignId == sourceExpr.FirstOperand || targetAssignId == sourceExpr.SecondOperand;
                                     TacExpr targetExpr = new TacExpr(targetAssign.FirstOperand, targetAssign.Operation, targetAssign.SecondOperand);
-                                    if (targetExpr.Equals(sourceExpr))
+                                    if (targetExpr.Equals(sourceExpr) || isNeedAdditionaly)
                                     {
                                         string tmpName = null;
                                         HashSet<ThreeAddressCode> hashSet = null;
@@ -113,6 +109,8 @@ namespace SimpleLang.Optimizations
                                         }
                                         else
                                         {
+                                            if (!infoDictionary.ContainsKey(sourceExpr))
+                                                break;
                                             var info = infoDictionary[sourceExpr];
                                             tmpName = info.Item1;
                                             hashSet = info.Item2;
