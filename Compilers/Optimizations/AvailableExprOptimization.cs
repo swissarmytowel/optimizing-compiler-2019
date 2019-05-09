@@ -9,41 +9,134 @@ using SimpleLang.CFG;
 
 namespace SimpleLang.Optimizations
 {
+    using TacExprInfoDictionary = Dictionary<TacExpr, Tuple<string, HashSet<ThreeAddressCode>>>;
+
+    struct TacExpr
+    {
+        public string FirstOperand;
+        public string Operation;
+        public string SecondOperand;
+
+        public TacExpr(string firstOperand, string operation, string secondOperand)
+        {
+            FirstOperand = firstOperand;
+            Operation = operation;
+            SecondOperand = secondOperand;
+        }
+
+        public TacNode CreateAssignNode(string idName)
+        {
+            TacNode assignNode = new TacAssignmentNode()
+            {
+                LeftPartIdentifier = idName,
+                FirstOperand = this.FirstOperand,
+                Operation = this.Operation,
+                SecondOperand = this.SecondOperand
+            };
+            return assignNode;
+        }
+    }
+
     class AvailableExprOptimization : ICFGOptimizer
     {
-        class TacExpr
-        {
-            public string FisrtOperand;
-            public string Operation;
-            public string SecondOperand;
+        TacExprInfoDictionary infoDictionary = new TacExprInfoDictionary();
 
-            public TacExpr(string fisrtOperand, string secondOperand, string operation)
+        private void OptimizationInBlock(TacExpr expr, ThreeAddressCode block, string tmpName)
+        {
+            bool isChange = false;
+            var taCode = block.TACodeLines.First;
+            while (taCode != null)
             {
-                FisrtOperand = fisrtOperand;
-                Operation = operation;
-                SecondOperand = secondOperand;      
+                var node = taCode.Value;
+                if (node is TacAssignmentNode assign)
+                {
+                    TacExpr nodeExpr = new TacExpr(assign.FirstOperand, assign.Operation, assign.SecondOperand);
+                    string id = assign.LeftPartIdentifier;
+                    if (id == expr.FirstOperand || id == expr.SecondOperand)
+                        isChange = true;
+                    if (nodeExpr.Equals(expr) && id != tmpName)
+                    {
+                        assign.FirstOperand = tmpName;
+                        assign.Operation = null;
+                        assign.SecondOperand = null;
+                        if (isChange)
+                        {
+                            isChange = false;
+                            block.TACodeLines.AddBefore(block.TACodeLines.Find(node), expr.CreateAssignNode(tmpName));
+                        }
+                    }
+                }
+                taCode = taCode.Next;
             }
         }
 
         public bool Optimize(ControlFlowGraph cfg)
         {
-            var bb = cfg.Blocks;
             bool isUsed = false;
-            Dictionary<TacExpr, Dictionary<ThreeAddressCode, ThreeAddressCode>> links;
-            foreach (var block in bb.BasicBlockItems)
+            var bb = cfg.Blocks;
+            for (int source = 0; source < bb.BasicBlockItems.Count(); source++)
             {
-                foreach (var elem in block.TACodeLines)
+                var sourceBlock = bb.BasicBlockItems[source];
+                var sourceCodeLine = sourceBlock.TACodeLines.First;
+                while (sourceCodeLine != null)
                 {
-                    if (elem is TacAssignmentNode aNode)
+                    var sourceNode = sourceCodeLine.Value;
+                    if (sourceNode is TacAssignmentNode sourceAssign)
                     {
-                        TacExpr expr = new TacExpr(aNode.FirstOperand, aNode.Operation, aNode.SecondOperand);
+                        if (sourceAssign.SecondOperand == null) break;
+                        TacExpr sourceExpr = new TacExpr(sourceAssign.FirstOperand, sourceAssign.Operation, sourceAssign.SecondOperand);
+                        for (int target = 0; target < bb.BasicBlockItems.Count(); target++)
+                        {
+                            var targetBlock = bb.BasicBlockItems[target];
+                            var targetCodeLine = targetBlock.TACodeLines.First;
+                            while (targetCodeLine != null)
+                            {
+                                var targetNode = targetCodeLine.Value;
+                                if (targetNode == sourceNode)
+                                    break;
+                                if (targetNode is TacAssignmentNode targetAssign)
+                                {
+                                    TacExpr targetExpr = new TacExpr(targetAssign.FirstOperand, targetAssign.Operation, targetAssign.SecondOperand);
+                                    if (targetExpr.Equals(sourceExpr))
+                                    {
+                                        string tmpName = null;
+                                        HashSet<ThreeAddressCode> hashSet = null;
+                                        bool isIdVar = infoDictionary.ContainsKey(sourceExpr);
+                                        if (!isIdVar)
+                                        {
+                                            tmpName = TmpNameManager.Instance.GenerateTmpVariableName();
+                                            sourceBlock.TACodeLines.AddBefore(sourceBlock.TACodeLines.Find(sourceNode), sourceExpr.CreateAssignNode(tmpName));
+                                            OptimizationInBlock(sourceExpr, sourceBlock, tmpName);
+                                            hashSet = new HashSet<ThreeAddressCode>();
+                                            hashSet.Add(sourceBlock);
+                                            infoDictionary.Add(sourceExpr, new Tuple<string, HashSet<ThreeAddressCode>>(tmpName, hashSet));
+                                        }
+                                        else
+                                        {
+                                            var info = infoDictionary[sourceExpr];
+                                            tmpName = info.Item1;
+                                            hashSet = info.Item2;
+                                        }
+                                        if (sourceBlock == targetBlock)
+                                            break;
+                                        bool isOptim = hashSet.Contains(targetBlock);
+                                        if (!isOptim)
+                                        {
+                                            isUsed = true;
+                                            hashSet.Add(targetBlock);
+                                            OptimizationInBlock(sourceExpr, targetBlock, tmpName);
+                                            break;
+                                        }
+                                    }
+                                }
+                                targetCodeLine = targetCodeLine.Next;
+                            }
+                        }
                     }
-                    if (elem is TacGotoNode gNode)
-                    {
-                        //gNode.
-                    }
+                    sourceCodeLine = sourceCodeLine.Next;
                 }
             }
+
             return isUsed;
         }
     }

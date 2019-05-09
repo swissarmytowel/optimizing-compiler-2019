@@ -171,6 +171,12 @@ namespace SimpleCompiler
                     cfg.Construct(threeAddressCodeVisitor.TACodeContainer);
                     Console.WriteLine(cfg);
                     cfg.SaveToFile(@"cfg.txt");
+
+                    Console.WriteLine(threeAddressCodeVisitor.TACodeContainer);
+                    var availExprOpt = new AvailableExprOptimization();
+                    availExprOpt.Optimize(cfg);
+                    Console.WriteLine("algebraic identity optimization");
+                    Console.WriteLine(threeAddressCodeVisitor.TACodeContainer);
                 }
             }
             catch (FileNotFoundException)
