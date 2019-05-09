@@ -99,6 +99,8 @@
     <Compile Include="Optimizations\BasicBlocks.cs" />
     <Compile Include="Visitors\ZeroMulOptVisitor.cs" />
     <Compile Include="Visitors\CompareToItselfFalseOptVisitor.cs" />
+    <Compile Include="GenKill\Iterfaces\IReachingDefinition.cs" />
+    <Compile Include="GenKill\VariableDefinitionGen.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
@@ -109,6 +111,10 @@
     <Content Include="a.txt" />
     <Content Include="Optimizations\README.md" />
     <Content Include="TACode\README.md" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="GenKill\" />
+    <Folder Include="GenKill\Iterfaces\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
