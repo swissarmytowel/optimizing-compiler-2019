@@ -5,10 +5,8 @@ using System.Collections.Generic;
 using SimpleLang.TACode.TacNodes;
 using SimpleLang.TACode;
 
-
 namespace SimpleLang.Optimizations
 {
-
     public class BasicBlocks : IEnumerable
     {
         public List<ThreeAddressCode> BasicBlockItems { get; set; }

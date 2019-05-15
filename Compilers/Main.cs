@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using SimpleLang.Optimizations.DefUse;
 using SimpleLang.CFG;
+using SimpleLang.TACode;
 using SimpleLang.TACode.TacNodes;
 using SimpleScanner;
 using SimpleParser;
@@ -91,20 +92,20 @@ namespace SimpleCompiler
                     var ifNodeWithBoolExpr = new IfNodeWithBoolExprVisitor();
                     parser.root.Visit(ifNodeWithBoolExpr);
 
-                    var plusZeroExpr = new PlusZeroExprVisitor();
-                    parser.root.Visit(plusZeroExpr);
-//
-//                    var alwaysElse = new AlwaysElseVisitor();
-//                    parser.root.Visit(alwaysElse);
-//
-//                    var checkTruth = new CheckTruthVisitor();
-//                    parser.root.Visit(checkTruth);
-//
-//                    Console.WriteLine("Оптимизированная программа");
-//                    printv = new PrettyPrintVisitor(true);
-//                    r.Visit(printv);
-//                    Console.WriteLine(printv.Text);
-//                    Console.WriteLine("-------------------------------");
+                    //var plusZeroExpr = new PlusZeroExprVisitor();
+                    //parser.root.Visit(plusZeroExpr);
+
+                    //var alwaysElse = new AlwaysElseVisitor();
+                    //parser.root.Visit(alwaysElse);
+
+                    //var checkTruth = new CheckTruthVisitor();
+                    //parser.root.Visit(checkTruth);
+
+                    //Console.WriteLine("Оптимизированная программа");
+                    //printv = new PrettyPrintVisitor(true);
+                    //r.Visit(printv);
+                    //Console.WriteLine(printv.Text);
+                    //Console.WriteLine("-------------------------------");
 
                     Console.WriteLine("Оптимизированная программа");
                     printv = new PrettyPrintVisitor(true);
@@ -162,6 +163,14 @@ namespace SimpleCompiler
                     gotoOpt.Optimize(threeAddressCodeVisitor.TACodeContainer);
                     Console.WriteLine("Goto optimization");
                     Console.WriteLine(threeAddressCodeVisitor.TACodeContainer);
+
+                    var elimintaion = new EliminateTranToTranOpt();
+                    elimintaion.Optimize(threeAddressCodeVisitor.TACodeContainer);
+                    Console.WriteLine("Удаление переходов к переходам завершилось");
+
+                    var unreachableCode = new UnreachableCodeOpt();
+                    var res = unreachableCode.Optimize(threeAddressCodeVisitor.TACodeContainer);
+                    Console.WriteLine("Оптимизация для недостижимых блоков");
 
                     var algOpt = new AlgebraicIdentityOptimization();
                     algOpt.Optimize(threeAddressCodeVisitor.TACodeContainer);
