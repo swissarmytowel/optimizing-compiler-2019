@@ -59,6 +59,7 @@ namespace SimpleLang.Optimizations
                         tac[line.Label] = new TacGotoNode { Label = ifGotoNode.Label, TargetLabel = ifGotoNode.TargetLabel };
                         tac.RemoveNodes(linesToDelete);
                         linesToDelete.Clear();
+                        isApplied = true;
                     }
                 }
                 currentNode = currentNode.Next;

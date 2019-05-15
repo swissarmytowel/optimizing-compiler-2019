@@ -124,19 +124,19 @@ namespace SimpleCompiler
                     Console.WriteLine("Goto optimization");
                     Console.WriteLine(threeAddressCodeVisitor.TACodeContainer);
 
-                    //var elimintaion = new RemoveTranToTranOpt();
-                    //elimintaion.Optimize(threeAddressCodeVisitor.TACodeContainer);
-                    //Console.WriteLine("Удаление переходов к переходам завершилось");
+                    var elimintaion = new EliminateTranToTranOpt();
+                    elimintaion.Optimize(threeAddressCodeVisitor.TACodeContainer);
+                    Console.WriteLine("Удаление переходов к переходам завершилось");
 
-                    var tmpTac = new ThreeAddressCode();
-                    tmpTac.PushNode(new TacIfGotoNode { Condition = "true", TargetLabel = "L1" });
-                    tmpTac.PushNode(new TacEmptyNode());
-                    tmpTac.PushNode(new TacAssignmentNode { Label="L1", Operation="+", FirstOperand="1", SecondOperand="2" });
+                    //var tmpTac = new ThreeAddressCode();
+                    //tmpTac.PushNode(new TacIfGotoNode { Condition = "true", TargetLabel = "L1" });
+                    //tmpTac.PushNode(new TacEmptyNode());
+                    //tmpTac.PushNode(new TacAssignmentNode { Label="L1", Operation="+", FirstOperand="1", SecondOperand="2" });
 
 
-                    var unreachableCode = new UnreachableCodeOpt();
-                    var res = unreachableCode.Optimize(tmpTac);
-                    Console.WriteLine(res);
+                    //var unreachableCode = new UnreachableCodeOpt();
+                    //var res = unreachableCode.Optimize(tmpTac);
+                    //Console.WriteLine(res);
 
                     //var bblocks = new BasicBlocks();
                     //bblocks.SplitTACode(threeAddressCodeVisitor.TACodeContainer);
