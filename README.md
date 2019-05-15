@@ -33,3 +33,5 @@ Project for Optimizing Compilers Development course, IMM&amp;CS, spring 2019
   - Ответственные за интегрирующую программу
 - Ульянов
   - Ответственный за документацию
+- Тян
+  - Ответственный за тесты
