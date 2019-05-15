@@ -91,18 +91,18 @@ namespace SimpleCompiler
 
                     var plusZeroExpr = new PlusZeroExprVisitor();
                     parser.root.Visit(plusZeroExpr);
-//
-//                    var alwaysElse = new AlwaysElseVisitor();
-//                    parser.root.Visit(alwaysElse);
-//
-//                    var checkTruth = new CheckTruthVisitor();
-//                    parser.root.Visit(checkTruth);
-//
-//                    Console.WriteLine("Оптимизированная программа");
-//                    printv = new PrettyPrintVisitor(true);
-//                    r.Visit(printv);
-//                    Console.WriteLine(printv.Text);
-//                    Console.WriteLine("-------------------------------");
+
+                    var alwaysElse = new AlwaysElseVisitor();
+                    parser.root.Visit(alwaysElse);
+
+                    var checkTruth = new CheckTruthVisitor();
+                    parser.root.Visit(checkTruth);
+
+                    Console.WriteLine("Оптимизированная программа");
+                    printv = new PrettyPrintVisitor(true);
+                    r.Visit(printv);
+                    Console.WriteLine(printv.Text);
+                    Console.WriteLine("-------------------------------");
 
                     Console.WriteLine("Оптимизированная программа");
                     printv = new PrettyPrintVisitor(true);
@@ -128,30 +128,24 @@ namespace SimpleCompiler
                     elimintaion.Optimize(threeAddressCodeVisitor.TACodeContainer);
                     Console.WriteLine("Удаление переходов к переходам завершилось");
 
-                    //var tmpTac = new ThreeAddressCode();
-                    //tmpTac.PushNode(new TacIfGotoNode { Condition = "true", TargetLabel = "L1" });
-                    //tmpTac.PushNode(new TacEmptyNode());
-                    //tmpTac.PushNode(new TacAssignmentNode { Label="L1", Operation="+", FirstOperand="1", SecondOperand="2" });
+                    var unreachableCode = new UnreachableCodeOpt();
+                    var res = unreachableCode.Optimize(threeAddressCodeVisitor.TACodeContainer);
+                    Console.WriteLine("Оптимизация для недостижимых блоков");
 
+                    var bblocks = new BasicBlocks();
+                    bblocks.SplitTACode(threeAddressCodeVisitor.TACodeContainer);
+                    Console.WriteLine("Разбиение на базовые блоки завершилось");
+                    Console.WriteLine();
 
-                    //var unreachableCode = new UnreachableCodeOpt();
-                    //var res = unreachableCode.Optimize(tmpTac);
-                    //Console.WriteLine(res);
+                    var varsForBlocks = Enumerable.Repeat(new string[] { "a", "t1", "t2" }, bblocks.BasicBlockItems.Count);
+                    var defUseSet = new DefUseSetForBlocks(bblocks, varsForBlocks);
+                    Console.WriteLine("DefUSeSet для базовых блоков");
+                    Console.WriteLine(defUseSet);
 
-                    //var bblocks = new BasicBlocks();
-                    //bblocks.SplitTACode(threeAddressCodeVisitor.TACodeContainer);
-                    //Console.WriteLine("Разбиение на базовые блоки завершилось");
-                    //Console.WriteLine();
-
-                    //var varsForBlocks = Enumerable.Repeat(new string[] { "a", "t1", "t2" }, bblocks.BasicBlockItems.Count);
-                    //var defUseSet = new DefUseSetForBlocks(bblocks, varsForBlocks);
-                    //Console.WriteLine("DefUSeSet для базовых блоков");
-                    //Console.WriteLine(defUseSet);
-
-                    //var cfg = new ControlFlowGraph();
-                    //cfg.Construct(threeAddressCodeVisitor.TACodeContainer);
-                    //Console.WriteLine(cfg);
-                    //cfg.SaveToFile(@"cfg.txt");
+                    var cfg = new ControlFlowGraph();
+                    cfg.Construct(threeAddressCodeVisitor.TACodeContainer);
+                    Console.WriteLine(cfg);
+                    cfg.SaveToFile(@"cfg.txt");
                 }
             }
             catch (FileNotFoundException)
