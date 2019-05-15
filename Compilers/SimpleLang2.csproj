@@ -53,9 +53,11 @@
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
+    <Reference Include="nunit.framework" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="InOut\InOutContainer.cs" />
+    <Compile Include="Optimizations\AvailableExprOptimization.cs" />
     <Compile Include="Optimizations\DefUse\DefUseConstPropagation.cs" />
     <Compile Include="Optimizations\DefUse\DefUseCopyPropagation.cs" />
     <Compile Include="Optimizations\DefUse\DefUseDetector.cs" />
@@ -105,6 +107,8 @@
     <Compile Include="Optimizations\BasicBlocks.cs" />
     <Compile Include="Visitors\ZeroMulOptVisitor.cs" />
     <Compile Include="Visitors\CompareToItselfFalseOptVisitor.cs" />
+    <Compile Include="Optimizations\UnreachableCodeOpt.cs" />
+    <Compile Include="Optimizations\EliminateTranToTranOpt.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
