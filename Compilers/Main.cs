@@ -3,6 +3,8 @@ using System.IO;
 using System.Text;
 using System.Reflection;
 using System.Collections.Generic;
+using System.Linq;
+using SimpleLang.Optimizations.DefUse;
 using SimpleLang.CFG;
 using SimpleLang.TACode;
 using SimpleLang.TACode.TacNodes;
@@ -11,6 +13,7 @@ using SimpleParser;
 using SimpleLang.Visitors;
 using SimpleLang.Optimizations;
 using System.Linq;
+
 
 namespace SimpleCompiler
 {
@@ -112,8 +115,45 @@ namespace SimpleCompiler
 
                     var threeAddressCodeVisitor = new ThreeAddressCodeVisitor();
                     r.Visit(threeAddressCodeVisitor);
+
+                    var cfg = new ControlFlowGraph();
+                    cfg.Construct(threeAddressCodeVisitor.TACodeContainer);
+                    Console.WriteLine(cfg);
+                    cfg.SaveToFile(@"cfg.txt");
+
+                    Console.WriteLine(threeAddressCodeVisitor.TACodeContainer);
+                    var availExprOpt = new AvailableExprOptimization();
+                    availExprOpt.Optimize(cfg);
+                    Console.WriteLine("======= After algebraic identity =======");
+                    Console.WriteLine(threeAddressCodeVisitor.TACodeContainer);
+
+                    Console.WriteLine("======= DV =======");
+                    Console.WriteLine(threeAddressCodeVisitor);
+                    var detector = new DefUseDetector();
+                    detector.DetectAndFillDefUse(threeAddressCodeVisitor.TACodeContainer);
+                    //Console.WriteLine("======= Detector 1 =======");
+                    //Console.WriteLine(detector);
+                    //Console.WriteLine("======= Detector 2 =======");
+                    //Console.WriteLine(detector.ToString2());
+                    var constPropagationOptimizer = new DefUseConstPropagation(detector);
+                    var result = constPropagationOptimizer.Optimize(threeAddressCodeVisitor.TACodeContainer);
+
+                    Console.WriteLine("======= After const propagation =======");
                     Console.WriteLine(threeAddressCodeVisitor);
 
+                    result = constPropagationOptimizer.Optimize(threeAddressCodeVisitor.TACodeContainer);
+                    Console.WriteLine("======= After const propagation =======");
+                    Console.WriteLine(threeAddressCodeVisitor);
+
+                    var copyPropagationOptimizer = new DefUseCopyPropagation(detector);
+                    result = copyPropagationOptimizer.Optimize(threeAddressCodeVisitor.TACodeContainer);
+
+                    Console.WriteLine("======= After copy propagation =======");
+                    Console.WriteLine(threeAddressCodeVisitor);
+
+                    //var bblocks = new BasicBlocks();
+                    //bblocks.SplitTACode(threeAddressCodeVisitor.TACodeContainer);
+                    //Console.WriteLine("Разбиение на базовые блоки завершилось");
                     var emptyopt = new EmptyNodeOptimization();
                     emptyopt.Optimize(threeAddressCodeVisitor.TACodeContainer);
                     Console.WriteLine("Empty node optimization");
@@ -132,6 +172,11 @@ namespace SimpleCompiler
                     var res = unreachableCode.Optimize(threeAddressCodeVisitor.TACodeContainer);
                     Console.WriteLine("Оптимизация для недостижимых блоков");
 
+                    var algOpt = new AlgebraicIdentityOptimization();
+                    algOpt.Optimize(threeAddressCodeVisitor.TACodeContainer);
+                    Console.WriteLine("algebraic identity optimization");
+                    Console.WriteLine(threeAddressCodeVisitor.TACodeContainer);
+
                     var bblocks = new BasicBlocks();
                     bblocks.SplitTACode(threeAddressCodeVisitor.TACodeContainer);
                     Console.WriteLine("Разбиение на базовые блоки завершилось");
@@ -141,11 +186,6 @@ namespace SimpleCompiler
                     var defUseSet = new DefUseSetForBlocks(bblocks, varsForBlocks);
                     Console.WriteLine("DefUSeSet для базовых блоков");
                     Console.WriteLine(defUseSet);
-
-                    var cfg = new ControlFlowGraph();
-                    cfg.Construct(threeAddressCodeVisitor.TACodeContainer);
-                    Console.WriteLine(cfg);
-                    cfg.SaveToFile(@"cfg.txt");
                 }
             }
             catch (FileNotFoundException)

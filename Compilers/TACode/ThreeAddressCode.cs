@@ -17,6 +17,7 @@ namespace SimpleLang.TACode
         /// </summary>
         public LinkedList<TacNode> TACodeLines { get; }
         
+        
         public TacNode this[string label]
         {
             get => GetNodeByLabel(label);
