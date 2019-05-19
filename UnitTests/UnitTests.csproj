@@ -49,6 +49,7 @@
     <Reference Include="System.Core" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="OptimizationTests\CommonSubexprOptimizationTests.cs" />
     <Compile Include="OptimizationTests\ConstsConvolutionTests.cs" />
     <Compile Include="OptimizationTests\LVNTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
