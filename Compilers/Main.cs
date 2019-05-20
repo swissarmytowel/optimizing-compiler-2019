@@ -125,7 +125,7 @@ namespace SimpleCompiler
                     var availExprOpt = new AvailableExprOptimization();
                     availExprOpt.Optimize(cfg);
                     Console.WriteLine("======= After algebraic identity =======");
-                    Console.WriteLine(threeAddressCodeVisitor.TACodeContainer);
+                    Console.WriteLine(cfg);
 
                     Console.WriteLine("======= DV =======");
                     Console.WriteLine(threeAddressCodeVisitor);
