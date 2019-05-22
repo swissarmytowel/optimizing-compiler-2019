@@ -106,6 +106,10 @@
     <Compile Include="Optimizations\BasicBlocks.cs" />
     <Compile Include="Visitors\ZeroMulOptVisitor.cs" />
     <Compile Include="Visitors\CompareToItselfFalseOptVisitor.cs" />
+    <Compile Include="GenKill\Interfaces\IGenKillVisitor.cs" />
+    <Compile Include="GenKill\Interfaces\IGenKillContainer.cs" />
+    <Compile Include="GenKill\Implementations\GenKillVisitor.cs" />
+    <Compile Include="GenKill\Implementations\GenKillConatainer.cs" />
     <Compile Include="Optimizations\UnreachableCodeOpt.cs" />
     <Compile Include="Optimizations\EliminateTranToTranOpt.cs" />
   </ItemGroup>
@@ -118,6 +122,11 @@
     <Content Include="a.txt" />
     <Content Include="Optimizations\README.md" />
     <Content Include="TACode\README.md" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="GenKill\" />
+    <Folder Include="GenKill\Interfaces\" />
+    <Folder Include="GenKill\Implementations\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
