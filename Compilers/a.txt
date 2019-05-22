@@ -1,5 +1,6 @@
-a = true || false;
-for (i=1 to 10)
-    for (j=1 to 10)
-        if(a)
-          c = 45;
+c = 123;
+if (true) {
+    c = 3;
+} else {
+    c = 456;
+}

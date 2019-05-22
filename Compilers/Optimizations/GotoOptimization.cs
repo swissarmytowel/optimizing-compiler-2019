@@ -14,7 +14,6 @@ namespace SimpleLang.Optimizations
         {
             bool isUsed = false;
             var node = tac.TACodeLines.First;
-            
             while (node != null)
             {
                 var next = node.Next;
@@ -32,6 +31,7 @@ namespace SimpleLang.Optimizations
                         ifVal.TargetLabel = (nextVal as TacGotoNode).TargetLabel;
                         var remove = next;
                         next = next.Next;
+                        next.Value.Label = null;
                         tac.TACodeLines.Remove(remove);
                     }
                 }

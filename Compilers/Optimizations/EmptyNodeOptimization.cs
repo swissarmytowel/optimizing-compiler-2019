@@ -15,9 +15,11 @@ namespace SimpleLang.Optimizations
             bool isUsed = false;
             var node = tac.TACodeLines.First;
 
-            while (node != null)
+            while (true)
             {
                 var next = node.Next;
+                if (next == null)
+                    break;
                 var val = node.Value;
                 var label = val.Label;
                 if (val is TacEmptyNode)

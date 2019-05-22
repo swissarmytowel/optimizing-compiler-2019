@@ -34,6 +34,10 @@ namespace SimpleLang.Visitors
             Indent -= 2;
         }
 
+        public override void VisitFunctionNode(FunctionNode fun)
+        {
+            Text += fun.Сall;
+        }
         public override void VisitIdNode(IdNode id) 
         {
             Text += id.Name;

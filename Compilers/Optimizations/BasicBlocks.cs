@@ -5,29 +5,27 @@ using System.Collections.Generic;
 using SimpleLang.TACode.TacNodes;
 using SimpleLang.TACode;
 
-
 namespace SimpleLang.Optimizations
 {
-
     public class BasicBlocks : IEnumerable
     {
         public List<ThreeAddressCode> BasicBlockItems { get; set; }
 
         public BasicBlocks() => BasicBlockItems = new List<ThreeAddressCode>();
 
-        private HashSet<object> FindLeaders(ThreeAddressCode RawTACode)
+        private HashSet<TacNode> FindLeaders(ThreeAddressCode RawTACode)
         {
             var previousGoto = false;
-            var firstLabel = RawTACode.TACodeLines.First.Value.Label;
-            var leaderLabels = new HashSet<object>{ firstLabel };
+            var firstTAC = RawTACode.TACodeLines.First.Value;
+            var leaderLabels = new HashSet<TacNode>{ firstTAC };
 
             foreach(var currentElement in RawTACode)
             {
                 if (previousGoto)
-                    leaderLabels.Add(currentElement.Label);
+                    leaderLabels.Add(currentElement);
 
                 if (currentElement is TacGotoNode gotoNode)
-                    leaderLabels.Add(gotoNode.TargetLabel);
+                    leaderLabels.Add(RawTACode[gotoNode.TargetLabel]);
 
                 previousGoto = currentElement is TacGotoNode;
             }
@@ -42,7 +40,7 @@ namespace SimpleLang.Optimizations
 
             foreach(var currentElement in RawTACode)
             {
-                if (leaderLabels.Contains(currentElement.Label))
+                if (leaderLabels.Contains(currentElement))
                 {
                     if (isFirstLeader) isFirstLeader = false;
                     else

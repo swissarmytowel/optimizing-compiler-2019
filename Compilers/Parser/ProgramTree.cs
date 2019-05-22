@@ -16,6 +16,17 @@ namespace ProgramTree
     {
     }
 
+    public class FunctionNode : ExprNode
+    {
+        public string Сall { get; set; }
+        public FunctionNode(IdNode idNode) { Сall = idNode.Name + "()"; }
+        public override void Visit(Visitor v)
+        {
+            v.VisitFunctionNode(this);
+        }
+        public override string ToString() => Сall;
+    }
+
     public class IdNode : ExprNode
     {
         public string Name { get; set; }

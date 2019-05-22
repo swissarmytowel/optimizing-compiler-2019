@@ -1,6 +1,17 @@
+
+// ==========================================================================
+//  GPPG error listing for yacc source file <SimpleYacc.y>
+// ==========================================================================
+//  Version:  1.3.6
+//  Machine:  DESKTOP-KEBRSVP
+//  DateTime: 20.05.2019 21:47:17
+//  UserName: Max
+// ==========================================================================
+
+
 %{
-// Эти объявления добавляются в класс GPPGParser, представляющий собой парсер, генерируемый системой gppg
-    public BlockNode root; // Корневой узел синтаксического дерева 
+// ГќГІГЁ Г®ГЎГєГїГўГ«ГҐГ­ГЁГї Г¤Г®ГЎГ ГўГ«ГїГѕГІГ±Гї Гў ГЄГ«Г Г±Г± GPPGParser, ГЇГ°ГҐГ¤Г±ГІГ ГўГ«ГїГѕГ№ГЁГ© Г±Г®ГЎГ®Г© ГЇГ Г°Г±ГҐГ°, ГЈГҐГ­ГҐГ°ГЁГ°ГіГҐГ¬Г»Г© Г±ГЁГ±ГІГҐГ¬Г®Г© gppg
+    public BlockNode root; // ГЉГ®Г°Г­ГҐГўГ®Г© ГіГ§ГҐГ« Г±ГЁГ­ГІГ ГЄГ±ГЁГ·ГҐГ±ГЄГ®ГЈГ® Г¤ГҐГ°ГҐГўГ  
     public Parser(AbstractScanner<ValueType, LexLocation> scanner) : base(scanner) { }
 	private bool InDefSect = false;
 %}
@@ -40,6 +51,12 @@ WHILE FOR TO PRINTLN IF ELSE COMMA
 %type <blVal> stlist block
 
 %%
+// Warning: Terminating function fixes the following size-1 NonTerminal set
+   // {function}
+// Error: NonTerminal symbol "function" has no productions
+// Error: There are 1 non-terminating NonTerminal Symbols
+   //  {function}
+// ------------------------------------------------------------------------
 
 progr   : stlist { root = $1; }
 		;
@@ -76,12 +93,17 @@ TYPE : INT | DOUBLE | BOOL;
 
 empty	: { $$ = new EmptyNode(); }
 		;
+
+function : f OPEN_BRACKET CLOSE_BRACKET
 	
 ident 	: ID 
+//^^^
+// Error: Syntax error, unexpected anchoredSymbol
+// ----------------------------------------------
 		{
 			// if (!InDefSect)
 			//	if (!SymbolTable.vars.ContainsKey($1))
-			//		throw new Exception("("+@1.StartLine+","+@1.StartColumn+"): Переменная "+$1+" не описана");
+			//		throw new Exception("("+@1.StartLine+","+@1.StartColumn+"): ГЏГҐГ°ГҐГ¬ГҐГ­Г­Г Гї "+$1+" Г­ГҐ Г®ГЇГЁГ±Г Г­Г ");
 			$$ = new IdNode($1); 
 		}
 		| ID OPEN_SQUARE expr CLOSE_SQUARE
@@ -156,7 +178,7 @@ F       : S { $$ = $1 as ExprNode; }
         ;
         
 S       : ident { $$ = $1 as IdNode; }
-		| ident OPEN_BRACKET CLOSE_BRACKET { $$ = new FunctionNode($1 as IdNode); }
+		| function { $$ = $1 as FunctionNode; }
         | NOT S { $$ = new LogicNotNode($2); }
         | INUM { $$ = new IntNumNode($1); }
         | RNUM { $$ = new DoubleNumNode($1); }
@@ -165,4 +187,6 @@ S       : ident { $$ = $1 as IdNode; }
         | OPEN_BRACKET expr CLOSE_BRACKET { $$ = $2 as ExprNode; }
         ;
 %%
+
+// ==========================================================================
 

@@ -53,10 +53,16 @@
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
+    <Reference Include="nunit.framework" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Optimizations\AvailableExprOptimization.cs" />
+    <Compile Include="Optimizations\CommonSubexprOptimization.cs" />
+    <Compile Include="Optimizations\DefUse\DefUseConstPropagation.cs" />
+    <Compile Include="Optimizations\DefUse\DefUseCopyPropagation.cs" />
+    <Compile Include="Optimizations\DefUse\DefUseDetector.cs" />
     <Compile Include="CFG\ControlFlowGraph.cs" />
-    <Compile Include="CFG\Visualization\DotPrinter.cs" />
+    <Compile Include="Optimizations\AlgebraicIdentityOptimization.cs" />
     <Compile Include="Optimizations\ConvConstOptimization.cs" />
     <Compile Include="Optimizations\CopyPropagationOptimization.cs" />
     <Compile Include="Optimizations\DeadCodeOptimization.cs" />
@@ -72,6 +78,7 @@
     <Compile Include="TACode\TacNodes\TacNode.cs" />
     <Compile Include="TACode\ThreeAddressCode.cs" />
     <Compile Include="TACode\TmpNameManager.cs" />
+    <Compile Include="Utility\Utility.cs" />
     <Compile Include="Visitors\AlwaysElseVisitor.cs" />
     <Compile Include="Visitors\AssignCountVisitor.cs" />
     <Compile Include="Visitors\AutoVisitor.cs" />
@@ -103,6 +110,8 @@
     <Compile Include="GenKill\Interfaces\IGenKillContainer.cs" />
     <Compile Include="GenKill\Implementations\GenKillVisitor.cs" />
     <Compile Include="GenKill\Implementations\GenKillConatainer.cs" />
+    <Compile Include="Optimizations\UnreachableCodeOpt.cs" />
+    <Compile Include="Optimizations\EliminateTranToTranOpt.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

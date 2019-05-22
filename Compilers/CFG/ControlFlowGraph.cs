@@ -1,11 +1,10 @@
 ﻿using System.IO;
 using System.Linq;
+using System.Text;
 using SimpleLang.Optimizations;
 using SimpleLang.TACode;
 using SimpleLang.TACode.TacNodes;
 using QuickGraph;
-using QuickGraph.Graphviz;
-using SimpleLang.CFG.Visualization;
 
 namespace SimpleLang.CFG
 {
@@ -71,14 +70,28 @@ namespace SimpleLang.CFG
 
         public override string ToString()
         {
-            var graphviz = new GraphvizAlgorithm<ThreeAddressCode, Edge<ThreeAddressCode>>(this);
-            graphviz.FormatVertex += VizFormatVertex;
-            return graphviz.Generate(new DotPrinter(), "");
-        }
+            if (IsVerticesEmpty)
+                return "Empty CFG.";
 
-        private static void VizFormatVertex<TVertex>(object sender, FormatVertexEventArgs<TVertex> e)
-        {
-            e.VertexFormatter.Label = $"Basic block:\n{e.Vertex}";
+            var currentIndex = 0;
+            var indices = Vertices.ToDictionary(vertex => vertex, _ => currentIndex++);
+            
+            var stringBuilder = new StringBuilder();
+
+            stringBuilder.AppendLine("VERTICES");
+            stringBuilder.Append(Vertices
+                .Select((tac, idx) => $"#{idx}:\n{tac}\n")
+                .Aggregate("", (acc, cur) => acc + cur));
+
+            stringBuilder.AppendLine("EDGES");
+            foreach (var vertex in Vertices)
+            {
+                var targetVertices = OutEdges(vertex).Select(x => indices[x.Target]);
+                stringBuilder.AppendLine(
+                    $"{indices[vertex]} -> [{targetVertices.Aggregate(" ", (acc, cur) => acc + cur + " ")}]");
+            }
+
+            return stringBuilder.ToString();
         }
     }
 }
