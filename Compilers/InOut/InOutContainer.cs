@@ -1,5 +1,7 @@
-﻿using SimpleLang.Optimizations;
+﻿using SimpleLang.GenKill.Interfaces;
+using SimpleLang.Optimizations;
 using SimpleLang.TACode;
+using SimpleLang.TACode.TacNodes;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,39 +12,72 @@ namespace SimpleLang.InOut
 {
     class InOutContainer
     {
+        public Dictionary<OneBasicBlock, HashSet<TacNode>> In = new Dictionary<OneBasicBlock, HashSet<TacNode>>();
+        public Dictionary<OneBasicBlock, HashSet<TacNode>> Out = new Dictionary<OneBasicBlock, HashSet<TacNode>>();
 
-#region
-        // TO DO :: Заменить на GenKill Миши и Димы
-        class GenKill
-        {
-            Dictionary<OneBasicBlock, HashSet<string>> gen = new Dictionary<OneBasicBlock, HashSet<string>>();
-            Dictionary<OneBasicBlock, HashSet<string>> kill = new Dictionary<OneBasicBlock, HashSet<string>>();
-
-            public Dictionary<OneBasicBlock, HashSet<string>> Gen { get { return gen; } }
-            public Dictionary<OneBasicBlock, HashSet<string>> Kill { get { return kill; } }
-        }
-#endregion
-
-        Dictionary<OneBasicBlock, HashSet<string>> In = new Dictionary<OneBasicBlock, HashSet<string>>();
-        Dictionary<OneBasicBlock, HashSet<string>> Out = new Dictionary<OneBasicBlock, HashSet<string>>();
-
-        InOutContainer(BasicBlocks bBlocks, GenKill genKillContainer)
+        /// <summary>
+        /// We construct InOutContainer by GenKillContainer in every BasicBlock
+        /// </summary>
+        /// <param name="bBlocks"> All basic blocks </param>
+        /// <param name="genKillContainers"> All gen-kill containers in basic blocks </param>
+        public InOutContainer(BasicBlocks bBlocks, Dictionary<OneBasicBlock, IGenKillContainer> genKillContainers)
         {
             for (int i = 0; i < bBlocks.BasicBlockItems.Count; ++i) {
                 var curBlock = bBlocks.BasicBlockItems[i];
 
                 if (i == 0) {
-                    In[curBlock] = new HashSet<string>();
+                    In[curBlock] = new HashSet<TacNode>();
                 } else {
                     var prevBlock = bBlocks.BasicBlockItems[i - 1];
+                    In[curBlock] = new HashSet<TacNode>();
                     In[curBlock].UnionWith(In[prevBlock]);
                     In[curBlock].UnionWith(Out[prevBlock]);
                 }
-                
-                Out[curBlock] = new HashSet<string>(genKillContainer.Gen[curBlock]
-                    .Union(In[curBlock]
-                    .Except(genKillContainer.Kill[curBlock])));
+
+                if (genKillContainers.ContainsKey(curBlock)) {
+                    Out[curBlock] = new HashSet<TacNode>(genKillContainers[curBlock].GetGen()
+                        .Union(In[curBlock]
+                        .Except(genKillContainers[curBlock].GetKill())));
+                } else {
+                    Out[curBlock] = new HashSet<TacNode>(In[curBlock]);
+                }
             }
+        }
+
+        public override string ToString()
+        {
+            var builder = new StringBuilder();
+            var numBlock = 0;
+
+            foreach (var inItem in In) {
+                builder.Append(string.Format("--- IN {0} :\n", numBlock));
+                if (inItem.Value.Count == 0) {
+                    builder.Append("null");
+                } else {
+                    var tmp = 0;
+                    foreach (var value in inItem.Value) {
+                        builder.Append(string.Format("{0})", tmp++));
+                        builder.Append(value.ToString());
+                        builder.Append("\n");
+                    }
+                }
+                builder.Append(string.Format("\n--- OUT {0}:\n", numBlock));
+                if (Out[inItem.Key].Count == 0) {
+                    builder.Append("null");
+                } else {
+                    var tmp = 0;
+                    foreach (var value in Out[inItem.Key]) {
+                        builder.Append(string.Format("{0})", tmp++));
+                        builder.Append(value.ToString());
+                        builder.Append("\n");
+                    }
+                }
+                builder.Append("\n");
+                numBlock++;
+            }
+            
+            return builder.ToString();
         }
     }
 }
+
