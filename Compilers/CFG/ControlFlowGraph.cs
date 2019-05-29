@@ -14,12 +14,16 @@ namespace SimpleLang.CFG
 
         public ControlFlowGraph() : base(false) { }
 
+        public ThreeAddressCode EntryBlock => Blocks.BasicBlockItems.First();
+
+        public ThreeAddressCode ExitBlock => Blocks.BasicBlockItems.Last();
+
         public void Construct(ThreeAddressCode tac)
         {
             Blocks = new BasicBlocks();
             Blocks.SplitTACode(tac);
             Construct();
-        }
+        }   
 
         public void Construct(BasicBlocks blocks)
         {
@@ -88,7 +92,7 @@ namespace SimpleLang.CFG
             {
                 var targetVertices = OutEdges(vertex).Select(x => indices[x.Target]);
                 stringBuilder.AppendLine(
-                    $"{indices[vertex]} -> [{targetVertices.Aggregate(" ", (acc, cur) => acc + cur + " ")}]");
+                    $"{indices[vertex]} -> [{targetVertices.Aggregate(" ", (acc, cur) => " " + cur + acc)}]");
             }
 
             return stringBuilder.ToString();
