@@ -9,14 +9,15 @@ namespace SimpleLang.GenKill.Implementations
     public class TFByComposition : ITransmissionFunction
     {
         private ThreeAddressCode basicBlock;
-        private Dictionary<TacNode, IGenKillContainer> lineGenKill;
+        private Dictionary<ThreeAddressCode, IExpressionSetsContainer> lineGenKill;
 
-        TFByComposition(ThreeAddressCode BasicBlock, Dictionary<TacNode, IGenKillContainer> LineGenKill)
+        public TFByComposition(ThreeAddressCode BasicBlock, Dictionary<ThreeAddressCode, IExpressionSetsContainer> LineGenKill)
         {
             basicBlock = BasicBlock;
             lineGenKill = LineGenKill;
         }
 
+        // Это только для базового блока или для одной линии тоже?
         public HashSet<TacNode> Calculate(HashSet<TacNode> _in)
         {
             var func = _in;
@@ -50,12 +51,12 @@ namespace SimpleLang.GenKill.Implementations
 
         public HashSet<TacNode> GetLineGen(TacNode tacNode)
         {
-            return lineGenKill[tacNode].GetGen();
+            return lineGenKill[basicBlock].GetSecondSet();
         }
 
         public HashSet<TacNode> GetLineKill(TacNode tacNode)
         {
-            return lineGenKill[tacNode].GetKill();
+            return lineGenKill[basicBlock].GetFirstSet();
         }
     }
 }
