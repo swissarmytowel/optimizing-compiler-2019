@@ -125,7 +125,7 @@ namespace SimpleCompiler
                     var availExprOpt = new AvailableExprOptimization();
                     availExprOpt.Optimize(cfg);
                     Console.WriteLine("======= After algebraic identity =======");
-                    Console.WriteLine(threeAddressCodeVisitor.TACodeContainer);
+                    Console.WriteLine(cfg);
 
                     Console.WriteLine("======= DV =======");
                     Console.WriteLine(threeAddressCodeVisitor);
@@ -182,8 +182,7 @@ namespace SimpleCompiler
                     Console.WriteLine("Разбиение на базовые блоки завершилось");
                     Console.WriteLine();
 
-                    var varsForBlocks = Enumerable.Repeat(new string[] { "a", "t1", "t2" }, bblocks.BasicBlockItems.Count);
-                    var defUseSet = new DefUseSetForBlocks(bblocks, varsForBlocks);
+                    var defUseSet = new DefUseSetForBlocks(bblocks);
                     Console.WriteLine("DefUSeSet для базовых блоков");
                     Console.WriteLine(defUseSet);
                 }

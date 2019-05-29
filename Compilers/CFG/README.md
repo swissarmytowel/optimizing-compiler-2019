@@ -19,21 +19,43 @@
 Пример результата работы любого из методов:
 
 ```md
-digraph G {
-0 [label="Basic block:
-L1: c = False  
-L2: t1 = 8 + 90
-L3: k = t1  
-L4: d = 0  
-L5: bm = False  
-L6: p = True  
-"];
-1 [label="Basic block:
-L7:
-L8: m = 3  
-"];
-0 -> 1 [];
-}
+VERTICES
+#0:
+i = 1  
+
+#1:
+L1: j = 1  
+
+#2:
+L2: a = 1  
+j = j + 1
+t1 = j < 10
+if t1 goto L2
+
+#3:
+i = i + 1
+t2 = i < 10
+if t2 goto L1
+
+#4:
+i = 1  
+
+#5:
+L3: a = 0  
+
+#6:
+i = i + 1
+t3 = i < 10
+if t3 goto L3
+
+EDGES
+0 -> [ 1 ]
+1 -> [ 2 ]
+2 -> [ 2 3 ]
+3 -> [ 1 4 ]
+4 -> [ 5 ]
+5 -> [ 6 ]
+6 -> [ 5 ]
 ```
 
 ### Класс `BidirectionalGraph<TVertex, TEdge>`
