@@ -1,6 +1,4 @@
-﻿using System.IO;
-using System.Linq;
-using System.Text;
+﻿using System.Linq;
 using SimpleLang.Optimizations;
 using SimpleLang.TACode;
 using SimpleLang.TACode.TacNodes;
@@ -8,45 +6,52 @@ using QuickGraph;
 
 namespace SimpleLang.CFG
 {
-    public class ControlFlowGraph : BidirectionalGraph<ThreeAddressCode, Edge<ThreeAddressCode>>
+    public class ControlFlowGraph : BidirectionalGraph
     {
-        public BasicBlocks Blocks { get; private set; }
+        public ThreeAddressCode EntryBlock => IsVerticesEmpty ? null : Vertices.First();
+        public ThreeAddressCode ExitBlock => IsVerticesEmpty ? null : Vertices.Last();
+        public ThreeAddressCode SourceCode { get; private set; }
 
-        public ControlFlowGraph() : base(false) { }
-
-        public ThreeAddressCode EntryBlock => Blocks.BasicBlockItems.First();
-
-        public ThreeAddressCode ExitBlock => Blocks.BasicBlockItems.Last();
-
-        public void Construct(ThreeAddressCode tac)
+        public ControlFlowGraph(ThreeAddressCode tac)
         {
-            Blocks = new BasicBlocks();
-            Blocks.SplitTACode(tac);
-            Construct();
-        }   
+            SourceCode = tac;
 
-        public void Construct(BasicBlocks blocks)
-        {
-            Blocks = blocks;
-            Construct();
+            if (SourceCode == null || SourceCode.TACodeLines.Count == 0)
+                return;
+
+            Build();
         }
 
-        private void Construct()
+        public DepthSpanningTree GetDepthSpanningTree()
+            => new DepthSpanningTree(this);
+
+        private void Rebuild(ThreeAddressCode tac)
         {
-            Clear();
+            SourceCode = tac;
 
-            AddVertexRange(Blocks.BasicBlockItems);
+            if (SourceCode == null || SourceCode.TACodeLines.Count == 0)
+                return;
 
-            var blocksCount = Blocks.BasicBlockItems.Count;
+            Build();
+        }
+
+        private void Build()
+        {
+            var blocks = new BasicBlocks();
+            blocks.SplitTACode(SourceCode);
+
+            Graph.AddVertexRange(blocks.BasicBlockItems);
+
+            var blocksCount = blocks.BasicBlockItems.Count;
             for (var i = 0; i < blocksCount; ++i)
             {
-                var currentBlock = Blocks.BasicBlockItems[i];
+                var currentBlock = blocks.BasicBlockItems[i];
 
                 if (currentBlock.Last() is TacGotoNode gotoNode)
                 {
-                    var targetBlock = Blocks.BasicBlockItems.Find(
+                    var targetBlock = blocks.BasicBlockItems.Find(
                         x => x.First().Label == gotoNode.TargetLabel);
-                    AddEdge(new Edge<ThreeAddressCode>(currentBlock, targetBlock));
+                    Graph.AddEdge(new Edge<ThreeAddressCode>(currentBlock, targetBlock));
 
                     if (!(currentBlock.Last() is TacIfGotoNode))
                         continue;
@@ -54,48 +59,10 @@ namespace SimpleLang.CFG
 
                 if (i < blocksCount - 1)
                 {
-                    var nextBlock = Blocks.BasicBlockItems[i + 1];
-                    AddEdge(new Edge<ThreeAddressCode>(currentBlock, nextBlock));
+                    var nextBlock = blocks.BasicBlockItems[i + 1];
+                    Graph.AddEdge(new Edge<ThreeAddressCode>(currentBlock, nextBlock));
                 }
             }
-        }
-
-        public void SaveToFile(string fileName)
-        {
-            if (string.IsNullOrEmpty(fileName))
-                return;
-
-            var directoryName = Path.GetDirectoryName(fileName);
-            if (!string.IsNullOrEmpty(directoryName) && !Directory.Exists(directoryName))
-                Directory.CreateDirectory(directoryName);
-            
-            File.WriteAllText(fileName, ToString());
-        }
-
-        public override string ToString()
-        {
-            if (IsVerticesEmpty)
-                return "Empty CFG.";
-
-            var currentIndex = 0;
-            var indices = Vertices.ToDictionary(vertex => vertex, _ => currentIndex++);
-            
-            var stringBuilder = new StringBuilder();
-
-            stringBuilder.AppendLine("VERTICES");
-            stringBuilder.Append(Vertices
-                .Select((tac, idx) => $"#{idx}:\n{tac}\n")
-                .Aggregate("", (acc, cur) => acc + cur));
-
-            stringBuilder.AppendLine("EDGES");
-            foreach (var vertex in Vertices)
-            {
-                var targetVertices = OutEdges(vertex).Select(x => indices[x.Target]);
-                stringBuilder.AppendLine(
-                    $"{indices[vertex]} -> [{targetVertices.Aggregate(" ", (acc, cur) => " " + cur + acc)}]");
-            }
-
-            return stringBuilder.ToString();
         }
     }
 }
