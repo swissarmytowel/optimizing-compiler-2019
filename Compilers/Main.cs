@@ -3,12 +3,17 @@ using System.IO;
 using System.Text;
 using System.Reflection;
 using System.Collections.Generic;
+using System.Linq;
+using SimpleLang.Optimizations.DefUse;
 using SimpleLang.CFG;
+using SimpleLang.TACode;
 using SimpleLang.TACode.TacNodes;
 using SimpleScanner;
 using SimpleParser;
 using SimpleLang.Visitors;
 using SimpleLang.Optimizations;
+using System.Linq;
+
 
 namespace SimpleCompiler
 {
@@ -21,6 +26,7 @@ namespace SimpleCompiler
             try
             {
                 string Text = File.ReadAllText(FileName);
+                Text = Text.Replace('\t', ' ');
 
                 Scanner scanner = new Scanner();
                 scanner.SetSource(Text, 0);
@@ -86,14 +92,20 @@ namespace SimpleCompiler
                     var ifNodeWithBoolExpr = new IfNodeWithBoolExprVisitor();
                     parser.root.Visit(ifNodeWithBoolExpr);
 
-                    var plusZeroExpr = new PlusZeroExprVisitor();
-                    parser.root.Visit(plusZeroExpr);
+                    //var plusZeroExpr = new PlusZeroExprVisitor();
+                    //parser.root.Visit(plusZeroExpr);
 
-                    var alwaysElse = new AlwaysElseVisitor();
-                    parser.root.Visit(alwaysElse);
+                    //var alwaysElse = new AlwaysElseVisitor();
+                    //parser.root.Visit(alwaysElse);
 
-                    var checkTruth = new CheckTruthVisitor();
-                    parser.root.Visit(checkTruth);
+                    //var checkTruth = new CheckTruthVisitor();
+                    //parser.root.Visit(checkTruth);
+
+                    //Console.WriteLine("Оптимизированная программа");
+                    //printv = new PrettyPrintVisitor(true);
+                    //r.Visit(printv);
+                    //Console.WriteLine(printv.Text);
+                    //Console.WriteLine("-------------------------------");
 
                     Console.WriteLine("Оптимизированная программа");
                     printv = new PrettyPrintVisitor(true);
@@ -101,20 +113,78 @@ namespace SimpleCompiler
                     Console.WriteLine(printv.Text);
                     Console.WriteLine("-------------------------------");
 
-
                     var threeAddressCodeVisitor = new ThreeAddressCodeVisitor();
                     r.Visit(threeAddressCodeVisitor);
+
+                    var cfg = new ControlFlowGraph();
+                    cfg.Construct(threeAddressCodeVisitor.TACodeContainer);
+                    Console.WriteLine(cfg);
+                    cfg.SaveToFile(@"cfg.txt");
+
+                    Console.WriteLine(threeAddressCodeVisitor.TACodeContainer);
+                    var availExprOpt = new AvailableExprOptimization();
+                    availExprOpt.Optimize(cfg);
+                    Console.WriteLine("======= After algebraic identity =======");
+                    Console.WriteLine(cfg);
+
+                    Console.WriteLine("======= DV =======");
                     Console.WriteLine(threeAddressCodeVisitor);
+                    var detector = new DefUseDetector();
+                    detector.DetectAndFillDefUse(threeAddressCodeVisitor.TACodeContainer);
+                    //Console.WriteLine("======= Detector 1 =======");
+                    //Console.WriteLine(detector);
+                    //Console.WriteLine("======= Detector 2 =======");
+                    //Console.WriteLine(detector.ToString2());
+                    var constPropagationOptimizer = new DefUseConstPropagation(detector);
+                    var result = constPropagationOptimizer.Optimize(threeAddressCodeVisitor.TACodeContainer);
+
+                    Console.WriteLine("======= After const propagation =======");
+                    Console.WriteLine(threeAddressCodeVisitor);
+
+                    result = constPropagationOptimizer.Optimize(threeAddressCodeVisitor.TACodeContainer);
+                    Console.WriteLine("======= After const propagation =======");
+                    Console.WriteLine(threeAddressCodeVisitor);
+
+                    var copyPropagationOptimizer = new DefUseCopyPropagation(detector);
+                    result = copyPropagationOptimizer.Optimize(threeAddressCodeVisitor.TACodeContainer);
+
+                    Console.WriteLine("======= After copy propagation =======");
+                    Console.WriteLine(threeAddressCodeVisitor);
+
+                    //var bblocks = new BasicBlocks();
+                    //bblocks.SplitTACode(threeAddressCodeVisitor.TACodeContainer);
+                    //Console.WriteLine("Разбиение на базовые блоки завершилось");
+                    var emptyopt = new EmptyNodeOptimization();
+                    emptyopt.Optimize(threeAddressCodeVisitor.TACodeContainer);
+                    Console.WriteLine("Empty node optimization");
+                    Console.WriteLine(threeAddressCodeVisitor.TACodeContainer);
+
+                    var gotoOpt = new GotoOptimization();
+                    gotoOpt.Optimize(threeAddressCodeVisitor.TACodeContainer);
+                    Console.WriteLine("Goto optimization");
+                    Console.WriteLine(threeAddressCodeVisitor.TACodeContainer);
+
+                    var elimintaion = new EliminateTranToTranOpt();
+                    elimintaion.Optimize(threeAddressCodeVisitor.TACodeContainer);
+                    Console.WriteLine("Удаление переходов к переходам завершилось");
+
+                    var unreachableCode = new UnreachableCodeOpt();
+                    var res = unreachableCode.Optimize(threeAddressCodeVisitor.TACodeContainer);
+                    Console.WriteLine("Оптимизация для недостижимых блоков");
+
+                    var algOpt = new AlgebraicIdentityOptimization();
+                    algOpt.Optimize(threeAddressCodeVisitor.TACodeContainer);
+                    Console.WriteLine("algebraic identity optimization");
+                    Console.WriteLine(threeAddressCodeVisitor.TACodeContainer);
 
                     var bblocks = new BasicBlocks();
                     bblocks.SplitTACode(threeAddressCodeVisitor.TACodeContainer);
                     Console.WriteLine("Разбиение на базовые блоки завершилось");
                     Console.WriteLine();
 
-                    var cfg = new ControlFlowGraph();
-                    cfg.Construct(threeAddressCodeVisitor.TACodeContainer);
-                    Console.WriteLine(cfg);
-                    cfg.SaveToFile(@"cfg.txt");
+                    var defUseSet = new DefUseSetForBlocks(bblocks);
+                    Console.WriteLine("DefUSeSet для базовых блоков");
+                    Console.WriteLine(defUseSet);
                 }
             }
             catch (FileNotFoundException)

@@ -27,15 +27,15 @@
 %token BEGIN END CYCLE ASSIGN ASSIGNPLUS ASSIGNMINUS ASSIGNMULT SEMICOLON WRITE
 VAR PLUS MINUS MULT DIV OPEN_BRACKET CLOSE_BRACKET
 OPEN_BLOCK CLOSE_BLOCK OPEN_SQUARE CLOSE_SQUARE
-TRUE FALSE NO AND OR MORE LESS EQUAL NOT_EQUAL MORE_EQUAL LESS_EQUAL
-INT DOUBLE BOOL
+TRUE FALSE NO AND OR MORE LESS EQUAL NOT_EQUAL MORE_EQUAL LESS_EQUAL MOD
+INT DOUBLE BOOL NOT
 WHILE FOR TO PRINTLN IF ELSE COMMA
 
 %token <iVal> INUM 
 %token <dVal> RNUM 
 %token <sVal> ID
 
-%type <eVal> expr ident T F Q K
+%type <eVal> expr ident T F S
 %type <stVal> statement assign block cycle write empty var varlist while for if println idenlist
 %type <blVal> stlist block
 
@@ -91,41 +91,6 @@ assign 	: ident ASSIGN expr { $$ = new AssignNode($1 as IdNode, $3); }
 		| TYPE ident ASSIGN expr { $$ = new AssignNode($2 as IdNode, $4); }
 		;
 
-expr	: Q { $$ = $1; }
-		| TRUE { $$ = new BoolNode(true);}
-		| FALSE { $$ = new BoolNode(false);  }
-		| expr MORE Q { $$ = new BinOpNode($1,$3,">"); }
-		| expr LESS Q { $$ = new BinOpNode($1,$3,"<"); }
-		| expr EQUAL Q { $$ = new BinOpNode($1,$3,"=="); }
-		| expr NOT_EQUAL Q { $$ = new BinOpNode($1,$3,"!="); }
-		| expr MORE_EQUAL Q { $$ = new BinOpNode($1,$3,">="); }
-		| expr LESS_EQUAL Q { $$ = new BinOpNode($1,$3,"<="); }
-		;
-
-Q		: Q PLUS T { $$ = new BinOpNode($1,$3,"+"); }
-		| Q MINUS T { $$ = new BinOpNode($1,$3,"-"); }
-		| T { $$ = $1; }
-		;
-		
-T 		: T MULT K { $$ = new BinOpNode($1,$3,"*"); }
-		| T DIV K { $$ = new BinOpNode($1,$3,"/"); }
-		| K { $$ = $1; }
-		;
-
-K		: F { $$ = $1; }
-		| K AND F { $$ = new BinOpNode($1,$3,"&&"); }
-		| K OR F { $$ = new BinOpNode($1,$3,"||"); }
-		;
-
-// H		: F { $$ = $1; }
-// 		| NO F
-//		;
-		
-F 		: ident  { $$ = $1 as IdNode; }
-		| INUM { $$ = new IntNumNode($1); }
-		| OPEN_BRACKET expr CLOSE_BRACKET { $$ = $2; }
-		;
-
 block	: OPEN_BLOCK stlist CLOSE_BLOCK { $$ = $2; }
 		;
 
@@ -154,7 +119,7 @@ varlist	: ident
 		}
 		;
 
-while	: WHILE OPEN_BRACKET expr CLOSE_BRACKET statement { $$ = new WhileNode($3, $5); }
+while	: WHILE OPEN_BRACKET expr  CLOSE_BRACKET statement { $$ = new WhileNode($3, $5); }
 		;
 
 for		: FOR OPEN_BRACKET assign TO expr CLOSE_BRACKET statement { $$ = new ForNode($3, $5, $7); }
@@ -162,9 +127,42 @@ for		: FOR OPEN_BRACKET assign TO expr CLOSE_BRACKET statement { $$ = new ForNod
 
 println	: PRINTLN OPEN_BRACKET expr CLOSE_BRACKET SEMICOLON
 		;
-if		: IF OPEN_BRACKET expr CLOSE_BRACKET statement { $$ = new IfNode($3, $5); }
-		| IF OPEN_BRACKET expr CLOSE_BRACKET statement ELSE statement { $$ = new IfNode($3, $5, $7); }
+if      : IF OPEN_BRACKET expr CLOSE_BRACKET statement { $$ = new IfNode($3, $5); }
+        | IF OPEN_BRACKET expr CLOSE_BRACKET statement ELSE statement { $$ = new IfNode($3, $5, $7); }
 		;
-	
+
+
+
+expr    : T { $$ = $1; }
+        | expr EQUAL T { $$ = new LogicOpNode($1, $3, "=="); }
+        | expr MORE T { $$ = new LogicOpNode($1, $3, ">"); }
+		| expr LESS T { $$ = new LogicOpNode($1, $3, "<"); }
+		| expr NOT_EQUAL T { $$ = new LogicOpNode($1, $3, "!="); }
+        | expr MORE_EQUAL T { $$ = new LogicOpNode($1, $3, ">="); }
+		| expr LESS_EQUAL T { $$ = new LogicOpNode($1, $3, "<="); }
+        ;
+        
+T       : F { $$ = $1 as ExprNode; }
+        | T PLUS F { $$ = new BinOpNode ( $1, $3, "+"); }
+        | T MINUS F { $$ = new BinOpNode ($1, $3, "-"); }
+		| T OR F { $$ = new LogicOpNode($1, $3, "||"); }
+        ;
+
+F       : S { $$ = $1 as ExprNode; }
+        | F MULT S { $$ = new BinOpNode ( $1, $3, "*"); }
+        | F DIV S { $$ = new BinOpNode ($1, $3, "/"); }
+		| F MOD S { $$ = new LogicOpNode($1, $3, "%"); }
+		| F AND S { $$ = new LogicOpNode($1, $3, "&&"); }
+        ;
+        
+S       : ident { $$ = $1 as IdNode; }
+		| ident OPEN_BRACKET CLOSE_BRACKET { $$ = new FunctionNode($1 as IdNode); }
+        | NOT S { $$ = new LogicNotNode($2); }
+        | INUM { $$ = new IntNumNode($1); }
+        | RNUM { $$ = new DoubleNumNode($1); }
+		| TRUE { $$ = new BoolNode(true); }
+		| FALSE { $$ = new BoolNode(false); }
+        | OPEN_BRACKET expr CLOSE_BRACKET { $$ = $2 as ExprNode; }
+        ;
 %%
 

@@ -53,11 +53,24 @@
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
+    <Reference Include="nunit.framework" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Optimizations\AvailableExprOptimization.cs" />
+    <Compile Include="Optimizations\CommonSubexprOptimization.cs" />
+    <Compile Include="Optimizations\DefUse\DefUseConstPropagation.cs" />
+    <Compile Include="Optimizations\DefUse\DefUseCopyPropagation.cs" />
+    <Compile Include="Optimizations\DefUse\DefUseDetector.cs" />
     <Compile Include="CFG\ControlFlowGraph.cs" />
-    <Compile Include="CFG\Visualization\DotPrinter.cs" />
+    <Compile Include="Optimizations\AlgebraicIdentityOptimization.cs" />
+    <Compile Include="Optimizations\ConvConstOptimization.cs" />
+    <Compile Include="Optimizations\CopyPropagationOptimization.cs" />
+    <Compile Include="Optimizations\DeadCodeOptimization.cs" />
+    <Compile Include="Optimizations\DefUseSetForBlocks.cs" />
+    <Compile Include="Optimizations\EmptyNodeOptimization.cs" />
+    <Compile Include="Optimizations\GotoOptimization.cs" />
     <Compile Include="Optimizations\Interfaces\IOptimizer.cs" />
+    <Compile Include="Optimizations\LocalValueNumberingOptimization.cs" />
     <Compile Include="TACode\TacNodes\TacAssignmentNode.cs" />
     <Compile Include="TACode\TacNodes\TacEmptyNode.cs" />
     <Compile Include="TACode\TacNodes\TacIfGotoNode.cs" />
@@ -65,6 +78,7 @@
     <Compile Include="TACode\TacNodes\TacNode.cs" />
     <Compile Include="TACode\ThreeAddressCode.cs" />
     <Compile Include="TACode\TmpNameManager.cs" />
+    <Compile Include="Utility\Utility.cs" />
     <Compile Include="Visitors\AlwaysElseVisitor.cs" />
     <Compile Include="Visitors\AssignCountVisitor.cs" />
     <Compile Include="Visitors\AutoVisitor.cs" />
@@ -92,6 +106,12 @@
     <Compile Include="Optimizations\BasicBlocks.cs" />
     <Compile Include="Visitors\ZeroMulOptVisitor.cs" />
     <Compile Include="Visitors\CompareToItselfFalseOptVisitor.cs" />
+    <Compile Include="GenKill\Interfaces\IGenKillVisitor.cs" />
+    <Compile Include="GenKill\Interfaces\IGenKillContainer.cs" />
+    <Compile Include="GenKill\Implementations\GenKillVisitor.cs" />
+    <Compile Include="GenKill\Implementations\GenKillConatainer.cs" />
+    <Compile Include="Optimizations\UnreachableCodeOpt.cs" />
+    <Compile Include="Optimizations\EliminateTranToTranOpt.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
@@ -102,6 +122,11 @@
     <Content Include="a.txt" />
     <Content Include="Optimizations\README.md" />
     <Content Include="TACode\README.md" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="GenKill\" />
+    <Folder Include="GenKill\Interfaces\" />
+    <Folder Include="GenKill\Implementations\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

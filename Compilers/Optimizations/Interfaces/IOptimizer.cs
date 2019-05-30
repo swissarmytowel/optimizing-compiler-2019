@@ -1,3 +1,4 @@
+using SimpleLang.CFG;
 using SimpleLang.TACode;
 
 namespace SimpleLang.Optimizations.Interfaces
@@ -10,5 +11,15 @@ namespace SimpleLang.Optimizations.Interfaces
         /// <param name="tac"> Three-address code container</param>
         /// <returns>Bool value, marking if current optimization was applied successfully</returns>
         bool Optimize(ThreeAddressCode tac);
+    }
+
+    public interface IBlockOptimizer
+    {
+        bool Optimize(BasicBlocks bb);
+    }
+
+    public interface ICFGOptimizer
+    {
+        bool Optimize(ControlFlowGraph cfg);
     }
 }

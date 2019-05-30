@@ -61,7 +61,7 @@ namespace SimpleLang.TACode.TacNodes
             var rightPart = (Operation == null) && (SecondOperand == null)
                 ? $"{FirstOperand}"
                 : $"{FirstOperand} {Operation} {SecondOperand}";
-            return $"{Label}: {LeftPartIdentifier} = {FirstOperand} {Operation} {SecondOperand}";
+            return $"{base.ToString()}{LeftPartIdentifier} = {FirstOperand} {Operation} {SecondOperand}";
         }
     }
 }
