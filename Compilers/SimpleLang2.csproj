@@ -56,6 +56,8 @@
     <Reference Include="nunit.framework" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CFG\BidirectionalGraph.cs" />
+    <Compile Include="CFG\DepthSpanningTree.cs" />
     <Compile Include="Optimizations\AvailableExprOptimization.cs" />
     <Compile Include="Optimizations\CommonSubexprOptimization.cs" />
     <Compile Include="Optimizations\DefUse\DefUseConstPropagation.cs" />
@@ -123,11 +125,7 @@
     <Content Include="Optimizations\README.md" />
     <Content Include="TACode\README.md" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="GenKill\" />
-    <Folder Include="GenKill\Interfaces\" />
-    <Folder Include="GenKill\Implementations\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

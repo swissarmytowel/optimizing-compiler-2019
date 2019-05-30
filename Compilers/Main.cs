@@ -116,8 +116,7 @@ namespace SimpleCompiler
                     var threeAddressCodeVisitor = new ThreeAddressCodeVisitor();
                     r.Visit(threeAddressCodeVisitor);
 
-                    var cfg = new ControlFlowGraph();
-                    cfg.Construct(threeAddressCodeVisitor.TACodeContainer);
+                    var cfg = new ControlFlowGraph(threeAddressCodeVisitor.TACodeContainer);
                     Console.WriteLine(cfg);
                     cfg.SaveToFile(@"cfg.txt");
 
