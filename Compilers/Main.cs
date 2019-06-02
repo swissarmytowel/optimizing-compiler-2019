@@ -176,10 +176,11 @@ namespace SimpleCompiler
 
                     var blocks = new List<ThreeAddressCode> { bblock_1, bblock_2, bblock_3, bblock_4 };
                     var blocksIn = new HashSet<TacNode>();
+                    var tf_composition = new TFByComposition(gen_kill_container);
 
                     foreach (var block in blocks)
                     {
-                        blocksIn = new TFByComposition(block, gen_kill_container).Calculate(blocksIn);
+                        blocksIn = tf_composition.Calculate(blocksIn, block);
                     };
 
                     //var cfg = new ControlFlowGraph();

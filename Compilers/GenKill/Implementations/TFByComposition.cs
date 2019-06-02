@@ -11,15 +11,15 @@ namespace SimpleLang.GenKill.Implementations
         private ThreeAddressCode basicBlock;
         private Dictionary<ThreeAddressCode, IExpressionSetsContainer> lineGenKill;
 
-        public TFByComposition(ThreeAddressCode BasicBlock, Dictionary<ThreeAddressCode, IExpressionSetsContainer> LineGenKill)
+        public TFByComposition(Dictionary<ThreeAddressCode, IExpressionSetsContainer> LineGenKill)
         {
-            basicBlock = BasicBlock;
             lineGenKill = LineGenKill;
         }
 
         // Это только для базового блока или для одной линии тоже?
-        public HashSet<TacNode> Calculate(HashSet<TacNode> _in)
+        public HashSet<TacNode> Calculate(HashSet<TacNode> _in, ThreeAddressCode bblock)
         {
+            basicBlock = bblock;
             var func = _in;
 
             foreach (var line in GetBasicBlock())
