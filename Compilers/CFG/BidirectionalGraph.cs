@@ -15,12 +15,15 @@ namespace SimpleLang.CFG
         public int EdgeCount => Graph.EdgeCount;
         public bool IsVerticesEmpty => Graph.IsVerticesEmpty;
         public bool IsEdgesEmpty => Graph.IsEdgesEmpty;
+        public ArrayAdjacencyGraph<ThreeAddressCode, Edge<ThreeAddressCode>> AdjancyMatrix { get; }
 
-        protected BidirectionalGraph<ThreeAddressCode, Edge<ThreeAddressCode>> Graph;
+        public BidirectionalGraph<ThreeAddressCode, Edge<ThreeAddressCode>> Graph { get; }
 
         protected BidirectionalGraph()
         {
             Graph = new BidirectionalGraph<ThreeAddressCode, Edge<ThreeAddressCode>>(false);
+            AdjancyMatrix = Graph.ToArrayAdjacencyGraph();
+
         }
 
         public void SaveToFile(string fileName)

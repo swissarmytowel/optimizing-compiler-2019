@@ -11,6 +11,7 @@ namespace SimpleLang.CFG
         public ThreeAddressCode EntryBlock => IsVerticesEmpty ? null : Vertices.First();
         public ThreeAddressCode ExitBlock => IsVerticesEmpty ? null : Vertices.Last();
         public ThreeAddressCode SourceCode { get; private set; }
+        
 
         public ControlFlowGraph(ThreeAddressCode tac)
         {
