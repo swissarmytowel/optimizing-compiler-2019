@@ -1,70 +1,68 @@
-# Граф потока управления
+# Абстрактный класс двунаправленного графа BidirectionalGraph 
 
-Класс `ControlFlowGraph` является наследником класса `BidirectionalGraph<TVertex, TEdge>` из библиотеки `QuickGraph`, у которого:
-1. Вершины (свойство `Vertices`) имеют тип `ThreeAddressCode` (тип элементов списка `BasicBlockItems` из класса `BasicBlocks`);
-2. Дуги (свойство `Edges`) имеют тип `Edge<ThreeAddressCode>` и содержать свойства `Source` и `Target`, представляющие собой вершины, соедененные данной дугой.
+Класс основан на `BidirectionalGraph<TVertex, TEdge>` из библиотеки QuickGraph: [yaccconstructor.github.io](http://yaccconstructor.github.io/QuickGraph/reference/quickgraph-bidirectionalgraph-2.html).
 
-### Построение графа
+## Свойства
 
-Построение графа осуществляется с помощью метода `Construct(...)`, который принимает программу в одном из следующих видов:
-1. Трехадресный код (`ThreeAddressCode`);
-2. Разбиение на базовые блоки (`BasicBlocks`).
+1. Вершины `Vertices` (тип `ThreeAddressCode`), которые являются базовыми блоками, полученными из класса `BasicBlocks` (элементы списка `BasicBlockItems`);
+2. Дуги `Edges` (тип `Edge<ThreeAddressCode>`), каждая из которых содержит информацию о вершинах, которые она соединяет (`Source` и `Target`);
+3. VertexCount (тип `int`);
+4. EdgeCount (тип `int`);
+5. IsVerticesEmpty (тип `bool`);
+6. IsEdgesEmpty (тип `bool`).
 
-### "Визуализация" графа
+## Методы
 
-Получить своеобразную визуализацию графа можно с помощью следующих методов:
-1. `ToString()`;
-2. `SaveToFile(...)`.
+1. `OutEdges(vertex)` — возвращает все дуги, выходящие из вершины `vertex`;
+2. `InEdges(vertex)` — возвращает все дуги, входящие в вершину `vertex`;
+3. `IsOutEdgesEmpty(vertex)`;
+4. `IsInEdgesEmpty(vertex)`;
+5. `OutDegree(vertex)`;
+6. `InDegree(vertex)`;
+7. `ContainsVertex(vertex)` — проверяет, содержит ли граф вершину `vertex`;
+8. `ContainsEdge(edge)` — проверяет, содержит ли граф другу `edge`;
+9. `SaveToFile(string fileName)`; 
+10. `ToString()`.
 
-Пример результата работы любого из методов:
+# Класс графа потока управления ControlFlowGraph
 
-```md
-VERTICES
-#0:
-i = 1  
+Класс является наследником `BidirectionalGraph`. Построение графа осуществляется при создании объекта класса, а с помощью метода `Rebuild(tac)` можно перестроить уже существующий граф.
 
-#1:
-L1: j = 1  
+## Дополнительные свойства
 
-#2:
-L2: a = 1  
-j = j + 1
-t1 = j < 10
-if t1 goto L2
+1. `EntryBlock` — входной блок, т.е. вершина, через которую управление входит в граф;
+2. `ExitBlock` — выходной блок, т.е. вершина, которая завершает все пути в графе;
+3. `SourceCode` — исходный трехадресный код, по которому был составлен граф.
 
-#3:
-i = i + 1
-t2 = i < 10
-if t2 goto L1
+# Класс глубинного остовного дерева DepthSpanningTree
 
-#4:
-i = 1  
+Класс также является наследником `BidirectionalGraph`. Построение графа осуществляется при создании объекта класса, а с помощью метода `Rebuild(cfg)` можно перестроить уже существующий граф.
 
-#5:
-L3: a = 0  
+# Примеры использования
 
-#6:
-i = i + 1
-t3 = i < 10
-if t3 goto L3
-
-EDGES
-0 -> [ 1 ]
-1 -> [ 2 ]
-2 -> [ 2 3 ]
-3 -> [ 1 4 ]
-4 -> [ 5 ]
-5 -> [ 6 ]
-6 -> [ 5 ]
+```c#
+var cfg = new ControlFlowGraph(threeAddressCodeVisitor.TACodeContainer);
+foreach (var vertex in cfg.Vertices)
+{
+  // ...
+}
 ```
 
-### Класс `BidirectionalGraph<TVertex, TEdge>`
+```c#
+Build(cfg.EntryBlock);
 
-Ссылка на документацию класса `BidirectionalGraph<TVertex, TEdge>`: [yaccconstructor.github.io](http://yaccconstructor.github.io/QuickGraph/reference/quickgraph-bidirectionalgraph-2.html).
+// ...
 
-Примеры методов:
-1. `IsInEdgesEmpty(TVertex vertex)` и `IsOutEdgesEmpty(TVertex vertex)`;
-2. `InEdges(TVertex vertex)` и `OutEdges(TVertex vertex)`;
-3. `OutDegree(TVertex vertex)` и `InDegree(TVertex vertex)`. 
+private void Build(ThreeAddressCode block)
+{
+    visitedBlocks.Add(block);
+    var outEdges = cfg.OutEdges(block);
+    foreach (var edge in outEdges)
+    {
+        // ...
+        
+        Build(edge.Target);
+    }
+}
 
-Ссылка на полную документацию библиотеки: [yaccconstructor.github.io](http://yaccconstructor.github.io/QuickGraph/reference/).
+```

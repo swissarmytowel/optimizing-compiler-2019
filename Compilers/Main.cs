@@ -117,6 +117,9 @@ namespace SimpleCompiler
                     var threeAddressCodeVisitor = new ThreeAddressCodeVisitor();
                     r.Visit(threeAddressCodeVisitor);
 
+                    var cfg = new ControlFlowGraph(threeAddressCodeVisitor.TACodeContainer);
+                    Console.WriteLine(cfg);
+                    cfg.SaveToFile(@"cfg.txt");
 
                     var bblock_1 = new ThreeAddressCode();
                     bblock_1.PushNode(new TacAssignmentNode {
@@ -249,10 +252,9 @@ namespace SimpleCompiler
                     //Console.WriteLine("Разбиение на базовые блоки завершилось");
                     //Console.WriteLine();
 
-                    //var varsForBlocks = Enumerable.Repeat(new string[] { "a", "t1", "t2" }, bblocks.BasicBlockItems.Count);
-                    //var defUseSet = new DefUseSetForBlocks(bblocks, varsForBlocks);
-                    //Console.WriteLine("DefUSeSet для базовых блоков");
-                    //Console.WriteLine(defUseSet);
+                    var defUseSet = new DefUseSetForBlocks(bblocks);
+                    Console.WriteLine("DefUSeSet для базовых блоков");
+                    Console.WriteLine(defUseSet);
                 }
             }
             catch (FileNotFoundException)

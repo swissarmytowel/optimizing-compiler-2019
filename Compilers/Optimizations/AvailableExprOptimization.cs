@@ -67,7 +67,8 @@ namespace SimpleLang.Optimizations
         public bool Optimize(ControlFlowGraph cfg)
         {
             bool isUsed = false;
-            var bb = cfg.Blocks;
+            var bb = new BasicBlocks();
+            bb.SplitTACode(cfg.SourceCode);
             for (int source = 0; source < bb.BasicBlockItems.Count(); source++)
             {
                 var sourceBlock = bb.BasicBlockItems[source];
