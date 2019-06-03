@@ -58,6 +58,10 @@
   <ItemGroup>
     <Compile Include="CFG\BidirectionalGraph.cs" />
     <Compile Include="CFG\DepthSpanningTree.cs" />
+    <Compile Include="IterationAlgorithms\ActiveVariablesITA.cs" />
+    <Compile Include="IterationAlgorithms\AvailableExpressionsITA.cs" />
+    <Compile Include="IterationAlgorithms\Interfaces\IIterationAlgorithm.cs" />
+    <Compile Include="IterationAlgorithms\IterationAlgorithm.cs" />
     <Compile Include="Optimizations\AvailableExprOptimization.cs" />
     <Compile Include="Optimizations\CommonSubexprOptimization.cs" />
     <Compile Include="Optimizations\DefUse\DefUseConstPropagation.cs" />

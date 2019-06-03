@@ -11,7 +11,7 @@ namespace SimpleLang.CFG
         public ThreeAddressCode EntryBlock => IsVerticesEmpty ? null : Vertices.First();
         public ThreeAddressCode ExitBlock => IsVerticesEmpty ? null : Vertices.Last();
         public ThreeAddressCode SourceCode { get; private set; }
-        
+        public BasicBlocks SourseBasicBlocks { get; private set; }
 
         public ControlFlowGraph(ThreeAddressCode tac)
         {
@@ -40,6 +40,7 @@ namespace SimpleLang.CFG
         {
             var blocks = new BasicBlocks();
             blocks.SplitTACode(SourceCode);
+            SourseBasicBlocks = blocks;
 
             Graph.AddVertexRange(blocks.BasicBlockItems);
 
