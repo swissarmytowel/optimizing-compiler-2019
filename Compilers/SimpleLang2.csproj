@@ -58,6 +58,12 @@
   <ItemGroup>
     <Compile Include="CFG\BidirectionalGraph.cs" />
     <Compile Include="CFG\DepthSpanningTree.cs" />
+    <Compile Include="DefUse\Implementations\DefUseContainer.cs" />
+    <Compile Include="DefUse\Implementations\DefUseVisitor.cs" />
+    <Compile Include="DefUse\Implementations\TFByComposition.cs" />
+    <Compile Include="DefUse\Interfaces\IDefUseVisitor.cs" />
+    <Compile Include="DefUse\Interfaces\IExpressionSetsContainer.cs" />
+    <Compile Include="DefUse\Interfaces\ITransmissionFunction.cs" />
     <Compile Include="Optimizations\AvailableExprOptimization.cs" />
     <Compile Include="Optimizations\CommonSubexprOptimization.cs" />
     <Compile Include="Optimizations\DefUse\DefUseConstPropagation.cs" />
