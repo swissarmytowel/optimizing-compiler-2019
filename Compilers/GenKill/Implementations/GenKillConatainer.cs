@@ -8,23 +8,23 @@ using System.Collections.Generic;
 
 namespace SimpleLang.GenKill.Implementations
 {
-    public class GenKillConatainer: IGenKillContainer
+    public class GenKillConatainer: IExpressionSetsContainer
     {
         private HashSet<TacNode> gen = new HashSet<TacNode>();
         private HashSet<TacNode> kill = new HashSet<TacNode>();
 
-        public void AddGen(TacNode line)
+        public void AddToSecondSet(TacNode line)
         {
             gen.Add(line);
         }
 
-        public void AddKill(TacNode line)
+        public void AddToFirstSet(TacNode line)
         {
             kill.Add(line);
         }
 
-        public HashSet<TacNode> GetGen() => gen;
+        public HashSet<TacNode> GetSecondSet() => gen;
 
-        public HashSet<TacNode> GetKill() => kill;
+        public HashSet<TacNode> GetFirstSet() => kill;
     }
 }
