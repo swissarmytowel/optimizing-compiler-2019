@@ -118,8 +118,7 @@
     <Compile Include="GenKill\Implementations\GenKillConatainer.cs" />
     <Compile Include="Optimizations\UnreachableCodeOpt.cs" />
     <Compile Include="Optimizations\EliminateTranToTranOpt.cs" />
-    <Compile Include="MOP\Interfaces\IMop.cs" />
-    <Compile Include="MOP\Implementations\MeetOverPaths.cs" />
+    <Compile Include="MOP\MeetOverPaths.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
@@ -134,8 +133,6 @@
   <ItemGroup />
   <ItemGroup>
     <Folder Include="MOP\" />
-    <Folder Include="MOP\Interfaces\" />
-    <Folder Include="MOP\Implementations\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

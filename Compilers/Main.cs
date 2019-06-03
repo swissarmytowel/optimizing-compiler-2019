@@ -121,7 +121,8 @@ namespace SimpleCompiler
                     Console.WriteLine(cfg);
                     cfg.SaveToFile(@"cfg.txt");
 
-                    var mop = new MeetOverPaths(cfg);
+                    var mop = new MeetOverPaths<TacNode>(cfg);
+                    mop.Compute();
 
                     //Console.WriteLine(threeAddressCodeVisitor.TACodeContainer);
                     //var availExprOpt = new AvailableExprOptimization();
