@@ -113,12 +113,14 @@
     <Compile Include="Visitors\ZeroMulOptVisitor.cs" />
     <Compile Include="Visitors\CompareToItselfFalseOptVisitor.cs" />
     <Compile Include="GenKill\Interfaces\IGenKillVisitor.cs" />
-    <Compile Include="GenKill\Interfaces\IGenKillContainer.cs" />
+    <Compile Include="GenKill\Interfaces\IExpressionSetsContainer.cs" />
     <Compile Include="GenKill\Implementations\GenKillVisitor.cs" />
     <Compile Include="GenKill\Implementations\GenKillConatainer.cs" />
     <Compile Include="Optimizations\UnreachableCodeOpt.cs" />
     <Compile Include="Optimizations\EliminateTranToTranOpt.cs" />
     <Compile Include="MOP\MeetOverPaths.cs" />
+    <Compile Include="GenKill\Interfaces\ITransmissionFunction.cs" />
+    <Compile Include="GenKill\Implementations\TFByComposition.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
