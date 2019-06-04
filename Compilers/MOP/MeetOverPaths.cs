@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Linq;
 using System.Collections.Generic;
-using QuickGraph;
 
 using SimpleLang.CFG;
 using SimpleLang.TACode.TacNodes;
@@ -59,13 +57,19 @@ namespace SimpleLang.MOP
             {
                 var outVertex = outEdge.Target;
                 var sourceVertex = outEdge.Source;
-
-                var _out = Out[sourceVertex];
-                var tmp2 = TransmissionFunction.Calculate(_out, outVertex);
+                // Здесь нужно применить оператор сбора ко всей последовательности
+                // ну и посчитать пердаточную функцию от полученного выше множества
+                //var _out = Out[sourceVertex];
+                //var tmp2 = TransmissionFunction.Calculate(_out, outVertex);
 
                 predecessors.Push(sourceVertex);
                 if (!visited[outVertex]) DepthFirstSearch(outVertex, visited, predecessors, ref isChanged);
                 predecessors.Pop();
+            }
+
+            if (currentBlock == ControlFlowGraph.EntryBlock)
+            {
+                // Здесь проверить из менялся ли Out
             }
 
             visited[currentBlock] = false;
