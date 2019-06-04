@@ -14,6 +14,7 @@ using SimpleLang.Visitors;
 using SimpleLang.Optimizations;
 using System.Linq;
 using SimpleLang.MOP;
+using SimpleLang.GenKill.Implementations;
 
 
 namespace SimpleCompiler
@@ -117,11 +118,22 @@ namespace SimpleCompiler
                     var threeAddressCodeVisitor = new ThreeAddressCodeVisitor();
                     r.Visit(threeAddressCodeVisitor);
 
+                    var bblocks = new BasicBlocks();
+                    bblocks.SplitTACode(threeAddressCodeVisitor.TACodeContainer);
+                    //Console.WriteLine("Разбиение на базовые блоки завершилось");
+                    //Console.WriteLine();
+
                     var cfg = new ControlFlowGraph(threeAddressCodeVisitor.TACodeContainer);
                     Console.WriteLine(cfg);
                     cfg.SaveToFile(@"cfg.txt");
 
-                    var mop = new MeetOverPaths<TacNode>(cfg);
+                    var genKillVisitor = new GenKillVisitor();
+                    //var genkill = genKillVisitor.GenerateReachingDefinitionForBlocks(cfg.SourseBasicBlocks);
+                    var genkill = genKillVisitor.GenerateReachingDefinitionForBlocks(bblocks);
+
+                    var tfBComposition = new TFByComposition(genkill);
+
+                    var mop = new MeetOverPaths(cfg, tfBComposition);
                     mop.Compute();
 
                     //Console.WriteLine(threeAddressCodeVisitor.TACodeContainer);
@@ -179,11 +191,6 @@ namespace SimpleCompiler
                     //algOpt.Optimize(threeAddressCodeVisitor.TACodeContainer);
                     //Console.WriteLine("algebraic identity optimization");
                     //Console.WriteLine(threeAddressCodeVisitor.TACodeContainer);
-
-                    //var bblocks = new BasicBlocks();
-                    //bblocks.SplitTACode(threeAddressCodeVisitor.TACodeContainer);
-                    //Console.WriteLine("Разбиение на базовые блоки завершилось");
-                    //Console.WriteLine();
 
                     //var defUseSet = new DefUseSetForBlocks(bblocks);
                     //Console.WriteLine("DefUSeSet для базовых блоков");

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Collections.Generic;
 using QuickGraph;
 
@@ -6,29 +7,37 @@ using SimpleLang.CFG;
 using SimpleLang.TACode.TacNodes;
 using SimpleLang.TACode;
 using SimpleLang.IterationAlgorithms.Interfaces;
+using SimpleLang.GenKill.Interfaces;
 
 namespace SimpleLang.MOP
 {
-    public class MeetOverPaths<T> : IIterationAlgorithm<T>
+    public class MeetOverPaths : IIterationAlgorithm<TacNode>
     {
         public ControlFlowGraph ControlFlowGraph { get; }
-        public Dictionary<ThreeAddressCode, HashSet<T>> In { get; set; }
-        public Dictionary<ThreeAddressCode, HashSet<T>> Out { get; set; }
+        public Dictionary<ThreeAddressCode, HashSet<TacNode>> In { get; set; }
+        public Dictionary<ThreeAddressCode, HashSet<TacNode>> Out { get; set; }
+        public ITransmissionFunction TransmissionFunction { get; }
 
-        public MeetOverPaths(ControlFlowGraph controlFlowGraph)
+        public MeetOverPaths(ControlFlowGraph controlFlowGraph, ITransmissionFunction transmissionFunction)
         {
+            TransmissionFunction = transmissionFunction;
             ControlFlowGraph = controlFlowGraph;
-            In = new Dictionary<ThreeAddressCode, HashSet<T>>();
-            Out = new Dictionary<ThreeAddressCode, HashSet<T>>();
+            In = new Dictionary<ThreeAddressCode, HashSet<TacNode>>();
+            Out = new Dictionary<ThreeAddressCode, HashSet<TacNode>>();
         }
 
         public void Compute()
         {
-            Dictionary<ThreeAddressCode, bool> visited = new Dictionary<ThreeAddressCode, bool>();
+            var visited = new Dictionary<ThreeAddressCode, bool>();
             foreach (var bblock in ControlFlowGraph.SourseBasicBlocks)
+            {
                 visited.Add(bblock, false);
+                var tfResult = TransmissionFunction.Calculate(new HashSet<TacNode>(), ControlFlowGraph.EntryBlock);
+                Out.Add(bblock, tfResult);
+            }
+                
 
-            List<ThreeAddressCode> predecessors = new List<ThreeAddressCode>();
+            var predecessors = new Stack<ThreeAddressCode>();
             var isChanged = true;
 
             while (isChanged)
@@ -39,18 +48,24 @@ namespace SimpleLang.MOP
         private void DepthFirstSearch(
             ThreeAddressCode currentBlock,
             Dictionary<ThreeAddressCode, bool> visited,
-            List<ThreeAddressCode> predecessors,
+            Stack<ThreeAddressCode> predecessors,
             ref bool isChanged
             )
         {
             if (ControlFlowGraph.IsOutEdgesEmpty(currentBlock)) return;
             visited[currentBlock] = true;
 
-            foreach(var outEdge in ControlFlowGraph.OutEdges(currentBlock))
+            foreach (var outEdge in ControlFlowGraph.OutEdges(currentBlock))
             {
                 var outVertex = outEdge.Target;
-                Console.WriteLine(outVertex);
+                var sourceVertex = outEdge.Source;
+
+                var _out = Out[sourceVertex];
+                var tmp2 = TransmissionFunction.Calculate(_out, outVertex);
+
+                predecessors.Push(sourceVertex);
                 if (!visited[outVertex]) DepthFirstSearch(outVertex, visited, predecessors, ref isChanged);
+                predecessors.Pop();
             }
 
             visited[currentBlock] = false;
