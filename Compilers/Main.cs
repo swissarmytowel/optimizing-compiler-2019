@@ -15,6 +15,7 @@ using SimpleLang.Optimizations;
 using System.Linq;
 using SimpleLang.GenKill.Implementations;
 using SimpleLang.InOut;
+using SimpleLang.DefUse;
 
 
 namespace SimpleCompiler
@@ -183,15 +184,14 @@ namespace SimpleCompiler
                     Console.WriteLine("Разбиение на базовые блоки завершилось");
                     Console.WriteLine();
 
-                    var defUseSet = new DefUseSetForBlocks(bblocks);
-                    Console.WriteLine("DefUSeSet для базовых блоков");
-                    Console.WriteLine(defUseSet);
-
                     GenKillVisitor genKillVisitor = new GenKillVisitor();
                     var genKillContainers = genKillVisitor.GenerateReachingDefinitionForBlocks(bblocks);
                     InOutContainer inOutContainers = new InOutContainer(bblocks, genKillContainers);
                     Console.WriteLine("=== InOut для базовых блоков ===");
                     Console.WriteLine(inOutContainers.ToString());
+
+                    var defUseContainers = DefUseForBlocksGenerator.Execute(bblocks);
+                    DefUseForBlocksPrinter.Execute(defUseContainers);
                 }
             }
             catch (FileNotFoundException)
