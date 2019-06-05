@@ -1,31 +1,48 @@
 # Название задачи
-Оптимизация по дереву - 4.
+Оптимизация по дереву №4: замена выражения вида `0 + expr` (`expr + 0`) на `expr`.
 
 ## Постановка задачи
-Описание вашей задачи
+Заменить выражения вида `0 + expr` (`expr + 0`) на `expr` с помощью визитора.
 
 ## Команда — исполнитель
 AW
 
 ## Зависимости
-От кого зависит это задача и чему препятствует. Напишите название задач.
+Зависит от:
+- Базовые визиторы
+- PrettyPrinter
 
 ## Теория
-Нужная теория для решения это задачи. Большой раздел.
+&mdash;
 
 ## Реализация
-Тут должно быть куски кода с объяснением. Самый большой раздел
+Для решения поставленной задачи был реализован визитор, наследуемый от ChangeVisitor.
 
-Пример куска кода:
 ```csharp
-using System;
-
-foreach (var i in list)
-    Console.WriteLine(i);
+class PlusZeroExprVisitor : ChangeVisitor
+{
+    public override void VisitBinOpNode(BinOpNode binop)
+    {
+        base.VisitBinOpNode(binop);
+        if (binop.Op == "+")
+        {
+            ExprNode expr1 = binop.Left;
+            ExprNode expr2 = binop.Right;
+            if (expr1 is IntNumNode expr && expr.Num == 0)
+            {
+                ReplaceExpr(expr1.Parent as ExprNode, expr2);
+            }
+            else if (expr2 is IntNumNode exp && exp.Num == 0)
+            {
+                ReplaceExpr(expr2.Parent as ExprNode, expr1);
+            }
+        }
+    }
+}
 ```
 
 ## Тесты
 Узнать как должны выглядить тесты в докуметации.
 
 ## Вывод
-Краткое описание работы и полученных результатов
+Используя метод, описанный выше, мы получили визитор, заменяющий выражения вида `0 + expr` (`expr + 0`) на `expr`.
