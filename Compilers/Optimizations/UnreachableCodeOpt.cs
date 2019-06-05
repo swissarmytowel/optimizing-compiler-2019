@@ -52,7 +52,7 @@ namespace SimpleLang.Optimizations
             {
                 var line = currentNode.Value;
 
-                if (line is TacIfGotoNode ifGotoNode && Equals(ifGotoNode.Condition, "true"))
+                if (line is TacIfGotoNode ifGotoNode && Equals(ifGotoNode.Condition, "True"))
                 {
                     if (CheckLabels(targetLabels, currentNode.Next, ifGotoNode.TargetLabel, linesToDelete))
                     {

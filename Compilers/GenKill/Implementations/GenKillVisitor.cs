@@ -34,8 +34,8 @@ namespace SimpleLang.GenKill.Implementations
                             blocksGen.Add(bblock, new HashSet<TacNode>());
                         }
 
-                        blocksKill[bblock].UnionWith(lineGenKill[line].GetFirstSet());
-                        blocksGen[bblock].UnionWith(lineGenKill[line].GetSecondSet());
+                        blocksKill[bblock].UnionWith(lineGenKill[line].GetSecondSet());
+                        blocksGen[bblock].UnionWith(lineGenKill[line].GetFirstSet());
                     }
                 }
             }
@@ -48,12 +48,12 @@ namespace SimpleLang.GenKill.Implementations
 
                 foreach (var resVal in blocksKill[resultGKKey])
                 {
-                    genKillContainer.AddToFirstSet(resVal);
+                    genKillContainer.AddToSecondSet(resVal);
                 }
 
                 foreach (var resVal in blocksGen[resultGKKey])
                 {
-                    genKillContainer.AddToSecondSet(resVal);
+                    genKillContainer.AddToFirstSet(resVal);
                 }
 
                 resultBlocksGenKill.Add(resultGKKey, genKillContainer);
@@ -79,7 +79,7 @@ namespace SimpleLang.GenKill.Implementations
                             lineContainer.Add(line, GetGenKillContainer());
                         }
 
-                        lineContainer[line].AddToSecondSet(line);
+                        lineContainer[line].AddToFirstSet(line);
 
                         if (!variablesContainer.ContainsKey(assignmentNode.LeftPartIdentifier))
                         {
@@ -102,12 +102,11 @@ namespace SimpleLang.GenKill.Implementations
                         variableSet.UnionWith(variablesContainer[assignmentNode.LeftPartIdentifier]);
 
                         foreach(var variable in variableSet)
-                            if (!lineContainer[line].GetSecondSet().Contains(variable))
-                                lineContainer[line].AddToFirstSet(variable);
+                            if (!lineContainer[line].GetFirstSet().Contains(variable))
+                                lineContainer[line].AddToSecondSet(variable);
                     }
                 }
             }
-
 
             return lineContainer;
         }
