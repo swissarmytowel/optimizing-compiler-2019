@@ -62,6 +62,16 @@ namespace SimpleLang.Optimizations
                         isApplied = true;
                     }
                 }
+
+                if (line is TacGotoNode tacGotoNode)
+                {
+                    if (CheckLabels(targetLabels, currentNode.Next, tacGotoNode.TargetLabel, linesToDelete))
+                    {
+                        tac.RemoveNodes(linesToDelete);
+                        linesToDelete.Clear();
+                        isApplied = true;
+                    }
+                }
                 currentNode = currentNode.Next;
             }
 
