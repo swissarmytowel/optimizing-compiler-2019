@@ -13,6 +13,8 @@ using SimpleParser;
 using SimpleLang.Visitors;
 using SimpleLang.Optimizations;
 using System.Linq;
+using SimpleLang.GenKill.Implementations;
+using SimpleLang.InOut;
 
 
 namespace SimpleCompiler

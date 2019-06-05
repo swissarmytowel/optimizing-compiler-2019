@@ -20,27 +20,56 @@ namespace SimpleLang.InOut
         /// </summary>
         /// <param name="bBlocks"> All basic blocks </param>
         /// <param name="genKillContainers"> All gen-kill containers in basic blocks </param>
-        public InOutContainer(BasicBlocks bBlocks, Dictionary<OneBasicBlock, IGenKillContainer> genKillContainers)
+        public InOutContainer(BasicBlocks bBlocks,
+            Dictionary<OneBasicBlock, IExpressionSetsContainer> genKillContainers)
         {
-            for (int i = 0; i < bBlocks.BasicBlockItems.Count; ++i) {
+            for (var i = 0; i < bBlocks.BasicBlockItems.Count; ++i)
+            {
                 var curBlock = bBlocks.BasicBlockItems[i];
 
-                if (i == 0) {
+                if (i == 0)
+                {
                     In[curBlock] = new HashSet<TacNode>();
-                } else {
+                }
+                else
+                {
                     var prevBlock = bBlocks.BasicBlockItems[i - 1];
-                    In[curBlock] = new HashSet<TacNode>();
-                    In[curBlock].UnionWith(In[prevBlock]);
-                    In[curBlock].UnionWith(Out[prevBlock]);
+                    FillInForBasicBlock(curBlock, prevBlock);
                 }
 
-                if (genKillContainers.ContainsKey(curBlock)) {
-                    Out[curBlock] = new HashSet<TacNode>(genKillContainers[curBlock].GetGen()
-                        .Union(In[curBlock]
-                        .Except(genKillContainers[curBlock].GetKill())));
-                } else {
-                    Out[curBlock] = new HashSet<TacNode>(In[curBlock]);
-                }
+                FillOutForBasicBlock(curBlock, genKillContainers);
+            }
+        }
+
+        /// <summary>
+        /// Fill IN for basic block B
+        /// </summary>
+        /// <param name="curBlock">current basic block</param>
+        /// <param name="prevBlock">previous basic block</param>
+        public void FillInForBasicBlock(OneBasicBlock curBlock, OneBasicBlock prevBlock)
+        {
+            In[curBlock] = new HashSet<TacNode>();
+            In[curBlock].UnionWith(In[prevBlock]);
+            In[curBlock].UnionWith(Out[prevBlock]);
+        }
+
+        /// <summary>
+        /// Fill OUT for basic block B
+        /// </summary>
+        /// <param name="curBlock">Current basic block</param>
+        /// <param name="genKillContainers">Gen/Kill container</param>
+        public void FillOutForBasicBlock(OneBasicBlock curBlock,
+            Dictionary<OneBasicBlock, IExpressionSetsContainer> genKillContainers)
+        {
+            if (genKillContainers.ContainsKey(curBlock))
+            {
+                Out[curBlock] = new HashSet<TacNode>(genKillContainers[curBlock].GetFirstSet()
+                    .Union(In[curBlock]
+                        .Except(genKillContainers[curBlock].GetSecondSet())));
+            }
+            else
+            {
+                Out[curBlock] = new HashSet<TacNode>(In[curBlock]);
             }
         }
 
@@ -49,35 +78,45 @@ namespace SimpleLang.InOut
             var builder = new StringBuilder();
             var numBlock = 0;
 
-            foreach (var inItem in In) {
-                builder.Append(string.Format("--- IN {0} :\n", numBlock));
-                if (inItem.Value.Count == 0) {
+            foreach (var inItem in In)
+            {
+                builder.Append($"--- IN {numBlock} :\n");
+                if (inItem.Value.Count == 0)
+                {
                     builder.Append("null");
-                } else {
+                }
+                else
+                {
                     var tmp = 0;
-                    foreach (var value in inItem.Value) {
-                        builder.Append(string.Format("{0})", tmp++));
+                    foreach (var value in inItem.Value)
+                    {
+                        builder.Append($"{tmp++})");
                         builder.Append(value.ToString());
                         builder.Append("\n");
                     }
                 }
-                builder.Append(string.Format("\n--- OUT {0}:\n", numBlock));
-                if (Out[inItem.Key].Count == 0) {
+
+                builder.Append($"\n--- OUT {numBlock}:\n");
+                if (Out[inItem.Key].Count == 0)
+                {
                     builder.Append("null");
-                } else {
+                }
+                else
+                {
                     var tmp = 0;
-                    foreach (var value in Out[inItem.Key]) {
-                        builder.Append(string.Format("{0})", tmp++));
+                    foreach (var value in Out[inItem.Key])
+                    {
+                        builder.Append($"{tmp++})");
                         builder.Append(value.ToString());
                         builder.Append("\n");
                     }
                 }
+
                 builder.Append("\n");
                 numBlock++;
             }
-            
+
             return builder.ToString();
         }
     }
 }
-
