@@ -56,15 +56,18 @@
     <Reference Include="nunit.framework" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DefUse\DefUseForBlocksPrinter.cs" />
+    <Compile Include="DefUse\TacNodeVarDecorator.cs" />
     <Compile Include="InOut\InOutContainer.cs" />
     <Compile Include="CFG\BidirectionalGraph.cs" />
     <Compile Include="CFG\DepthSpanningTree.cs" />
-    <Compile Include="DefUse\Implementations\DefUseContainer.cs" />
-    <Compile Include="DefUse\Implementations\DefUseVisitor.cs" />
-    <Compile Include="DefUse\Implementations\TFByComposition.cs" />
-    <Compile Include="DefUse\Interfaces\IDefUseVisitor.cs" />
-    <Compile Include="DefUse\Interfaces\IExpressionSetsContainer.cs" />
-    <Compile Include="DefUse\Interfaces\ITransmissionFunction.cs" />
+    <Compile Include="DefUse\DefUseContainer.cs" />
+    <Compile Include="DefUse\DefUseForBlocksGenerator.cs" />
+    <Compile Include="IterationAlgorithms\ActiveVariablesITA.cs" />
+    <Compile Include="IterationAlgorithms\AvailableExpressionsITA.cs" />
+    <Compile Include="IterationAlgorithms\Interfaces\IIterationAlgorithm.cs" />
+    <Compile Include="IterationAlgorithms\IterationAlgorithm.cs" />
+    <Compile Include="IterationAlgorithms\ReachingDefenitionsITA.cs" />
     <Compile Include="Optimizations\AvailableExprOptimization.cs" />
     <Compile Include="Optimizations\CommonSubexprOptimization.cs" />
     <Compile Include="Optimizations\DefUse\DefUseConstPropagation.cs" />
@@ -75,7 +78,6 @@
     <Compile Include="Optimizations\ConvConstOptimization.cs" />
     <Compile Include="Optimizations\CopyPropagationOptimization.cs" />
     <Compile Include="Optimizations\DeadCodeOptimization.cs" />
-    <Compile Include="Optimizations\DefUseSetForBlocks.cs" />
     <Compile Include="Optimizations\EmptyNodeOptimization.cs" />
     <Compile Include="Optimizations\GotoOptimization.cs" />
     <Compile Include="Optimizations\Interfaces\IOptimizer.cs" />
