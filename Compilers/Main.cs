@@ -16,6 +16,7 @@ using System.Linq;
 using SimpleLang.GenKill.Implementations;
 using SimpleLang.InOut;
 using SimpleLang.DefUse;
+using SimpleLang.ConstDistrib;
 
 
 namespace SimpleCompiler
@@ -192,6 +193,8 @@ namespace SimpleCompiler
 
                     var defUseContainers = DefUseForBlocksGenerator.Execute(bblocks);
                     DefUseForBlocksPrinter.Execute(defUseContainers);
+
+                    SemilatticeTest.TestForValueOperator();
                 }
             }
             catch (FileNotFoundException)

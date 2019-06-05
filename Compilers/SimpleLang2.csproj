@@ -56,6 +56,8 @@
     <Reference Include="nunit.framework" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ConstDistrib\SemilatticeTest.cs" />
+    <Compile Include="ConstDistrib\SemilatticeValue.cs" />
     <Compile Include="DefUse\DefUseForBlocksPrinter.cs" />
     <Compile Include="DefUse\TacNodeVarDecorator.cs" />
     <Compile Include="InOut\InOutContainer.cs" />
