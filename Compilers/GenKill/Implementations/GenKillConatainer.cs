@@ -15,16 +15,28 @@ namespace SimpleLang.GenKill.Implementations
 
         public void AddToSecondSet(TacNode line)
         {
-            gen.Add(line);
+            kill.Add(line);
         }
 
         public void AddToFirstSet(TacNode line)
         {
-            kill.Add(line);
+            gen.Add(line);
         }
 
-        public HashSet<TacNode> GetSecondSet() => gen;
+        public HashSet<TacNode> GetSecondSet() => kill;
 
-        public HashSet<TacNode> GetFirstSet() => kill;
+        public HashSet<TacNode> GetFirstSet() => gen;
+
+        public override string ToString()
+        {
+            var resStr = "Gen";
+            foreach(var item in gen)
+                resStr += $"\n{item}";
+
+            resStr += "\nKill";
+            foreach (var item in kill)
+                resStr += $"\n{item}";
+            return resStr;
+        }
     }
 }
