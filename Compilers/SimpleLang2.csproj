@@ -57,6 +57,14 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="InOut\InOutContainer.cs" />
+    <Compile Include="CFG\BidirectionalGraph.cs" />
+    <Compile Include="CFG\DepthSpanningTree.cs" />
+    <Compile Include="DefUse\Implementations\DefUseContainer.cs" />
+    <Compile Include="DefUse\Implementations\DefUseVisitor.cs" />
+    <Compile Include="DefUse\Implementations\TFByComposition.cs" />
+    <Compile Include="DefUse\Interfaces\IDefUseVisitor.cs" />
+    <Compile Include="DefUse\Interfaces\IExpressionSetsContainer.cs" />
+    <Compile Include="DefUse\Interfaces\ITransmissionFunction.cs" />
     <Compile Include="Optimizations\AvailableExprOptimization.cs" />
     <Compile Include="Optimizations\CommonSubexprOptimization.cs" />
     <Compile Include="Optimizations\DefUse\DefUseConstPropagation.cs" />
@@ -108,11 +116,13 @@
     <Compile Include="Visitors\ZeroMulOptVisitor.cs" />
     <Compile Include="Visitors\CompareToItselfFalseOptVisitor.cs" />
     <Compile Include="GenKill\Interfaces\IGenKillVisitor.cs" />
-    <Compile Include="GenKill\Interfaces\IGenKillContainer.cs" />
+    <Compile Include="GenKill\Interfaces\IExpressionSetsContainer.cs" />
     <Compile Include="GenKill\Implementations\GenKillVisitor.cs" />
     <Compile Include="GenKill\Implementations\GenKillConatainer.cs" />
     <Compile Include="Optimizations\UnreachableCodeOpt.cs" />
     <Compile Include="Optimizations\EliminateTranToTranOpt.cs" />
+    <Compile Include="GenKill\Interfaces\ITransmissionFunction.cs" />
+    <Compile Include="GenKill\Implementations\TFByComposition.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
@@ -124,11 +134,7 @@
     <Content Include="Optimizations\README.md" />
     <Content Include="TACode\README.md" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="GenKill\" />
-    <Folder Include="GenKill\Interfaces\" />
-    <Folder Include="GenKill\Implementations\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

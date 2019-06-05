@@ -42,7 +42,13 @@ namespace SimpleLang.Visitors
 
                 case BoolNode boolNode:
                     return boolNode.ToString();
-
+                
+                case FunctionNode funcNode:
+                    return funcNode.ToString();
+                
+                case DoubleNumNode doubleNode:
+                    return doubleNode.ToString();
+                
                 default:
                     // if the default case is hit, Expr is complex, and TAC simplification can't be done
                     return GenerateThreeAddressLine(node);
@@ -92,6 +98,21 @@ namespace SimpleLang.Visitors
                 {
                     return TACodeContainer.CreateAndPushBoolNode(boolNode, label);
                 }
+                case UnOpNode unOpNode:
+                {
+                    var unaryExp = ManageTrivialCases(unOpNode.Unary);
+                    
+                    var tmpName = TmpNameManager.Instance.GenerateTmpVariableName();
+                    TACodeContainer.PushNode(new TacAssignmentNode()
+                    {
+                        Label = label,
+                        LeftPartIdentifier = tmpName,
+                        FirstOperand = null,
+                        Operation = unOpNode.Op,
+                        SecondOperand = unaryExp
+                    });
+                    return tmpName;
+                }
                 // Complex case, when a part of an expr is a binary operation
                 case BinOpNode binOpNode:
                 {
@@ -118,7 +139,7 @@ namespace SimpleLang.Visitors
                     var leftPart = ManageTrivialCases(logicOpNode.Left);
                     var rightPart = ManageTrivialCases(logicOpNode.Right);
                     
-                    // Creating and pushing the resulting binOp between 
+                    // Creating and pushing the resulting LogicOp between 
                     // already generated above TAC variables
                     var tmpName = TmpNameManager.Instance.GenerateTmpVariableName();
                     TACodeContainer.PushNode(new TacAssignmentNode()
@@ -128,6 +149,21 @@ namespace SimpleLang.Visitors
                         FirstOperand = leftPart,
                         Operation = logicOpNode.Operation,
                         SecondOperand = rightPart
+                    });
+                    return tmpName;
+                }
+                case LogicNotNode logicNotNode:
+                {
+                    var unaryExp = ManageTrivialCases(logicNotNode.LogExpr);
+                    
+                    var tmpName = TmpNameManager.Instance.GenerateTmpVariableName();
+                    TACodeContainer.PushNode(new TacAssignmentNode()
+                    {
+                        Label = label,
+                        LeftPartIdentifier = tmpName,
+                        FirstOperand = null,
+                        Operation = "!",
+                        SecondOperand = unaryExp
                     });
                     return tmpName;
                 }

@@ -13,8 +13,7 @@ using SimpleParser;
 using SimpleLang.Visitors;
 using SimpleLang.Optimizations;
 using System.Linq;
-using SimpleLang.GenKill.Implementations;
-using SimpleLang.InOut;
+
 
 namespace SimpleCompiler
 {
@@ -117,8 +116,7 @@ namespace SimpleCompiler
                     var threeAddressCodeVisitor = new ThreeAddressCodeVisitor();
                     r.Visit(threeAddressCodeVisitor);
 
-                    var cfg = new ControlFlowGraph();
-                    cfg.Construct(threeAddressCodeVisitor.TACodeContainer);
+                    var cfg = new ControlFlowGraph(threeAddressCodeVisitor.TACodeContainer);
                     Console.WriteLine(cfg);
                     cfg.SaveToFile(@"cfg.txt");
 
@@ -187,17 +185,11 @@ namespace SimpleCompiler
                     Console.WriteLine("DefUSeSet для базовых блоков");
                     Console.WriteLine(defUseSet);
 
-
                     GenKillVisitor genKillVisitor = new GenKillVisitor();
                     var genKillContainers = genKillVisitor.GenerateReachingDefinitionForBlocks(bblocks);
                     InOutContainer inOutContainers = new InOutContainer(bblocks, genKillContainers);
                     Console.WriteLine("=== InOut для базовых блоков ===");
                     Console.WriteLine(inOutContainers.ToString());
-
-                    //foreach (var bl in bblocks) {
-                    //    Console.WriteLine(bl.ToString());
-                    //}
-
                 }
             }
             catch (FileNotFoundException)

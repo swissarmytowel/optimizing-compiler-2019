@@ -10,9 +10,9 @@ namespace SimpleLang.GenKill.Implementations
 {
     public class GenKillVisitor : IGenKillVisitor
     {
-        private Dictionary<TacNode, IGenKillContainer> lineContainer;
+        private Dictionary<TacNode, IExpressionSetsContainer> lineContainer;
 
-        public Dictionary<ThreeAddressCode, IGenKillContainer> GenerateReachingDefinitionForBlocks(BasicBlocks bblocks)
+        public Dictionary<ThreeAddressCode, IExpressionSetsContainer> GenerateReachingDefinitionForBlocks(BasicBlocks bblocks)
         {
             var lineGenKill = GenerateReachingDefinitionForLine(bblocks);
             var blocksKill = new Dictionary<ThreeAddressCode, HashSet<TacNode>>();
@@ -34,13 +34,13 @@ namespace SimpleLang.GenKill.Implementations
                             blocksGen.Add(bblock, new HashSet<TacNode>());
                         }
 
-                        blocksKill[bblock].UnionWith(lineGenKill[line].GetKill());
-                        blocksGen[bblock].UnionWith(lineGenKill[line].GetGen());
+                        blocksKill[bblock].UnionWith(lineGenKill[line].GetFirstSet());
+                        blocksGen[bblock].UnionWith(lineGenKill[line].GetSecondSet());
                     }
                 }
             }
 
-            var resultBlocksGenKill = new Dictionary<ThreeAddressCode, IGenKillContainer>();
+            var resultBlocksGenKill = new Dictionary<ThreeAddressCode, IExpressionSetsContainer>();
 
             foreach(var resultGKKey in blocksGen.Keys)
             {
@@ -48,12 +48,12 @@ namespace SimpleLang.GenKill.Implementations
 
                 foreach (var resVal in blocksKill[resultGKKey])
                 {
-                    genKillContainer.AddKill(resVal);
+                    genKillContainer.AddToFirstSet(resVal);
                 }
 
                 foreach (var resVal in blocksGen[resultGKKey])
                 {
-                    genKillContainer.AddGen(resVal);
+                    genKillContainer.AddToSecondSet(resVal);
                 }
 
                 resultBlocksGenKill.Add(resultGKKey, genKillContainer);
@@ -62,9 +62,9 @@ namespace SimpleLang.GenKill.Implementations
             return resultBlocksGenKill;
         }
 
-        public Dictionary<TacNode, IGenKillContainer> GenerateReachingDefinitionForLine(BasicBlocks bblocks)
+        public Dictionary<TacNode, IExpressionSetsContainer> GenerateReachingDefinitionForLine(BasicBlocks bblocks)
         {
-            lineContainer = new Dictionary<TacNode, IGenKillContainer>();
+            lineContainer = new Dictionary<TacNode, IExpressionSetsContainer>();
             var variablesContainer = new Dictionary<string, HashSet<TacNode>>();
 
             // Прохождение по каждой строчке кода и нахождение gen и ипсользования переменных
@@ -79,7 +79,7 @@ namespace SimpleLang.GenKill.Implementations
                             lineContainer.Add(line, GetGenKillContainer());
                         }
 
-                        lineContainer[line].AddGen(line);
+                        lineContainer[line].AddToSecondSet(line);
 
                         if (!variablesContainer.ContainsKey(assignmentNode.LeftPartIdentifier))
                         {
@@ -102,8 +102,8 @@ namespace SimpleLang.GenKill.Implementations
                         variableSet.UnionWith(variablesContainer[assignmentNode.LeftPartIdentifier]);
 
                         foreach(var variable in variableSet)
-                            if (!lineContainer[line].GetGen().Contains(variable))
-                                lineContainer[line].AddKill(variable);
+                            if (!lineContainer[line].GetSecondSet().Contains(variable))
+                                lineContainer[line].AddToFirstSet(variable);
                     }
                 }
             }
@@ -112,6 +112,6 @@ namespace SimpleLang.GenKill.Implementations
             return lineContainer;
         }
 
-        public IGenKillContainer GetGenKillContainer() => new GenKillConatainer();
+        public IExpressionSetsContainer GetGenKillContainer() => new GenKillConatainer();
     }
 }
