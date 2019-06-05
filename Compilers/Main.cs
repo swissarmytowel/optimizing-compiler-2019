@@ -165,9 +165,9 @@ namespace SimpleCompiler
                     Console.WriteLine("Goto optimization");
                     Console.WriteLine(threeAddressCodeVisitor.TACodeContainer);
 
-                    var elimintaion = new EliminateTranToTranOpt();
-                    elimintaion.Optimize(threeAddressCodeVisitor.TACodeContainer);
-                    Console.WriteLine("Удаление переходов к переходам завершилось");
+                    //var elimintaion = new EliminateTranToTranOpt();
+                    //elimintaion.Optimize(threeAddressCodeVisitor.TACodeContainer);
+                    //Console.WriteLine("Удаление переходов к переходам завершилось");
 
                     var unreachableCode = new UnreachableCodeOpt();
                     var res = unreachableCode.Optimize(threeAddressCodeVisitor.TACodeContainer);
