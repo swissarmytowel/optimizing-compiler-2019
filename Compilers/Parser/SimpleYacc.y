@@ -158,6 +158,7 @@ F       : S { $$ = $1 as ExprNode; }
 S       : ident { $$ = $1 as IdNode; }
 		| ident OPEN_BRACKET CLOSE_BRACKET { $$ = new FunctionNode($1 as IdNode); }
         | NOT S { $$ = new LogicNotNode($2); }
+		| MINUS S { $$ = new UnOpNode($2); }
         | INUM { $$ = new IntNumNode($1); }
         | RNUM { $$ = new DoubleNumNode($1); }
 		| TRUE { $$ = new BoolNode(true); }
