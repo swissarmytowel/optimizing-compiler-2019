@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Collections.Generic;
 
 using SimpleLang.CFG;
@@ -57,23 +58,18 @@ namespace SimpleLang.MOP
             {
                 var outVertex = outEdge.Target;
                 var sourceVertex = outEdge.Source;
-                // Здесь нужно применить оператор сбора ко всей последовательности
-                // ну и посчитать пердаточную функцию от полученного выше множества
-                //var _out = Out[sourceVertex];
-                //var tmp2 = TransmissionFunction.Calculate(_out, outVertex);
+
+                //In[sourceVertex] = операторСбора(predecessors);
+                //var outBefore = Out[sourceVertex];
+                //Out[sourceVertex] = TransmissionFunction.Calculate(In[sourceVertex], sourceVertex);
+                //isChanged = !outBefore.SequenceEqual(Out[sourceVertex]);
 
                 predecessors.Push(sourceVertex);
                 if (!visited[outVertex]) DepthFirstSearch(outVertex, visited, predecessors, ref isChanged);
                 predecessors.Pop();
             }
 
-            if (currentBlock == ControlFlowGraph.EntryBlock)
-            {
-                // Здесь проверить из менялся ли Out
-            }
-
             visited[currentBlock] = false;
-            isChanged = false;
         }
     }
 }
