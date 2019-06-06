@@ -19,7 +19,6 @@ using SimpleLang.DefUse;
 using SimpleLang.IterationAlgorithms;
 
 
-
 namespace SimpleCompiler
 {
     public class SimpleCompilerMain
@@ -188,9 +187,10 @@ namespace SimpleCompiler
 
                     GenKillVisitor genKillVisitor = new GenKillVisitor();
                     var genKillContainers = genKillVisitor.GenerateReachingDefinitionForBlocks(cfg.SourceBasicBlocks);
-                    InOutContainer inOutContainers = new InOutContainer(cfg.SourceBasicBlocks, genKillContainers);
-                    Console.WriteLine("=== InOut для базовых блоков ===");
-                    Console.WriteLine(inOutContainers.ToString());
+//                    InOutContainerWithFilling inOutContainers =
+//                        new InOutContainerWithFilling(cfg.SourceBasicBlocks, genKillContainers);
+//                    Console.WriteLine("=== InOut для базовых блоков ===");
+//                    Console.WriteLine(inOutContainers.ToString());
 
                     var defUseContainers = DefUseForBlocksGenerator.Execute(cfg.SourceBasicBlocks);
                     DefUseForBlocksPrinter.Execute(defUseContainers);
@@ -215,6 +215,5 @@ namespace SimpleCompiler
 
             Console.ReadLine();
         }
-
     }
 }
