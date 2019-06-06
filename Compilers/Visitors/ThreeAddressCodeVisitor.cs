@@ -133,25 +133,6 @@ namespace SimpleLang.Visitors
                     });
                     return tmpName;
                 }
-                case LogicOpNode logicOpNode:
-                {
-                    
-                    var leftPart = ManageTrivialCases(logicOpNode.Left);
-                    var rightPart = ManageTrivialCases(logicOpNode.Right);
-                    
-                    // Creating and pushing the resulting LogicOp between 
-                    // already generated above TAC variables
-                    var tmpName = TmpNameManager.Instance.GenerateTmpVariableName();
-                    TACodeContainer.PushNode(new TacAssignmentNode()
-                    {
-                        Label = label,
-                        LeftPartIdentifier = tmpName,
-                        FirstOperand = leftPart,
-                        Operation = logicOpNode.Operation,
-                        SecondOperand = rightPart
-                    });
-                    return tmpName;
-                }
                 case LogicNotNode logicNotNode:
                 {
                     var unaryExp = ManageTrivialCases(logicNotNode.LogExpr);

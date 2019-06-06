@@ -90,9 +90,6 @@ class ScannerHelper
     keywords = new Dictionary<string,int>();
     keywords.Add("begin",(int)Tokens.BEGIN);
     keywords.Add("end",(int)Tokens.END);
-    keywords.Add("cycle",(int)Tokens.CYCLE);
-    keywords.Add("write",(int)Tokens.WRITE);
-    keywords.Add("var",(int)Tokens.VAR);
 	keywords.Add("true",(int)Tokens.TRUE);
 	keywords.Add("false",(int)Tokens.FALSE);
 	keywords.Add("int",(int)Tokens.INT);

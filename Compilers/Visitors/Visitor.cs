@@ -12,21 +12,16 @@ namespace SimpleLang.Visitors
         public virtual void VisitIntNumNode(IntNumNode num) { }
         public virtual void VisitDoubleNumNode(DoubleNumNode num) { }
         public virtual void VisitBoolNode(BoolNode v) { }
-        //public virtual void VisitLogicIdNode(LogicIdNode lid) { }
-        public virtual void VisitLogicOpNode(LogicOpNode lop) { }
         public virtual void VisitLogicNotNode(LogicNotNode lnot) { }
         public virtual void VisitBinOpNode(BinOpNode binop) { }
         public virtual void VisitUnOpNode(UnOpNode unop) { }
         public virtual void VisitAssignNode(AssignNode a) { }
-        public virtual void VisitCycleNode(CycleNode c) { }
         public virtual void VisitWhileNode(WhileNode w) { }
         public virtual void VisitForNode(ForNode f) { }
         public virtual void VisitLabelNode(LabelNode l) { }
         public virtual void VisitGotoNode(GotoNode gt) { }
         public virtual void VisitIfNode(IfNode i) { }
         public virtual void VisitBlockNode(BlockNode bl) { }
-        public virtual void VisitWriteNode(WriteNode w) { }
-        public virtual void VisitVarDefNode(VarDefNode w) { }
         public virtual void VisitEmptyNode(EmptyNode w) { }
         public virtual void VisitFunctionNode(FunctionNode f) { }
     }
