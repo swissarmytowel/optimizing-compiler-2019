@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 using SimpleLang.TACode.TacNodes;
 
-namespace SimpleLang.IterationAlgorithms.Interfaces
+namespace SimpleLang.IterationAlgorithms.CollectionOperators
 {
     public interface ICollectionOperator
     {
