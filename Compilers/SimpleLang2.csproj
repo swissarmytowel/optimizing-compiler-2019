@@ -56,6 +56,8 @@
     <Reference Include="nunit.framework" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ConstDistrib\SemilatticeTest.cs" />
+    <Compile Include="ConstDistrib\SemilatticeValue.cs" />
     <Compile Include="DefUse\DefUseForBlocksPrinter.cs" />
     <Compile Include="DefUse\TacNodeVarDecorator.cs" />
     <Compile Include="InOut\InOutContainer.cs" />
@@ -125,6 +127,9 @@
     <Compile Include="Optimizations\EliminateTranToTranOpt.cs" />
     <Compile Include="GenKill\Interfaces\ITransmissionFunction.cs" />
     <Compile Include="GenKill\Implementations\TFByComposition.cs" />
+    <Compile Include="IterationAlgorithms\CollectionOperators\ICollectionOperator.cs" />
+    <Compile Include="IterationAlgorithms\CollectionOperators\UnionCollectionOperator.cs" />
+    <Compile Include="IterationAlgorithms\CollectionOperators\IntersectCollectionOperator.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
@@ -137,6 +142,9 @@
     <Content Include="TACode\README.md" />
   </ItemGroup>
   <ItemGroup />
+  <ItemGroup>
+    <Folder Include="IterationAlgorithms\CollectionOperators\" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
