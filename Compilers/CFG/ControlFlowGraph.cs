@@ -29,6 +29,7 @@ namespace SimpleLang.CFG
         public void Rebuild(ThreeAddressCode tac)
         {
             SourceCode = tac;
+            SourceBasicBlocks = null;
             Graph.Clear();
 
             if (SourceCode == null || SourceCode.TACodeLines.Count == 0)

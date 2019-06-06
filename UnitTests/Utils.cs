@@ -1,4 +1,6 @@
-﻿using SimpleLang.TACode;
+﻿using System.Linq;
+using SimpleLang.CFG;
+using SimpleLang.TACode;
 using SimpleLang.TACode.TacNodes;
 using SimpleLang.Visitors;
 
@@ -90,6 +92,48 @@ namespace UnitTests
                 Condition = condition,
                 TargetLabel = targetLabel
             });
+        }
+
+        /// <summary>
+        /// Check whether the graph contains an edge with specified source and target
+        /// </summary>
+        public static bool IsContainsEdge(BidirectionalGraph graph,
+            ThreeAddressCode source, ThreeAddressCode target) =>
+            graph.Edges.Any(edge =>
+                edge.Source.ToString() == source.ToString() &&
+                edge.Target.ToString() == target.ToString());
+
+        /// <summary>
+        /// Return the code containing nested loop with counter converted to TAC
+        /// </summary>
+        public static ThreeAddressCode GetNestedLoopWithCounterInTAC()
+        {
+            /*
+             * a = 1;
+             * for (i = 1 to 10)
+             *     for (j = 1 to 10)
+             *         a = a + 1;
+             */
+
+            var tacContainer = new ThreeAddressCode();
+
+            // basic block #0
+            AddAssignmentNode(tacContainer, null, "a", "1");
+            AddAssignmentNode(tacContainer, null, "i", "1");
+            // basic block #1
+            AddAssignmentNode(tacContainer, "L1", "j", "1");
+            // basic block #2
+            AddAssignmentNode(tacContainer, "L2", "t1", "a", "+", "1");
+            AddAssignmentNode(tacContainer, null, "a", "t1");
+            AddAssignmentNode(tacContainer, null, "j", "j", "+", "1");
+            AddAssignmentNode(tacContainer, null, "t2", "j", "<", "10");
+            AddIfGotoNode(tacContainer, null, "L2", "t2");
+            // basic block #3
+            AddAssignmentNode(tacContainer, null, "i", "i", "+", "1");
+            AddAssignmentNode(tacContainer, null, "t3", "i", "<", "10");
+            AddIfGotoNode(tacContainer, null, "L1", "t3");
+
+            return tacContainer;
         }
     }
 }
