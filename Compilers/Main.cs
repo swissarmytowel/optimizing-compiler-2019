@@ -125,11 +125,11 @@ namespace SimpleCompiler
                     Console.WriteLine(cfg);
                     cfg.SaveToFile(@"cfg.txt");
 
-                    Console.WriteLine(threeAddressCodeVisitor.TACodeContainer);
-                    var availExprOpt = new AvailableExprOptimization();
-                    availExprOpt.Optimize(cfg);
-                    Console.WriteLine("======= After algebraic identity =======");
-                    Console.WriteLine(cfg);
+                    //Console.WriteLine(threeAddressCodeVisitor.TACodeContainer);
+                    //var availExprOpt = new AvailableExprOptimization();
+                    //availExprOpt.Optimize(cfg);
+                    //Console.WriteLine("======= After algebraic identity =======");
+                    //Console.WriteLine(cfg);
 
                     Console.WriteLine("======= DV =======");
                     Console.WriteLine(threeAddressCodeVisitor);
