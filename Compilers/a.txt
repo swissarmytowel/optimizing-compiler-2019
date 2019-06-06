@@ -2,7 +2,7 @@ c = 123;
 goto l 7:
 m = 1 + c + y;
 l 7:
-if (m > 2) {
+if (m) {
     c = 3;
 } else {
     c = 456;
