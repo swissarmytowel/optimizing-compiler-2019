@@ -48,7 +48,7 @@ namespace SimpleLang.Visitors
                 
                 case DoubleNumNode doubleNode:
                     return doubleNode.ToString();
-                
+
                 default:
                     // if the default case is hit, Expr is complex, and TAC simplification can't be done
                     return GenerateThreeAddressLine(node);
@@ -365,6 +365,23 @@ namespace SimpleLang.Visitors
         public override void VisitEmptyNode(EmptyNode w)
         {
             TACodeContainer.CreateAndPushEmptyNode(w);
+        }
+
+        public override void VisitGotoNode(GotoNode gt)
+        {
+            TACodeContainer.PushNode(new TacGotoNode()
+            {
+                IsUtility = false,
+                TargetLabel = "L" + gt.L.Inum
+            });
+        }
+
+        public override void VisitLabelNode(LabelNode l)
+        {
+            TACodeContainer.PushNode(new TacEmptyNode()
+            {
+                Label = "L" + l.Inum
+            });
         }
 
         public override string ToString() => TACodeContainer.ToString();
