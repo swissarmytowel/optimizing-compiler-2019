@@ -1,5 +1,6 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using SimpleLang.Optimizations;
+using SimpleLang.TACode;
 using SimpleLang.Visitors;
 
 namespace UnitTests.Optimizations
@@ -10,14 +11,14 @@ namespace UnitTests.Optimizations
         [TestMethod]
         public void Optimize_ThreeTimesRepeatedExpression()
         {
-            var tacVisitor = new ThreeAddressCodeVisitor();
-            Utils.AddAssignmentNode(tacVisitor, "L1", "t1", "a", "+", "b");
-            Utils.AddAssignmentNode(tacVisitor, null, "t2", "2");
-            Utils.AddAssignmentNode(tacVisitor, null, "t3", "a", "+", "b");
-            Utils.AddAssignmentNode(tacVisitor, null, "t4", "10");
-            Utils.AddAssignmentNode(tacVisitor, null, "t5", "a", "+", "b");
+            var tacContainer = new ThreeAddressCode();
+            Utils.AddAssignmentNode(tacContainer, "L1", "t1", "a", "+", "b");
+            Utils.AddAssignmentNode(tacContainer, null, "t2", "2");
+            Utils.AddAssignmentNode(tacContainer, null, "t3", "a", "+", "b");
+            Utils.AddAssignmentNode(tacContainer, null, "t4", "10");
+            Utils.AddAssignmentNode(tacContainer, null, "t5", "a", "+", "b");
 
-            var expectedResult = new ThreeAddressCodeVisitor();
+            var expectedResult = new ThreeAddressCode();
             Utils.AddAssignmentNode(expectedResult, "L1", "t1", "a", "+", "b");
             Utils.AddAssignmentNode(expectedResult, null, "t2", "2");
             Utils.AddAssignmentNode(expectedResult, null, "t3", "t1");
@@ -25,19 +26,19 @@ namespace UnitTests.Optimizations
             Utils.AddAssignmentNode(expectedResult, null, "t5", "t1");
 
             var optimization = new CommonSubexprOptimization();
-            var isOptimized = optimization.Optimize(tacVisitor.TACodeContainer);
+            var isOptimized = optimization.Optimize(tacContainer);
 
             Assert.IsTrue(isOptimized);
-            Assert.AreEqual(tacVisitor.ToString(), expectedResult.ToString());
+            Assert.AreEqual(tacContainer.ToString(), expectedResult.ToString());
         }
 
         [TestMethod]
         public void Optimize_ChangedFirstOperand()
         {
-            var tacVisitor = new ThreeAddressCodeVisitor();
-            Utils.AddAssignmentNode(tacVisitor, "L1", "t1", "a", "+", "b");
-            Utils.AddAssignmentNode(tacVisitor, null, "a", "2");
-            Utils.AddAssignmentNode(tacVisitor, null, "t2", "a", "+", "b");
+            var tacContainer = new ThreeAddressCode();
+            Utils.AddAssignmentNode(tacContainer, "L1", "t1", "a", "+", "b");
+            Utils.AddAssignmentNode(tacContainer, null, "a", "2");
+            Utils.AddAssignmentNode(tacContainer, null, "t2", "a", "+", "b");
 
             var expectedResult = new ThreeAddressCodeVisitor();
             Utils.AddAssignmentNode(expectedResult, "L1", "t1", "a", "+", "b");
@@ -45,19 +46,19 @@ namespace UnitTests.Optimizations
             Utils.AddAssignmentNode(expectedResult, null, "t2", "a", "+", "b");
 
             var optimization = new CommonSubexprOptimization();
-            var isOptimized = optimization.Optimize(tacVisitor.TACodeContainer);
+            var isOptimized = optimization.Optimize(tacContainer);
 
             Assert.IsFalse(isOptimized);
-            Assert.AreEqual(tacVisitor.ToString(), expectedResult.ToString());
+            Assert.AreEqual(tacContainer.ToString(), expectedResult.ToString());
         }
 
         [TestMethod]
         public void Optimize_ChangedSecondOperand()
         {
-            var tacVisitor = new ThreeAddressCodeVisitor();
-            Utils.AddAssignmentNode(tacVisitor, "L1", "t1", "a", "+", "b");
-            Utils.AddAssignmentNode(tacVisitor, null, "b", "2");
-            Utils.AddAssignmentNode(tacVisitor, null, "t2", "a", "+", "b");
+            var tacContainer = new ThreeAddressCode();
+            Utils.AddAssignmentNode(tacContainer, "L1", "t1", "a", "+", "b");
+            Utils.AddAssignmentNode(tacContainer, null, "b", "2");
+            Utils.AddAssignmentNode(tacContainer, null, "t2", "a", "+", "b");
 
             var expectedResult = new ThreeAddressCodeVisitor();
             Utils.AddAssignmentNode(expectedResult, "L1", "t1", "a", "+", "b");
@@ -65,20 +66,20 @@ namespace UnitTests.Optimizations
             Utils.AddAssignmentNode(expectedResult, null, "t2", "a", "+", "b");
 
             var optimization = new CommonSubexprOptimization();
-            var isOptimized = optimization.Optimize(tacVisitor.TACodeContainer);
+            var isOptimized = optimization.Optimize(tacContainer);
 
             Assert.IsFalse(isOptimized);
-            Assert.AreEqual(tacVisitor.ToString(), expectedResult.ToString());
+            Assert.AreEqual(tacContainer.ToString(), expectedResult.ToString());
         }
 
         [TestMethod]
         public void Optimize_ChangedOperandThenTwiceRepeatedExpression()
         {
-            var tacVisitor = new ThreeAddressCodeVisitor();
-            Utils.AddAssignmentNode(tacVisitor, "L1", "t1", "a", "+", "b");
-            Utils.AddAssignmentNode(tacVisitor, null, "b", "2");
-            Utils.AddAssignmentNode(tacVisitor, null, "t2", "a", "+", "b");
-            Utils.AddAssignmentNode(tacVisitor, null, "t3", "a", "+", "b");
+            var tacContainer = new ThreeAddressCode();
+            Utils.AddAssignmentNode(tacContainer, "L1", "t1", "a", "+", "b");
+            Utils.AddAssignmentNode(tacContainer, null, "b", "2");
+            Utils.AddAssignmentNode(tacContainer, null, "t2", "a", "+", "b");
+            Utils.AddAssignmentNode(tacContainer, null, "t3", "a", "+", "b");
 
             var expectedResult = new ThreeAddressCodeVisitor();
             Utils.AddAssignmentNode(expectedResult, "L1", "t1", "a", "+", "b");
@@ -87,20 +88,20 @@ namespace UnitTests.Optimizations
             Utils.AddAssignmentNode(expectedResult, null, "t3", "t2");
 
             var optimization = new CommonSubexprOptimization();
-            var isOptimized = optimization.Optimize(tacVisitor.TACodeContainer);
+            var isOptimized = optimization.Optimize(tacContainer);
 
             Assert.IsTrue(isOptimized);
-            Assert.AreEqual(tacVisitor.ToString(), expectedResult.ToString());
+            Assert.AreEqual(tacContainer.ToString(), expectedResult.ToString());
         }
 
         [TestMethod]
         public void Optimize_MultipleExpressions()
         {
-            var tacVisitor = new ThreeAddressCodeVisitor();
-            Utils.AddAssignmentNode(tacVisitor, "L1", "t1", "a", "+", "b");
-            Utils.AddAssignmentNode(tacVisitor, null, "t2", "c", "+", "d");
-            Utils.AddAssignmentNode(tacVisitor, null, "t3", "c", "+", "d");
-            Utils.AddAssignmentNode(tacVisitor, null, "t4", "a", "+", "b");
+            var tacContainer = new ThreeAddressCode();
+            Utils.AddAssignmentNode(tacContainer, "L1", "t1", "a", "+", "b");
+            Utils.AddAssignmentNode(tacContainer, null, "t2", "c", "+", "d");
+            Utils.AddAssignmentNode(tacContainer, null, "t3", "c", "+", "d");
+            Utils.AddAssignmentNode(tacContainer, null, "t4", "a", "+", "b");
 
             var expectedResult = new ThreeAddressCodeVisitor();
             Utils.AddAssignmentNode(expectedResult, "L1", "t1", "a", "+", "b");
@@ -109,10 +110,10 @@ namespace UnitTests.Optimizations
             Utils.AddAssignmentNode(expectedResult, null, "t4", "t1");
 
             var optimization = new CommonSubexprOptimization();
-            var isOptimized = optimization.Optimize(tacVisitor.TACodeContainer);
+            var isOptimized = optimization.Optimize(tacContainer);
 
             Assert.IsTrue(isOptimized);
-            Assert.AreEqual(tacVisitor.ToString(), expectedResult.ToString());
+            Assert.AreEqual(tacContainer.ToString(), expectedResult.ToString());
         }
     }
 }

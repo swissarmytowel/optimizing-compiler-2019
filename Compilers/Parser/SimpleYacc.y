@@ -25,7 +25,7 @@
 %start progr
 
 %token BEGIN END CYCLE ASSIGN ASSIGNPLUS ASSIGNMINUS ASSIGNMULT SEMICOLON WRITE
-VAR PLUS MINUS MULT DIV OPEN_BRACKET CLOSE_BRACKET
+PLUS MINUS MULT DIV OPEN_BRACKET CLOSE_BRACKET
 OPEN_BLOCK CLOSE_BLOCK OPEN_SQUARE CLOSE_SQUARE
 TRUE FALSE NO AND OR MORE LESS EQUAL NOT_EQUAL MORE_EQUAL LESS_EQUAL MOD
 INT DOUBLE BOOL NOT
@@ -36,7 +36,7 @@ WHILE FOR TO PRINTLN IF ELSE COMMA LABEL COLON GOTO
 %token <sVal> ID
 
 %type <eVal> expr ident T F S
-%type <stVal> statement assign block cycle write empty var varlist while for if println idenlist label goto
+%type <stVal> statement assign block  empty while for if println idenlist label goto
 %type <blVal> stlist block
 
 %%
@@ -56,10 +56,7 @@ stlist	: statement
 		;
 
 statement: assign SEMICOLON { $$ = $1; }
-		| block   { $$ = $1; }
-		| cycle   { $$ = $1; }
-		| write   { $$ = $1; }
-		| var     { $$ = $1; }
+		| block   { $$ = $1; }		
 		| empty SEMICOLON  { $$ = $1; }
 		| while   { $$ = $1; }
 		| for { $$ = $1; }
@@ -96,31 +93,6 @@ assign 	: ident ASSIGN expr { $$ = new AssignNode($1 as IdNode, $3); }
 block	: OPEN_BLOCK stlist CLOSE_BLOCK { $$ = $2; }
 		;
 
-cycle	: CYCLE expr statement { $$ = new CycleNode($2,$3); }
-		;
-		
-write	: WRITE OPEN_BRACKET expr CLOSE_BRACKET { $$ = new WriteNode($3); }
-		;
-		
-var		: VAR { InDefSect = true; } varlist 
-		{ 
-			foreach (var v in ($3 as VarDefNode).vars)
-				SymbolTable.NewVarDef(v.Name, type.tint);
-			InDefSect = false;	
-		}
-		;
-
-varlist	: ident 
-		{ 
-			$$ = new VarDefNode($1 as IdNode); 
-		}
-		| varlist COMMA ident 
-		{ 
-			($1 as VarDefNode).Add($3 as IdNode);
-			$$ = $1;
-		}
-		;
-
 while	: WHILE OPEN_BRACKET expr  CLOSE_BRACKET statement { $$ = new WhileNode($3, $5); }
 		;
 
@@ -141,25 +113,25 @@ goto	: GOTO label { $$ = new GotoNode($2 as LabelNode); }
 		;
 
 expr    : T { $$ = $1; }
-        | expr EQUAL T { $$ = new LogicOpNode($1, $3, "=="); }
-        | expr MORE T { $$ = new LogicOpNode($1, $3, ">"); }
-		| expr LESS T { $$ = new LogicOpNode($1, $3, "<"); }
-		| expr NOT_EQUAL T { $$ = new LogicOpNode($1, $3, "!="); }
-        | expr MORE_EQUAL T { $$ = new LogicOpNode($1, $3, ">="); }
-		| expr LESS_EQUAL T { $$ = new LogicOpNode($1, $3, "<="); }
+        | expr EQUAL T { $$ = new BinOpNode($1, $3, "=="); }
+        | expr MORE T { $$ = new BinOpNode($1, $3, ">"); }
+		| expr LESS T { $$ = new BinOpNode($1, $3, "<"); }
+		| expr NOT_EQUAL T { $$ = new BinOpNode($1, $3, "!="); }
+        | expr MORE_EQUAL T { $$ = new BinOpNode($1, $3, ">="); }
+		| expr LESS_EQUAL T { $$ = new BinOpNode($1, $3, "<="); }
         ;
         
 T       : F { $$ = $1 as ExprNode; }
         | T PLUS F { $$ = new BinOpNode ( $1, $3, "+"); }
         | T MINUS F { $$ = new BinOpNode ($1, $3, "-"); }
-		| T OR F { $$ = new LogicOpNode($1, $3, "||"); }
+		| T OR F { $$ = new BinOpNode($1, $3, "||"); }
         ;
 
 F       : S { $$ = $1 as ExprNode; }
         | F MULT S { $$ = new BinOpNode ( $1, $3, "*"); }
         | F DIV S { $$ = new BinOpNode ($1, $3, "/"); }
-		| F MOD S { $$ = new LogicOpNode($1, $3, "%"); }
-		| F AND S { $$ = new LogicOpNode($1, $3, "&&"); }
+		| F MOD S { $$ = new BinOpNode($1, $3, "%"); }
+		| F AND S { $$ = new BinOpNode($1, $3, "&&"); }
         ;
         
 S       : ident { $$ = $1 as IdNode; }
