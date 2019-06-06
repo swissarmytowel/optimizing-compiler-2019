@@ -217,6 +217,39 @@ namespace ProgramTree
         }
     }
 
+    public class LabelNode : StatementNode
+    {
+        public int Inum { get; set; }
+        public LabelNode(int inum)
+        {
+            Inum = inum;
+        }
+        public override void Visit(Visitor v)
+        {
+            v.VisitLabelNode(this);
+        }
+        public override string ToString()
+        {
+            return "l" + Inum + ": ";
+        }
+    }
+    public class GotoNode : StatementNode
+    {
+        public LabelNode L{ get; set; }
+        public GotoNode(LabelNode l)
+        {
+            L = l;
+        }
+        public override void Visit(Visitor v)
+        {
+            v.VisitGotoNode(this);
+        }
+        public override string ToString()
+        {
+            return "goto " + L;
+        }
+    }
+
     public class IfNode : StatementNode
     {
         public ExprNode Expr { get; set; }

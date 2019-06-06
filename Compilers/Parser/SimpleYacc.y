@@ -29,14 +29,14 @@ VAR PLUS MINUS MULT DIV OPEN_BRACKET CLOSE_BRACKET
 OPEN_BLOCK CLOSE_BLOCK OPEN_SQUARE CLOSE_SQUARE
 TRUE FALSE NO AND OR MORE LESS EQUAL NOT_EQUAL MORE_EQUAL LESS_EQUAL MOD
 INT DOUBLE BOOL NOT
-WHILE FOR TO PRINTLN IF ELSE COMMA
+WHILE FOR TO PRINTLN IF ELSE COMMA LABEL COLON GOTO
 
 %token <iVal> INUM 
 %token <dVal> RNUM 
 %token <sVal> ID
 
 %type <eVal> expr ident T F S
-%type <stVal> statement assign block cycle write empty var varlist while for if println idenlist
+%type <stVal> statement assign block cycle write empty var varlist while for if println idenlist label goto
 %type <blVal> stlist block
 
 %%
@@ -65,6 +65,8 @@ statement: assign SEMICOLON { $$ = $1; }
 		| for { $$ = $1; }
 		| println { $$ = $1; }
 		| if { $$ = $1; }
+		| label { $$ = $1; }
+		| goto { $$ = $1; }
 		| idenlist SEMICOLON { $$ = $1; }
 		;
 
@@ -127,11 +129,16 @@ for		: FOR OPEN_BRACKET assign TO expr CLOSE_BRACKET statement { $$ = new ForNod
 
 println	: PRINTLN OPEN_BRACKET expr CLOSE_BRACKET SEMICOLON
 		;
+
 if      : IF OPEN_BRACKET expr CLOSE_BRACKET statement { $$ = new IfNode($3, $5); }
         | IF OPEN_BRACKET expr CLOSE_BRACKET statement ELSE statement { $$ = new IfNode($3, $5, $7); }
 		;
 
+label	: LABEL INUM COLON { $$ = new LabelNode($2); }
+		;
 
+goto	: GOTO label { $$ = new GotoNode($2 as LabelNode); }
+		;
 
 expr    : T { $$ = $1; }
         | expr EQUAL T { $$ = new LogicOpNode($1, $3, "=="); }

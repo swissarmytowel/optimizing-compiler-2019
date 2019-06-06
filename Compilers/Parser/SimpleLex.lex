@@ -32,6 +32,7 @@ ID {Alpha}{AlphaDigit}*
 
 "=" { return (int)Tokens.ASSIGN; }
 ";" { return (int)Tokens.SEMICOLON; }
+":" { return (int)Tokens.COLON; }
 "-=" { return (int)Tokens.ASSIGNMINUS; }
 "+=" { return (int)Tokens.ASSIGNPLUS; }
 "*=" { return (int)Tokens.ASSIGNMULT; }
@@ -96,6 +97,8 @@ class ScannerHelper
 	keywords.Add("false",(int)Tokens.FALSE);
 	keywords.Add("int",(int)Tokens.INT);
 	keywords.Add("double",(int)Tokens.DOUBLE);
+	keywords.Add("l",(int)Tokens.LABEL);
+	keywords.Add("goto",(int)Tokens.GOTO);
 	keywords.Add("bool",(int)Tokens.BOOL);
 	keywords.Add("while",(int)Tokens.WHILE);
 	keywords.Add("for",(int)Tokens.FOR);
