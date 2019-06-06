@@ -27,7 +27,7 @@ namespace SimpleCompiler
         public static void Main()
         {
             var DirectoryPath = Directory.GetParent(Directory.GetCurrentDirectory()).Parent.FullName;
-            string FileName = Path.Combine(DirectoryPath, "a.txt");
+            string FileName = Path.Combine(DirectoryPath, "b.txt");
             try
             {
                 string Text = File.ReadAllText(FileName);
@@ -187,15 +187,15 @@ namespace SimpleCompiler
                     Console.WriteLine();
 
                     GenKillVisitor genKillVisitor = new GenKillVisitor();
-                    var genKillContainers = genKillVisitor.GenerateReachingDefinitionForBlocks(cfg.SourseBasicBlocks);
-                    InOutContainer inOutContainers = new InOutContainer(cfg.SourseBasicBlocks, genKillContainers);
+                    var genKillContainers = genKillVisitor.GenerateReachingDefinitionForBlocks(cfg.SourceBasicBlocks);
+                    InOutContainer inOutContainers = new InOutContainer(cfg.SourceBasicBlocks, genKillContainers);
                     Console.WriteLine("=== InOut для базовых блоков ===");
                     Console.WriteLine(inOutContainers.ToString());
 
-                    var defUseContainers = DefUseForBlocksGenerator.Execute(cfg.SourseBasicBlocks);
+                    var defUseContainers = DefUseForBlocksGenerator.Execute(cfg.SourceBasicBlocks);
                     DefUseForBlocksPrinter.Execute(defUseContainers);
 
-                    var reachingDefenitionsITA = new ReachingDefenitionsITA(cfg, genKillContainers);
+                    var reachingDefenitionsITA = new ReachingDefinitionsITA(cfg, genKillContainers);
                     Console.WriteLine("=== InOut после итерационного алгоритма для достигающих определения ===");
                     Console.WriteLine(reachingDefenitionsITA);
 
