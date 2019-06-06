@@ -120,9 +120,7 @@ namespace SimpleCompiler
 
                     var threeAddressCodeVisitor = new ThreeAddressCodeVisitor();
                     r.Visit(threeAddressCodeVisitor);
-                    
-                    Console.WriteLine(threeAddressCodeVisitor);
-                    
+
                     var cfg = new ControlFlowGraph(threeAddressCodeVisitor.TACodeContainer);
                     Console.WriteLine(cfg);
                     cfg.SaveToFile(@"cfg.txt");
@@ -177,42 +175,33 @@ namespace SimpleCompiler
                     var unreachableCode = new UnreachableCodeOpt();
                     var res = unreachableCode.Optimize(threeAddressCodeVisitor.TACodeContainer);
                     Console.WriteLine("Оптимизация для недостижимых блоков");
-//
-//                    var algOpt = new AlgebraicIdentityOptimization();
-//                    algOpt.Optimize(threeAddressCodeVisitor.TACodeContainer);
-//                    Console.WriteLine("algebraic identity optimization");
-//                    Console.WriteLine(threeAddressCodeVisitor.TACodeContainer);
-//
-//                    var bblocks = new BasicBlocks();
-//                    bblocks.SplitTACode(threeAddressCodeVisitor.TACodeContainer);
-//                    Console.WriteLine("Разбиение на базовые блоки завершилось");
-//                    Console.WriteLine();
-//
-//                    GenKillVisitor genKillVisitor = new GenKillVisitor();
-//                    var genKillContainers = genKillVisitor.GenerateReachingDefinitionForBlocks(cfg.SourceBasicBlocks);
-//                    InOutContainer inOutContainers = new InOutContainer(cfg.SourceBasicBlocks, genKillContainers);
-//                    Console.WriteLine("=== InOut для базовых блоков ===");
-//                    Console.WriteLine(inOutContainers.ToString());
-//
-//                    var defUseContainers = DefUseForBlocksGenerator.Execute(cfg.SourceBasicBlocks);
-//                    DefUseForBlocksPrinter.Execute(defUseContainers);
-//
-//                    var reachingDefenitionsITA = new ReachingDefinitionsITA(cfg, genKillContainers);
-//                    Console.WriteLine("=== InOut после итерационного алгоритма для достигающих определения ===");
-//                    Console.WriteLine(reachingDefenitionsITA);
-//
-//                    var activeVariablesITA = new ActiveVariablesITA(cfg, defUseContainers);
-//                    Console.WriteLine("=== InOut после итерационного алгоритма для активных переменных ===");
-//                    Console.WriteLine(activeVariablesITA);
-//                    
-                    Console.WriteLine("\n" + threeAddressCodeVisitor.ToString());
-                    foreach (var entry in threeAddressCodeVisitor.TACodeContainer)
-                    {
-                        if (ThreeAddressCode.IsFunction(((TacAssignmentNode) entry).FirstOperand))
-                        {
-                            Console.WriteLine(entry);
-                        }
-                    }
+
+                    var algOpt = new AlgebraicIdentityOptimization();
+                    algOpt.Optimize(threeAddressCodeVisitor.TACodeContainer);
+                    Console.WriteLine("algebraic identity optimization");
+                    Console.WriteLine(threeAddressCodeVisitor.TACodeContainer);
+
+                    var bblocks = new BasicBlocks();
+                    bblocks.SplitTACode(threeAddressCodeVisitor.TACodeContainer);
+                    Console.WriteLine("Разбиение на базовые блоки завершилось");
+                    Console.WriteLine();
+
+                    GenKillVisitor genKillVisitor = new GenKillVisitor();
+                    var genKillContainers = genKillVisitor.GenerateReachingDefinitionForBlocks(cfg.SourceBasicBlocks);
+                    InOutContainer inOutContainers = new InOutContainer(cfg.SourceBasicBlocks, genKillContainers);
+                    Console.WriteLine("=== InOut для базовых блоков ===");
+                    Console.WriteLine(inOutContainers.ToString());
+
+                    var defUseContainers = DefUseForBlocksGenerator.Execute(cfg.SourceBasicBlocks);
+                    DefUseForBlocksPrinter.Execute(defUseContainers);
+
+                    var reachingDefenitionsITA = new ReachingDefinitionsITA(cfg, genKillContainers);
+                    Console.WriteLine("=== InOut после итерационного алгоритма для достигающих определения ===");
+                    Console.WriteLine(reachingDefenitionsITA);
+
+                    var activeVariablesITA = new ActiveVariablesITA(cfg, defUseContainers);
+                    Console.WriteLine("=== InOut после итерационного алгоритма для активных переменных ===");
+                    Console.WriteLine(activeVariablesITA);
                 }
             }
             catch (FileNotFoundException)
