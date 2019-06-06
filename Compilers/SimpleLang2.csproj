@@ -128,6 +128,9 @@
     <Compile Include="MOP\MeetOverPaths.cs" />
     <Compile Include="GenKill\Interfaces\ITransmissionFunction.cs" />
     <Compile Include="GenKill\Implementations\TFByComposition.cs" />
+    <Compile Include="IterationAlgorithms\CollectionOperators\ICollectionOperator.cs" />
+    <Compile Include="IterationAlgorithms\CollectionOperators\UnionCollectionOperator.cs" />
+    <Compile Include="IterationAlgorithms\CollectionOperators\IntersectCollectionOperator.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
@@ -142,6 +145,9 @@
   <ItemGroup />
   <ItemGroup>
     <Folder Include="MOP\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="IterationAlgorithms\CollectionOperators\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
