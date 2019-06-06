@@ -6,26 +6,32 @@ using SimpleLang.TACode.TacNodes;
 using SimpleLang.TACode;
 using SimpleLang.CFG;
 using SimpleLang.IterationAlgorithms.Interfaces;
+using SimpleLang.GenKill.Interfaces;
+using SimpleLang.GenKill.Implementations;
+
 
 namespace SimpleLang.IterationAlgorithms
 {
-    
-    abstract class IterationAlgorithm<T> : IIterationAlgorithm<T>
+    abstract class IterationAlgorithm :IIterationAlgorithm<TacNode>
     {
-        public Dictionary<ThreeAddressCode, HashSet<T>> In { get; set; } = new Dictionary<ThreeAddressCode, HashSet<T>>();
-        public Dictionary<ThreeAddressCode, HashSet<T>> Out { get; set; } = new Dictionary<ThreeAddressCode, HashSet<T>>();
+        public Dictionary<ThreeAddressCode, HashSet<TacNode>> In { get; set; } = new Dictionary<ThreeAddressCode, HashSet<TacNode>>();
+        public Dictionary<ThreeAddressCode, HashSet<TacNode>> Out { get; set; } = new Dictionary<ThreeAddressCode, HashSet<TacNode>>();
 
         private ControlFlowGraph controlFlowGraph;
         private Func<ThreeAddressCode, IEnumerable<ThreeAddressCode>> GetPredVertices;
+        private Func<HashSet<TacNode>, ThreeAddressCode, HashSet<TacNode>> TransmissionFunc;
 
-        protected HashSet<T> InitilizationSet { get; set; }
+        protected HashSet<TacNode> InitilizationSet { get; set; } = new HashSet<TacNode>();
         protected bool isForwardDirection = true;
-        protected abstract HashSet<T> CollectionOperator(HashSet<T> x, HashSet<T> y);
-        protected abstract HashSet<T> TransmissionFunc(ThreeAddressCode tac, HashSet<T> x);
+        protected abstract HashSet<TacNode> CollectionOperator(HashSet<TacNode> x, HashSet<TacNode> y);
 
-        protected IterationAlgorithm(ControlFlowGraph cfg, bool forwardDirection = true)
+        protected IterationAlgorithm(
+            ControlFlowGraph cfg,
+            ITransmissionFunction func,
+            bool forwardDirection = true)
         {
             controlFlowGraph = cfg;
+            TransmissionFunc = func.Calculate;
             isForwardDirection = forwardDirection;
             if (forwardDirection)
             {
@@ -44,7 +50,7 @@ namespace SimpleLang.IterationAlgorithms
                 controlFlowGraph.Vertices.ToList() :
                 controlFlowGraph.Vertices.Reverse().ToList();
 
-            Out[entryPoint] = new HashSet<T>();
+            Out[entryPoint] = new HashSet<TacNode>();
             foreach(var vertex in vertices.Skip(1))
             {
                 Out[vertex] = InitilizationSet;
@@ -63,7 +69,7 @@ namespace SimpleLang.IterationAlgorithms
 
                     In[vertex] = pred;
                     var tmp = Out[vertex];
-                    Out[vertex] = TransmissionFunc(vertex, In[vertex]);
+                    Out[vertex] = TransmissionFunc(In[vertex], vertex);
                     if (!tmp.SequenceEqual(Out[vertex]))
                     {
                         isChanged = true;
@@ -77,6 +83,52 @@ namespace SimpleLang.IterationAlgorithms
                 Out = In;
                 In = tmp;
             }
+        }
+
+        public override string ToString()
+        {
+            var builder = new StringBuilder();
+            var numBlock = 0;
+
+            foreach (var inItem in In)
+            {
+                builder.Append($"--- IN {numBlock} :\n");
+                if (inItem.Value.Count == 0)
+                {
+                    builder.Append("null");
+                }
+                else
+                {
+                    var tmp = 0;
+                    foreach (var value in inItem.Value)
+                    {
+                        builder.Append($"{tmp++})");
+                        builder.Append(value.ToString());
+                        builder.Append("\n");
+                    }
+                }
+
+                builder.Append($"\n--- OUT {numBlock}:\n");
+                if (!Out.TryGetValue(inItem.Key, out _) || Out[inItem.Key].Count == 0)
+                {
+                    builder.Append("null");
+                }
+                else
+                {
+                    var tmp = 0;
+                    foreach (var value in Out[inItem.Key])
+                    {
+                        builder.Append($"{tmp++})");
+                        builder.Append(value.ToString());
+                        builder.Append("\n");
+                    }
+                }
+
+                builder.Append("\n");
+                numBlock++;
+            }
+
+            return builder.ToString();
         }
 
     }

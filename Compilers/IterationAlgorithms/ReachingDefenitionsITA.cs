@@ -10,21 +10,17 @@ using SimpleLang.GenKill.Implementations;
 
 namespace SimpleLang.IterationAlgorithms
 {
-    class AvailableExpressionsITA: IterationAlgorithm
+    class ReachingDefenitionsITA : IterationAlgorithm
     {
         protected override HashSet<TacNode> CollectionOperator(HashSet<TacNode> x, HashSet<TacNode> y)
         {
-            return new HashSet<TacNode>(x.Intersect(y));
+            return new HashSet<TacNode>(x.Union(y));
         }
 
-        public AvailableExpressionsITA(
+        public ReachingDefenitionsITA(
             ControlFlowGraph cfg,
             Dictionary<ThreeAddressCode, IExpressionSetsContainer> lines) : base(cfg, new TFByComposition(lines))
         {
-            InitilizationSet = lines
-                .Values
-                .Aggregate(new HashSet<TacNode>(), (a, b) => new HashSet<TacNode>(a.Union(b.GetFirstSet().Union(b.GetSecondSet()))));
-
             Execute();
         }
     }

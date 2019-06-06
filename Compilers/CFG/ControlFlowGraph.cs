@@ -26,7 +26,7 @@ namespace SimpleLang.CFG
         public DepthSpanningTree GetDepthSpanningTree()
             => new DepthSpanningTree(this);
 
-        private void Rebuild(ThreeAddressCode tac)
+        public void Rebuild(ThreeAddressCode tac)
         {
             SourceCode = tac;
 

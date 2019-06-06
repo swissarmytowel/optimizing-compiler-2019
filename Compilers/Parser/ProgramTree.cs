@@ -64,7 +64,7 @@ namespace ProgramTree
     {
         public ExprNode Unary { get; set; }
         public string Op { get; set; }
-        public UnOpNode(ExprNode unary,  string op)  {Unary = unary; Op = op; }
+        public UnOpNode(ExprNode unary,  string op = "-")  {Unary = unary; Op = op; }
         public override void Visit(Visitor v)
         {
             v.VisitUnOpNode(this);

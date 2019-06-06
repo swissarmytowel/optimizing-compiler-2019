@@ -1,35 +1,26 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using SimpleLang.TACode.TacNodes;
 using SimpleLang.TACode;
 using SimpleLang.CFG;
-using SimpleLang.Optimizations;
+using SimpleLang.GenKill.Interfaces;
+using System.Linq;
+using SimpleLang.GenKill.Implementations;
 
 namespace SimpleLang.IterationAlgorithms
 {
-    class ActiveVariablesITA : IterationAlgorithm<string>
+    class ActiveVariablesITA : IterationAlgorithm
     {  
-        protected override HashSet<string> TransmissionFunc(ThreeAddressCode tac, HashSet<string> x)
+        protected override HashSet<TacNode> CollectionOperator(HashSet<TacNode> x, HashSet<TacNode> y)
         {
-            return new HashSet<string>(defUseSetForBlocks
-                .UseSets[tac]
-                .Union(x.Except(defUseSetForBlocks.DefSets[tac])));
+            return new HashSet<TacNode>(x.Union(y));
         }
 
-        protected override HashSet<string> CollectionOperator(HashSet<string> x, HashSet<string> y)
+        public ActiveVariablesITA(
+            ControlFlowGraph cfg,
+            Dictionary<ThreeAddressCode, IExpressionSetsContainer> lines
+            ) : base(cfg, new TFByComposition(lines), false)
         {
-            return new HashSet<string>(x.Union(y));
-        }
-
-        DefUseSetForBlocks defUseSetForBlocks;
-
-        public ActiveVariablesITA(ControlFlowGraph cfg) : base(cfg, false)
-        {
-            InitilizationSet = new HashSet<string>();
-            defUseSetForBlocks = new DefUseSetForBlocks(cfg.SourseBasicBlocks);
-
             Execute();
         }
     }

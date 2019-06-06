@@ -13,8 +13,12 @@ using SimpleParser;
 using SimpleLang.Visitors;
 using SimpleLang.Optimizations;
 using System.Linq;
-using SimpleLang.MOP;
 using SimpleLang.GenKill.Implementations;
+using SimpleLang.InOut;
+using SimpleLang.DefUse;
+using SimpleLang.IterationAlgorithms;
+using SimpleLang.MOP;
+
 
 
 namespace SimpleCompiler
@@ -192,6 +196,22 @@ namespace SimpleCompiler
                     Console.WriteLine("Разбиение на базовые блоки завершилось");
                     Console.WriteLine();
 
+                    GenKillVisitor genKillVisitor = new GenKillVisitor();
+                    var genKillContainers = genKillVisitor.GenerateReachingDefinitionForBlocks(cfg.SourseBasicBlocks);
+                    InOutContainer inOutContainers = new InOutContainer(cfg.SourseBasicBlocks, genKillContainers);
+                    Console.WriteLine("=== InOut для базовых блоков ===");
+                    Console.WriteLine(inOutContainers.ToString());
+
+                    var defUseContainers = DefUseForBlocksGenerator.Execute(cfg.SourseBasicBlocks);
+                    DefUseForBlocksPrinter.Execute(defUseContainers);
+
+                    var reachingDefenitionsITA = new ReachingDefenitionsITA(cfg, genKillContainers);
+                    Console.WriteLine("=== InOut после итерационного алгоритма для достигающих определения ===");
+                    Console.WriteLine(reachingDefenitionsITA);
+
+                    var activeVariablesITA = new ActiveVariablesITA(cfg, defUseContainers);
+                    Console.WriteLine("=== InOut после итерационного алгоритма для активных переменных ===");
+                    Console.WriteLine(activeVariablesITA);
                     //var defUseSet = new DefUseSetForBlocks(bblocks);
                     //Console.WriteLine("DefUSeSet для базовых блоков");
                     //Console.WriteLine(defUseSet);
