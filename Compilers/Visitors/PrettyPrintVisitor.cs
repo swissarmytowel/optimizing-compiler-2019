@@ -171,9 +171,15 @@ namespace SimpleLang.Visitors
             }
             IsInner = prevInner;
         }
-        public override void VisitBoolNode(BoolNode v)
+        public override void VisitBoolNode(BoolNode v) => Text += v.Value.ToString().ToLower();
+
+        public override void VisitLabelNode(LabelNode l)
         {
-            Text += v.Value.ToString().ToLower();
+            Text += l.ToString();
+        }
+        public override void VisitGotoNode(GotoNode gt)
+        {
+            Text += gt.ToString();
         }
         public override void VisitLogicNotNode(LogicNotNode v)
         {
