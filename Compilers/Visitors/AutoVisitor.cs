@@ -20,15 +20,7 @@ namespace SimpleLang.Visitors
         {
             unop.Unary.Visit(this);
         }
-        /*public override void VisitLogicIdNode(LogicIdNode lid)
-        {
-            lid.Name.Visit(this);
-        }*/
-        public override void VisitLogicOpNode(LogicOpNode lop)
-        {
-            lop.Left.Visit(this);
-            lop.Right.Visit(this);
-        }
+       
         public override void VisitLogicNotNode(LogicNotNode lnot)
         {
             lnot.LogExpr.Visit(this);
@@ -39,11 +31,7 @@ namespace SimpleLang.Visitors
             a.Id.Visit(this);
             a.Expr.Visit(this);
         }
-        public override void VisitCycleNode(CycleNode c) 
-        {
-            c.Expr.Visit(this);
-            c.Stat.Visit(this);
-        }
+       
         public override void VisitWhileNode(WhileNode c)
         {
             c.Expr.Visit(this);
@@ -67,14 +55,6 @@ namespace SimpleLang.Visitors
             for (var i = 0; i< bl.StList.Count; i++)
                 bl.StList[i].Visit(this);
         }
-        public override void VisitWriteNode(WriteNode w) 
-        {
-            w.Expr.Visit(this);
-        }
-        public override void VisitVarDefNode(VarDefNode w) 
-        {
-            foreach (var v in w.vars)
-                v.Visit(this);
-        }
+       
     }
 }

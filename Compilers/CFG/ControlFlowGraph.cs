@@ -11,7 +11,7 @@ namespace SimpleLang.CFG
         public ThreeAddressCode EntryBlock => IsVerticesEmpty ? null : Vertices.First();
         public ThreeAddressCode ExitBlock => IsVerticesEmpty ? null : Vertices.Last();
         public ThreeAddressCode SourceCode { get; private set; }
-        public BasicBlocks SourseBasicBlocks { get; private set; }
+        public BasicBlocks SourceBasicBlocks { get; private set; }
 
         public ControlFlowGraph(ThreeAddressCode tac)
         {
@@ -29,6 +29,8 @@ namespace SimpleLang.CFG
         public void Rebuild(ThreeAddressCode tac)
         {
             SourceCode = tac;
+            SourceBasicBlocks = null;
+            Graph.Clear();
 
             if (SourceCode == null || SourceCode.TACodeLines.Count == 0)
                 return;
@@ -40,7 +42,7 @@ namespace SimpleLang.CFG
         {
             var blocks = new BasicBlocks();
             blocks.SplitTACode(SourceCode);
-            SourseBasicBlocks = blocks;
+            SourceBasicBlocks = blocks;
 
             Graph.AddVertexRange(blocks.BasicBlockItems);
 

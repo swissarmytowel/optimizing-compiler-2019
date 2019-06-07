@@ -1,6 +1,8 @@
 c = 123;
+goto l 7:
 m = 1 + c + y;
-if (m > 2) {
+l 7:
+if (m) {
     c = 3;
 } else {
     c = 456;

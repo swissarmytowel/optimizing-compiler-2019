@@ -1,4 +1,4 @@
-﻿using SimpleLang.GenKill.Interfaces;
+using SimpleLang.GenKill.Interfaces;
 using SimpleLang.Optimizations;
 using SimpleLang.TACode;
 using SimpleLang.TACode.TacNodes;
@@ -6,73 +6,16 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using OneBasicBlock = SimpleLang.TACode.ThreeAddressCode;
 
 namespace SimpleLang.InOut
 {
-    class InOutContainer
+    public class InOutContainer
     {
-        public Dictionary<OneBasicBlock, HashSet<TacNode>> In = new Dictionary<OneBasicBlock, HashSet<TacNode>>();
-        public Dictionary<OneBasicBlock, HashSet<TacNode>> Out = new Dictionary<OneBasicBlock, HashSet<TacNode>>();
+        public Dictionary<ThreeAddressCode, HashSet<TacNode>> In = new Dictionary<ThreeAddressCode, HashSet<TacNode>>();
 
-        /// <summary>
-        /// We construct InOutContainer by GenKillContainer in every BasicBlock
-        /// </summary>
-        /// <param name="bBlocks"> All basic blocks </param>
-        /// <param name="genKillContainers"> All gen-kill containers in basic blocks </param>
-        public InOutContainer(BasicBlocks bBlocks,
-            Dictionary<OneBasicBlock, IExpressionSetsContainer> genKillContainers)
-        {
-            for (var i = 0; i < bBlocks.BasicBlockItems.Count; ++i)
-            {
-                var curBlock = bBlocks.BasicBlockItems[i];
-
-                if (i == 0)
-                {
-                    In[curBlock] = new HashSet<TacNode>();
-                }
-                else
-                {
-                    var prevBlock = bBlocks.BasicBlockItems[i - 1];
-                    FillInForBasicBlock(curBlock, prevBlock);
-                }
-
-                FillOutForBasicBlock(curBlock, genKillContainers);
-            }
-        }
-
-        /// <summary>
-        /// Fill IN for basic block B
-        /// </summary>
-        /// <param name="curBlock">current basic block</param>
-        /// <param name="prevBlock">previous basic block</param>
-        public void FillInForBasicBlock(OneBasicBlock curBlock, OneBasicBlock prevBlock)
-        {
-            In[curBlock] = new HashSet<TacNode>();
-            In[curBlock].UnionWith(In[prevBlock]);
-            In[curBlock].UnionWith(Out[prevBlock]);
-        }
-
-        /// <summary>
-        /// Fill OUT for basic block B
-        /// </summary>
-        /// <param name="curBlock">Current basic block</param>
-        /// <param name="genKillContainers">Gen/Kill container</param>
-        public void FillOutForBasicBlock(OneBasicBlock curBlock,
-            Dictionary<OneBasicBlock, IExpressionSetsContainer> genKillContainers)
-        {
-            if (genKillContainers.ContainsKey(curBlock))
-            {
-                Out[curBlock] = new HashSet<TacNode>(genKillContainers[curBlock].GetFirstSet()
-                    .Union(In[curBlock]
-                        .Except(genKillContainers[curBlock].GetSecondSet())));
-            }
-            else
-            {
-                Out[curBlock] = new HashSet<TacNode>(In[curBlock]);
-            }
-        }
-
+        public Dictionary<ThreeAddressCode, HashSet<TacNode>>
+            Out = new Dictionary<ThreeAddressCode, HashSet<TacNode>>();
+        
         public override string ToString()
         {
             var builder = new StringBuilder();

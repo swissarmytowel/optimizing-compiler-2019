@@ -48,7 +48,7 @@ namespace SimpleLang.Visitors
                 
                 case DoubleNumNode doubleNode:
                     return doubleNode.ToString();
-                
+
                 default:
                     // if the default case is hit, Expr is complex, and TAC simplification can't be done
                     return GenerateThreeAddressLine(node);
@@ -88,7 +88,7 @@ namespace SimpleLang.Visitors
                 // Trivial cases. Each switch branch generate simple corresponding node
                 case IdNode idNode:
                 {
-                    return TACodeContainer.CreateAndPushIdNode(idNode, label);
+                    return idNode.Name; //TACodeContainer.CreateAndPushIdNode(idNode, label);
                 }
                 case IntNumNode intNumNode:
                 {
@@ -129,25 +129,6 @@ namespace SimpleLang.Visitors
                         LeftPartIdentifier = tmpName,
                         FirstOperand = leftPart,
                         Operation = binOpNode.Op,
-                        SecondOperand = rightPart
-                    });
-                    return tmpName;
-                }
-                case LogicOpNode logicOpNode:
-                {
-                    
-                    var leftPart = ManageTrivialCases(logicOpNode.Left);
-                    var rightPart = ManageTrivialCases(logicOpNode.Right);
-                    
-                    // Creating and pushing the resulting LogicOp between 
-                    // already generated above TAC variables
-                    var tmpName = TmpNameManager.Instance.GenerateTmpVariableName();
-                    TACodeContainer.PushNode(new TacAssignmentNode()
-                    {
-                        Label = label,
-                        LeftPartIdentifier = tmpName,
-                        FirstOperand = leftPart,
-                        Operation = logicOpNode.Operation,
                         SecondOperand = rightPart
                     });
                     return tmpName;
@@ -367,6 +348,49 @@ namespace SimpleLang.Visitors
             TACodeContainer.CreateAndPushEmptyNode(w);
         }
 
+        public override void VisitGotoNode(GotoNode gt)
+        {
+            TACodeContainer.PushNode(new TacGotoNode()
+            {
+                IsUtility = false,
+                TargetLabel = "L" + gt.L.Inum
+            });
+        }
+
+        public override void VisitLabelNode(LabelNode l)
+        {
+            TACodeContainer.PushNode(new TacEmptyNode()
+            {
+                Label = "L" + l.Inum
+            });
+        }
+
+        public void Postprocess()
+        {
+            var nodesToRemove = new List<TacNode>();
+            var currentNode = TACodeContainer.First;
+            while (currentNode != null)
+            {
+                var next = currentNode.Next;
+
+                if (next == null)
+                {
+                    currentNode = next;
+                    continue;
+                }
+                if (currentNode.Value is TacEmptyNode && !(next.Value is TacEmptyNode))
+                {
+                    if (currentNode.Value.Label != null)
+                    {
+                        next.Value.Label = currentNode.Value.Label;
+                        nodesToRemove.Add(currentNode.Value);
+                    }
+                }
+                currentNode = next;
+            }
+            TACodeContainer.RemoveNodes(nodesToRemove);
+        }
+        
         public override string ToString() => TACodeContainer.ToString();
     }
 }

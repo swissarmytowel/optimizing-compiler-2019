@@ -1,141 +1,145 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using SimpleLang.Optimizations.Interfaces;
 using SimpleLang.TACode.TacNodes;
 using SimpleLang.TACode;
-using SimpleLang.CFG;
+using SimpleLang.IterationAlgorithms;
 
 namespace SimpleLang.Optimizations
 {
-    using TacExprInfoDictionary = Dictionary<TacExpr, Tuple<string, HashSet<ThreeAddressCode>>>;
-
     struct TacExpr
     {
         public string FirstOperand;
         public string Operation;
         public string SecondOperand;
 
-        public TacExpr(string firstOperand, string operation, string secondOperand)
+        public TacExpr(TacAssignmentNode assign)
         {
-            FirstOperand = firstOperand;
-            Operation = operation;
-            SecondOperand = secondOperand;
+            FirstOperand = assign.FirstOperand;
+            Operation = assign.Operation;
+            SecondOperand = assign.SecondOperand;
         }
 
         public TacNode CreateAssignNode(string idName)
         {
-            TacNode assignNode = new TacAssignmentNode()
+            return new TacAssignmentNode()
             {
                 LeftPartIdentifier = idName,
                 FirstOperand = this.FirstOperand,
                 Operation = this.Operation,
                 SecondOperand = this.SecondOperand
             };
-            return assignNode;
         }
     }
 
-    class AvailableExprOptimization : ICFGOptimizer
+    class AvailableExprOptimization : IAlgorithmOptimizer
     {
-        TacExprInfoDictionary infoDictionary = new TacExprInfoDictionary();
+        private Dictionary<TacExpr, string> idsForExprDic = new Dictionary<TacExpr, string>();
 
-        private void OptimizationInBlock(TacExpr expr, ThreeAddressCode block, string tmpName)
+        private HashSet<TacExpr> TransformHashSetNodeToExpr(HashSet<TacNode> nodes)
         {
-            var taCode = block.TACodeLines.First;
-            while (taCode != null)
+            var result = new HashSet<TacExpr>();
+            foreach (var node in nodes)
             {
-                var node = taCode.Value;
-                if (node is TacAssignmentNode assign)
-                {
-                    TacExpr nodeExpr = new TacExpr(assign.FirstOperand, assign.Operation, assign.SecondOperand);
-                    string id = assign.LeftPartIdentifier;
-                    if (id == expr.FirstOperand || id == expr.SecondOperand)
-                        block.TACodeLines.AddAfter(block.TACodeLines.Find(node), expr.CreateAssignNode(tmpName));
-                    if (nodeExpr.Equals(expr) && id != tmpName)
-                    {
-                        assign.FirstOperand = tmpName;
-                        assign.Operation = null;
-                        assign.SecondOperand = null;
-                    }
-                }
-                taCode = taCode.Next;
+                var assign = node as TacAssignmentNode;
+                result.Add(new TacExpr(assign));
             }
+            return result;
         }
 
-        public bool Optimize(ControlFlowGraph cfg)
+        private void AssignRightPartVarReplace(TacAssignmentNode assign, string idName)
+        {
+            assign.FirstOperand = idName;
+            assign.Operation = null;
+            assign.SecondOperand = null;
+        }
+
+        private bool IsVariable(string var)
+        {
+            return Utility.Utility.IsVariable(var);
+        }
+
+        private void DictionarySetOrAdd(Dictionary<TacExpr, bool> varsExprChange, TacExpr key, bool value)
+        {
+            if (varsExprChange.Keys.Contains(key))
+                varsExprChange[key] = value;
+            else varsExprChange.Add(key, value);
+        }
+
+        public bool Optimize(BasicBlocks bb, IterationAlgorithm ita)
         {
             bool isUsed = false;
-            var bb = new BasicBlocks();
-            bb.SplitTACode(cfg.SourceCode);
-            for (int source = 0; source < bb.BasicBlockItems.Count(); source++)
+            Dictionary<ThreeAddressCode, HashSet<TacNode>> IN = ita.In;
+            Dictionary<ThreeAddressCode, HashSet<TacNode>> OUT = ita.Out;
+            Dictionary<TacExpr, int> tacExprCount = new Dictionary<TacExpr, int>();
+            Dictionary<TacExpr, bool> varsExprChange = new Dictionary<TacExpr, bool>();
+            // ищем какие выражения нужно оптимизировать
+            foreach (var block in bb.BasicBlockItems)
             {
-                var sourceBlock = bb.BasicBlockItems[source];
-                var sourceCodeLine = sourceBlock.TACodeLines.First;
-                while (sourceCodeLine != null)
+                foreach (TacNode node in block.TACodeLines)
                 {
-                    var sourceNode = sourceCodeLine.Value;
-                    if (sourceNode is TacAssignmentNode sourceAssign)
+                    if (node is TacAssignmentNode assign)
                     {
-                        if (sourceAssign.SecondOperand == null) break;
-                        TacExpr sourceExpr = new TacExpr(sourceAssign.FirstOperand, sourceAssign.Operation, sourceAssign.SecondOperand);
-                        for (int target = 0; target < bb.BasicBlockItems.Count(); target++)
+                        TacExpr expr = new TacExpr(assign);
+                        if (!tacExprCount.Keys.Contains(expr))
+                            tacExprCount.Add(expr, 1);
+                        else tacExprCount[expr] += 1;
+                    }
+                }
+            }
+            // проводим оптимизацию
+            for (int blockInd = 0; blockInd < bb.BasicBlockItems.Count(); blockInd++)
+            {
+               var block = bb.BasicBlockItems[blockInd];
+               HashSet<TacExpr> inNode = TransformHashSetNodeToExpr(IN[block]);
+               HashSet<TacExpr> outNode = TransformHashSetNodeToExpr(OUT[block]);
+               var codeLine = block.TACodeLines.First;
+               while (codeLine != null)
+               {
+                    var node = codeLine.Value;
+                    if (node is TacAssignmentNode assign)
+                    {
+                        string assignId = assign.LeftPartIdentifier;
+                        TacExpr expr = new TacExpr(assign);
+                        // если выражений больше 1 делаем оптимизацию
+                        if (tacExprCount[expr] > 1)
                         {
-                            var targetBlock = bb.BasicBlockItems[target];
-                            var targetCodeLine = targetBlock.TACodeLines.First;
-                            while (targetCodeLine != null)
+                            DictionarySetOrAdd(varsExprChange, expr, !inNode.Contains(expr));
+                            // если это первая замена общего выражения
+                            if (!idsForExprDic.Keys.Contains(expr))
                             {
-                                var targetNode = targetCodeLine.Value;
-                                if (targetNode == sourceNode)
-                                    break;
-                                if (targetNode is TacAssignmentNode targetAssign)
+                                // создаём переменную для общего выражения
+                                string idName = TmpNameManager.Instance.GenerateTmpVariableName();
+                                idsForExprDic.Add(expr, idName);
+                                block.TACodeLines.AddBefore(block.TACodeLines.Find(node), expr.CreateAssignNode(idName));
+                                AssignRightPartVarReplace(assign, idName);
+                                varsExprChange[expr] = false;
+                            } else
+                            {
+                                string idName = idsForExprDic[expr];
+                                // если это не замена общего выражения
+                                if (assignId != idName)
+                                    AssignRightPartVarReplace(assign, idName);
+                                // если выражение недоступно на входе
+                                if (varsExprChange[expr])
                                 {
-                                    string targetAssignId = targetAssign.LeftPartIdentifier;
-                                    bool isNeedAdditionaly = targetAssignId == sourceExpr.FirstOperand || targetAssignId == sourceExpr.SecondOperand;
-                                    TacExpr targetExpr = new TacExpr(targetAssign.FirstOperand, targetAssign.Operation, targetAssign.SecondOperand);
-                                    if (targetExpr.Equals(sourceExpr) || isNeedAdditionaly)
-                                    {
-                                        string tmpName = null;
-                                        HashSet<ThreeAddressCode> hashSet = null;
-                                        bool isIdVar = infoDictionary.ContainsKey(sourceExpr);
-                                        if (!isIdVar)
-                                        {
-                                            tmpName = TmpNameManager.Instance.GenerateTmpVariableName();
-                                            sourceBlock.TACodeLines.AddBefore(sourceBlock.TACodeLines.Find(sourceNode), sourceExpr.CreateAssignNode(tmpName));
-                                            OptimizationInBlock(sourceExpr, sourceBlock, tmpName);
-                                            hashSet = new HashSet<ThreeAddressCode>();
-                                            hashSet.Add(sourceBlock);
-                                            infoDictionary.Add(sourceExpr, new Tuple<string, HashSet<ThreeAddressCode>>(tmpName, hashSet));
-                                        }
-                                        else
-                                        {
-                                            if (!infoDictionary.ContainsKey(sourceExpr))
-                                                break;
-                                            var info = infoDictionary[sourceExpr];
-                                            tmpName = info.Item1;
-                                            hashSet = info.Item2;
-                                        }
-                                        if (sourceBlock == targetBlock)
-                                            break;
-                                        bool isOptim = hashSet.Contains(targetBlock);
-                                        if (!isOptim)
-                                        {
-                                            isUsed = true;
-                                            hashSet.Add(targetBlock);
-                                            OptimizationInBlock(sourceExpr, targetBlock, tmpName);
-                                            break;
-                                        }
-                                    }
+                                    block.TACodeLines.AddBefore(block.TACodeLines.Find(node), expr.CreateAssignNode(idName));
+                                    varsExprChange[expr] = false;
                                 }
-                                targetCodeLine = targetCodeLine.Next;
+                            }
+                        }
+                        // для всех оптимизируемых выражений
+                        foreach (var _expr in varsExprChange.Keys)
+                        {
+                            // если выражение недоступно на выходе и присваивание его изменяет
+                            if (!outNode.Contains(_expr) && (_expr.FirstOperand == assignId || _expr.SecondOperand == assignId))
+                            {
+                                varsExprChange[_expr] = true;
                             }
                         }
                     }
-                    sourceCodeLine = sourceCodeLine.Next;
                 }
             }
-
             return isUsed;
         }
     }

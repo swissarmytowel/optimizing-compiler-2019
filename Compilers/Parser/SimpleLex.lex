@@ -32,6 +32,7 @@ ID {Alpha}{AlphaDigit}*
 
 "=" { return (int)Tokens.ASSIGN; }
 ";" { return (int)Tokens.SEMICOLON; }
+":" { return (int)Tokens.COLON; }
 "-=" { return (int)Tokens.ASSIGNMINUS; }
 "+=" { return (int)Tokens.ASSIGNPLUS; }
 "*=" { return (int)Tokens.ASSIGNMULT; }
@@ -89,13 +90,12 @@ class ScannerHelper
     keywords = new Dictionary<string,int>();
     keywords.Add("begin",(int)Tokens.BEGIN);
     keywords.Add("end",(int)Tokens.END);
-    keywords.Add("cycle",(int)Tokens.CYCLE);
-    keywords.Add("write",(int)Tokens.WRITE);
-    keywords.Add("var",(int)Tokens.VAR);
 	keywords.Add("true",(int)Tokens.TRUE);
 	keywords.Add("false",(int)Tokens.FALSE);
 	keywords.Add("int",(int)Tokens.INT);
 	keywords.Add("double",(int)Tokens.DOUBLE);
+	keywords.Add("l",(int)Tokens.LABEL);
+	keywords.Add("goto",(int)Tokens.GOTO);
 	keywords.Add("bool",(int)Tokens.BOOL);
 	keywords.Add("while",(int)Tokens.WHILE);
 	keywords.Add("for",(int)Tokens.FOR);

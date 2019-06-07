@@ -12,7 +12,7 @@ using SimpleLang.GenKill.Implementations;
 
 namespace SimpleLang.IterationAlgorithms
 {
-    abstract class IterationAlgorithm :IIterationAlgorithm<TacNode>
+    public abstract class IterationAlgorithm :IIterationAlgorithm<TacNode>
     {
         public Dictionary<ThreeAddressCode, HashSet<TacNode>> In { get; set; } = new Dictionary<ThreeAddressCode, HashSet<TacNode>>();
         public Dictionary<ThreeAddressCode, HashSet<TacNode>> Out { get; set; } = new Dictionary<ThreeAddressCode, HashSet<TacNode>>();
