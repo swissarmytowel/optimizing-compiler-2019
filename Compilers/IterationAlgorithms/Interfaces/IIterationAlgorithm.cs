@@ -1,14 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using SimpleLang.TACode;
-using System.Text;
+﻿using SimpleLang.InOut;
 
 namespace SimpleLang.IterationAlgorithms.Interfaces
 {
-    interface IIterationAlgorithm<T>
+    interface IIterationAlgorithm
     {
-        Dictionary<ThreeAddressCode, HashSet<T>> In { get; set; }
-        Dictionary<ThreeAddressCode, HashSet<T>> Out { get; set; }
+        InOutContainer InOut { get; set; }
     }
 }

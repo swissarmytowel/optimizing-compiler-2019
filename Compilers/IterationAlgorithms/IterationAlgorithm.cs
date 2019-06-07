@@ -1,37 +1,39 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using SimpleLang.TACode.TacNodes;
 using SimpleLang.TACode;
 using SimpleLang.CFG;
 using SimpleLang.IterationAlgorithms.Interfaces;
 using SimpleLang.GenKill.Interfaces;
-using SimpleLang.GenKill.Implementations;
+using SimpleLang.InOut;
+using SimpleLang.IterationAlgorithms.CollectionOperators;
 
 
 namespace SimpleLang.IterationAlgorithms
 {
-    public abstract class IterationAlgorithm :IIterationAlgorithm<TacNode>
+    public abstract class IterationAlgorithm :IIterationAlgorithm
     {
-        public Dictionary<ThreeAddressCode, HashSet<TacNode>> In { get; set; } = new Dictionary<ThreeAddressCode, HashSet<TacNode>>();
-        public Dictionary<ThreeAddressCode, HashSet<TacNode>> Out { get; set; } = new Dictionary<ThreeAddressCode, HashSet<TacNode>>();
+        public InOutContainer InOut { get; set; } = new InOutContainer();
 
         private ControlFlowGraph controlFlowGraph;
         private Func<ThreeAddressCode, IEnumerable<ThreeAddressCode>> GetPredVertices;
         private Func<HashSet<TacNode>, ThreeAddressCode, HashSet<TacNode>> TransmissionFunc;
+        private Func<HashSet<TacNode>, HashSet<TacNode>, HashSet<TacNode>> CollectionOperator;
 
         protected HashSet<TacNode> InitilizationSet { get; set; } = new HashSet<TacNode>();
         protected bool isForwardDirection = true;
-        protected abstract HashSet<TacNode> CollectionOperator(HashSet<TacNode> x, HashSet<TacNode> y);
+        //protected abstract HashSet<TacNode> CollectionOperator(HashSet<TacNode> x, HashSet<TacNode> y);
 
         protected IterationAlgorithm(
             ControlFlowGraph cfg,
             ITransmissionFunction func,
+            ICollectionOperator collectionOperator,
             bool forwardDirection = true)
         {
             controlFlowGraph = cfg;
             TransmissionFunc = func.Calculate;
+            CollectionOperator = collectionOperator.Collect;
             isForwardDirection = forwardDirection;
             if (forwardDirection)
             {
@@ -45,15 +47,17 @@ namespace SimpleLang.IterationAlgorithms
 
         protected void Execute()
         {
-            var entryPoint = (isForwardDirection) ? controlFlowGraph.EntryBlock : controlFlowGraph.ExitBlock;
+            var entryPoints = (isForwardDirection) ? 
+                controlFlowGraph.Vertices.Where(e => controlFlowGraph.InDegree(e) == 0):
+                controlFlowGraph.Vertices.Where(e => controlFlowGraph.OutDegree(e) == 0);
+
             var vertices = (isForwardDirection) ? 
                 controlFlowGraph.Vertices.ToList() :
                 controlFlowGraph.Vertices.Reverse().ToList();
 
-            Out[entryPoint] = new HashSet<TacNode>();
-            foreach(var vertex in vertices.Skip(1))
+            foreach(var vertex in vertices)
             {
-                Out[vertex] = InitilizationSet;
+                InOut.Out[vertex] = InitilizationSet;
             }
 
             var isChanged = true;
@@ -61,16 +65,18 @@ namespace SimpleLang.IterationAlgorithms
             while (isChanged)
             {
                 isChanged = false;
-                foreach(var vertex in vertices.Skip(1))
+                foreach(var vertex in vertices)
                 {
-                    var pred = GetPredVertices(vertex)
-                        .Select(e => Out[e])
+                    var pred = (entryPoints.Contains(vertex))?
+                        new HashSet<TacNode>() :
+                        GetPredVertices(vertex)
+                        .Select(e => InOut.Out[e])
                         .Aggregate((a,b) => CollectionOperator(a,b));
 
-                    In[vertex] = pred;
-                    var tmp = Out[vertex];
-                    Out[vertex] = TransmissionFunc(In[vertex], vertex);
-                    if (!tmp.SequenceEqual(Out[vertex]))
+                    InOut.In[vertex] = pred;
+                    var tmp = InOut.Out[vertex];
+                    InOut.Out[vertex] = TransmissionFunc(InOut.In[vertex], vertex);
+                    if (!tmp.SequenceEqual(InOut.Out[vertex]))
                     {
                         isChanged = true;
                     }
@@ -79,57 +85,10 @@ namespace SimpleLang.IterationAlgorithms
 
             if (!isForwardDirection)
             {
-                var tmp = Out;
-                Out = In;
-                In = tmp;
+                var tmp = InOut.Out;
+                InOut.Out = InOut.In;
+                InOut.In = tmp;
             }
         }
-
-        public override string ToString()
-        {
-            var builder = new StringBuilder();
-            var numBlock = 0;
-
-            foreach (var inItem in In)
-            {
-                builder.Append($"--- IN {numBlock} :\n");
-                if (inItem.Value.Count == 0)
-                {
-                    builder.Append("null");
-                }
-                else
-                {
-                    var tmp = 0;
-                    foreach (var value in inItem.Value)
-                    {
-                        builder.Append($"{tmp++})");
-                        builder.Append(value.ToString());
-                        builder.Append("\n");
-                    }
-                }
-
-                builder.Append($"\n--- OUT {numBlock}:\n");
-                if (!Out.TryGetValue(inItem.Key, out _) || Out[inItem.Key].Count == 0)
-                {
-                    builder.Append("null");
-                }
-                else
-                {
-                    var tmp = 0;
-                    foreach (var value in Out[inItem.Key])
-                    {
-                        builder.Append($"{tmp++})");
-                        builder.Append(value.ToString());
-                        builder.Append("\n");
-                    }
-                }
-
-                builder.Append("\n");
-                numBlock++;
-            }
-
-            return builder.ToString();
-        }
-
     }
 }
