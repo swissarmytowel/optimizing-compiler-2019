@@ -7,23 +7,21 @@ using SimpleLang.TACode;
 using SimpleLang.CFG;
 using SimpleLang.GenKill.Interfaces;
 using SimpleLang.GenKill.Implementations;
+using SimpleLang.IterationAlgorithms.CollectionOperators;
 
 namespace SimpleLang.IterationAlgorithms
 {
     class AvailableExpressionsITA: IterationAlgorithm
     {
-        protected override HashSet<TacNode> CollectionOperator(HashSet<TacNode> x, HashSet<TacNode> y)
-        {
-            return new HashSet<TacNode>(x.Intersect(y));
-        }
-
         public AvailableExpressionsITA(
             ControlFlowGraph cfg,
-            Dictionary<ThreeAddressCode, IExpressionSetsContainer> lines) : base(cfg, new TFByComposition(lines))
+            Dictionary<ThreeAddressCode, IExpressionSetsContainer> lines
+            ) : base(cfg, new TFByComposition(lines), new IntersectCollectionOperator())
         {
             InitilizationSet = lines
                 .Values
-                .Aggregate(new HashSet<TacNode>(), (a, b) => new HashSet<TacNode>(a.Union(b.GetFirstSet().Union(b.GetSecondSet()))));
+                .Aggregate(new HashSet<TacNode>(), 
+                (a, b) => new HashSet<TacNode>(a.Union(b.GetFirstSet().Union(b.GetSecondSet()))));
 
             Execute();
         }

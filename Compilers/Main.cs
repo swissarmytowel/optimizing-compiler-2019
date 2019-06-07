@@ -209,16 +209,13 @@ namespace SimpleCompiler
                     //var defUseContainers = DefUseForBlocksGenerator.Execute(cfg.SourseBasicBlocks);
                     //DefUseForBlocksPrinter.Execute(defUseContainers);
 
-                    //var reachingDefenitionsITA = new ReachingDefenitionsITA(cfg, genKillContainers);
-                    //Console.WriteLine("=== InOut после итерационного алгоритма для достигающих определения ===");
-                    //Console.WriteLine(reachingDefenitionsITA);
+                    var reachingDefenitionsITA = new ReachingDefinitionsITA(cfg, genKillContainers);
+                    Console.WriteLine("=== InOut после итерационного алгоритма для достигающих определения ===");
+                    Console.WriteLine(reachingDefenitionsITA.InOut);
 
-                    //var activeVariablesITA = new ActiveVariablesITA(cfg, defUseContainers);
-                    //Console.WriteLine("=== InOut после итерационного алгоритма для активных переменных ===");
-                    //Console.WriteLine(activeVariablesITA);
-                    //var defUseSet = new DefUseSetForBlocks(bblocks);
-                    //Console.WriteLine("DefUSeSet для базовых блоков");
-                    //Console.WriteLine(defUseSet);
+                    var activeVariablesITA = new ActiveVariablesITA(cfg, defUseContainers);
+                    Console.WriteLine("=== InOut после итерационного алгоритма для активных переменных ===");
+                    Console.WriteLine(activeVariablesITA.InOut);
                 }
             }
             catch (FileNotFoundException)
