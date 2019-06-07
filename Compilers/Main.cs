@@ -197,11 +197,11 @@ namespace SimpleCompiler
 
                     var reachingDefenitionsITA = new ReachingDefinitionsITA(cfg, genKillContainers);
                     Console.WriteLine("=== InOut после итерационного алгоритма для достигающих определения ===");
-                    Console.WriteLine(reachingDefenitionsITA);
+                    Console.WriteLine(reachingDefenitionsITA.InOut);
 
                     var activeVariablesITA = new ActiveVariablesITA(cfg, defUseContainers);
                     Console.WriteLine("=== InOut после итерационного алгоритма для активных переменных ===");
-                    Console.WriteLine(activeVariablesITA);
+                    Console.WriteLine(activeVariablesITA.InOut);
                 }
             }
             catch (FileNotFoundException)

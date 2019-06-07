@@ -69,8 +69,8 @@ namespace SimpleLang.Optimizations
         public bool Optimize(BasicBlocks bb, IterationAlgorithm ita)
         {
             bool isUsed = false;
-            Dictionary<ThreeAddressCode, HashSet<TacNode>> IN = ita.In;
-            Dictionary<ThreeAddressCode, HashSet<TacNode>> OUT = ita.Out;
+            Dictionary<ThreeAddressCode, HashSet<TacNode>> IN = ita.InOut.In;
+            Dictionary<ThreeAddressCode, HashSet<TacNode>> OUT = ita.InOut.Out;
             Dictionary<TacExpr, int> tacExprCount = new Dictionary<TacExpr, int>();
             Dictionary<TacExpr, bool> varsExprChange = new Dictionary<TacExpr, bool>();
             // ищем какие выражения нужно оптимизировать
