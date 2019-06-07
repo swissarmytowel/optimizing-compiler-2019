@@ -123,7 +123,9 @@ namespace SimpleCompiler
                     var cfg = new ControlFlowGraph(threeAddressCodeVisitor.TACodeContainer);
                     Console.WriteLine(cfg);
                     cfg.SaveToFile(@"cfg.txt");
-
+                    var dstClassifier = new DstEdgeClassifier(cfg);
+                    dstClassifier.ClassificateEdges(cfg);
+                    Console.WriteLine(dstClassifier);
                     //Console.WriteLine(threeAddressCodeVisitor.TACodeContainer);
                     //var availExprOpt = new AvailableExprOptimization();
                     //availExprOpt.Optimize(cfg);
