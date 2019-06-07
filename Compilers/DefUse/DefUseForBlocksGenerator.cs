@@ -3,6 +3,7 @@ using System.Text.RegularExpressions;
 
 using SimpleLang.Optimizations;
 using SimpleLang.GenKill.Interfaces;
+using SimpleLang.TacBasicBlocks;
 using SimpleLang.TACode;
 using SimpleLang.TACode.TacNodes;
 

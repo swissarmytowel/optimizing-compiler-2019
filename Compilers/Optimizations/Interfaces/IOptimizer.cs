@@ -1,5 +1,6 @@
 using SimpleLang.CFG;
 using SimpleLang.IterationAlgorithms;
+using SimpleLang.TacBasicBlocks;
 using SimpleLang.TACode;
 
 namespace SimpleLang.Optimizations.Interfaces

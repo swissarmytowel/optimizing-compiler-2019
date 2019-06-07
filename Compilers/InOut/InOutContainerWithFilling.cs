@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using SimpleLang.TacBasicBlocks;
 using OneBasicBlock = SimpleLang.TACode.ThreeAddressCode;
 
 namespace SimpleLang.InOut

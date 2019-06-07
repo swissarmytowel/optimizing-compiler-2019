@@ -4,7 +4,6 @@ using System.Text;
 using System.Reflection;
 using System.Collections.Generic;
 using System.Linq;
-using SimpleLang.Optimizations.DefUse;
 using SimpleLang.CFG;
 using SimpleLang.TACode;
 using SimpleLang.TACode.TacNodes;
@@ -17,6 +16,8 @@ using SimpleLang.GenKill.Implementations;
 using SimpleLang.InOut;
 using SimpleLang.DefUse;
 using SimpleLang.IterationAlgorithms;
+using SimpleLang.TacBasicBlocks;
+using SimpleLang.TacBasicBlocks.DefUse;
 
 
 namespace SimpleCompiler

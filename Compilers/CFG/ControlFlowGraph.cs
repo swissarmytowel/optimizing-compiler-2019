@@ -3,6 +3,7 @@ using SimpleLang.Optimizations;
 using SimpleLang.TACode;
 using SimpleLang.TACode.TacNodes;
 using QuickGraph;
+using SimpleLang.TacBasicBlocks;
 
 namespace SimpleLang.CFG
 {

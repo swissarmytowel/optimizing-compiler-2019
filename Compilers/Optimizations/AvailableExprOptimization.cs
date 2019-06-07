@@ -4,6 +4,7 @@ using SimpleLang.Optimizations.Interfaces;
 using SimpleLang.TACode.TacNodes;
 using SimpleLang.TACode;
 using SimpleLang.IterationAlgorithms;
+using SimpleLang.TacBasicBlocks;
 
 namespace SimpleLang.Optimizations
 {
