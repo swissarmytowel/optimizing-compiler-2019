@@ -140,21 +140,21 @@ namespace SimpleCompiler
                     //Console.WriteLine(detector);
                     //Console.WriteLine("======= Detector 2 =======");
                     //Console.WriteLine(detector.ToString2());
-                    var constPropagationOptimizer = new DefUseConstPropagation(detector);
-                    var result = constPropagationOptimizer.Optimize(threeAddressCodeVisitor.TACodeContainer);
+                    //var constPropagationOptimizer = new DefUseConstPropagation(detector);
+                    //var result = constPropagationOptimizer.Optimize(threeAddressCodeVisitor.TACodeContainer);
 
-                    Console.WriteLine("======= After const propagation =======");
-                    Console.WriteLine(threeAddressCodeVisitor);
+                    //Console.WriteLine("======= After const propagation =======");
+                    //Console.WriteLine(threeAddressCodeVisitor);
 
-                    result = constPropagationOptimizer.Optimize(threeAddressCodeVisitor.TACodeContainer);
-                    Console.WriteLine("======= After const propagation =======");
-                    Console.WriteLine(threeAddressCodeVisitor);
+                    //result = constPropagationOptimizer.Optimize(threeAddressCodeVisitor.TACodeContainer);
+                    //Console.WriteLine("======= After const propagation =======");
+                    //Console.WriteLine(threeAddressCodeVisitor);
 
-                    var copyPropagationOptimizer = new DefUseCopyPropagation(detector);
-                    result = copyPropagationOptimizer.Optimize(threeAddressCodeVisitor.TACodeContainer);
+                    //var copyPropagationOptimizer = new DefUseCopyPropagation(detector);
+                    //result = copyPropagationOptimizer.Optimize(threeAddressCodeVisitor.TACodeContainer);
 
-                    Console.WriteLine("======= After copy propagation =======");
-                    Console.WriteLine(threeAddressCodeVisitor);
+                    //Console.WriteLine("======= After copy propagation =======");
+                    //Console.WriteLine(threeAddressCodeVisitor);
 
                     //var bblocks = new BasicBlocks();
                     //bblocks.SplitTACode(threeAddressCodeVisitor.TACodeContainer);
@@ -184,7 +184,7 @@ namespace SimpleCompiler
 
 
                     var genKillVisitor = new GenKillVisitor();
-                    var genkill = genKillVisitor.GenerateReachingDefinitionForBlocks(cfg.SourseBasicBlocks);
+                    var genkill = genKillVisitor.GenerateReachingDefinitionForBlocks(cfg.SourceBasicBlocks);
                     //var genkill = genKillVisitor.GenerateReachingDefinitionForBlocks(bblocks);
 
                     var tfBComposition = new TFByComposition(genkill);
@@ -193,7 +193,7 @@ namespace SimpleCompiler
                     var mop = new MeetOverPaths(cfg, tfBComposition, unionCollection, new HashSet<TacNode>());
                     mop.Compute();
 
-                    var iterationAlgo = new ReachingDefenitionsITA(cfg, genkill);
+                    var iterationAlgo = new ReachingDefinitionsITA(cfg, genkill);
 
                     var bblocks = new BasicBlocks();
                     bblocks.SplitTACode(threeAddressCodeVisitor.TACodeContainer);
@@ -209,13 +209,13 @@ namespace SimpleCompiler
                     //var defUseContainers = DefUseForBlocksGenerator.Execute(cfg.SourseBasicBlocks);
                     //DefUseForBlocksPrinter.Execute(defUseContainers);
 
-                    var reachingDefenitionsITA = new ReachingDefinitionsITA(cfg, genKillContainers);
-                    Console.WriteLine("=== InOut после итерационного алгоритма для достигающих определения ===");
-                    Console.WriteLine(reachingDefenitionsITA.InOut);
+                    //var reachingDefenitionsITA = new ReachingDefinitionsITA(cfg, genKillContainers);
+                    //Console.WriteLine("=== InOut после итерационного алгоритма для достигающих определения ===");
+                    //Console.WriteLine(reachingDefenitionsITA.InOut);
 
-                    var activeVariablesITA = new ActiveVariablesITA(cfg, defUseContainers);
-                    Console.WriteLine("=== InOut после итерационного алгоритма для активных переменных ===");
-                    Console.WriteLine(activeVariablesITA.InOut);
+                    //var activeVariablesITA = new ActiveVariablesITA(cfg, defUseContainers);
+                    //Console.WriteLine("=== InOut после итерационного алгоритма для активных переменных ===");
+                    //Console.WriteLine(activeVariablesITA.InOut);
                 }
             }
             catch (FileNotFoundException)
