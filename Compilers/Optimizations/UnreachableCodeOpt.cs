@@ -29,7 +29,6 @@ namespace SimpleLang.Optimizations
             {
                 if (lables.Contains(line.Label))
                 {
-                    tacNodesToRemove.Clear();
                     return false;
                 } 
                 tacNodesToRemove.Add(line);
@@ -47,30 +46,33 @@ namespace SimpleLang.Optimizations
             var currentNode = tac.TACodeLines.First;
             var linesToDelete = new List<TacNode>();
             var variablesValue = new Dictionary<string, string>();
+            var previuosNodes = new HashSet<TacNode>();
 
             while (currentNode != null)
             {
                 var line = currentNode.Value;
                 if (line is TacAssignmentNode assignmentNode)
                 {
+                    var rightPart = $"{assignmentNode.FirstOperand} {assignmentNode.Operation} {assignmentNode.SecondOperand}";
                     if (!variablesValue.ContainsKey(assignmentNode.LeftPartIdentifier))
-                        variablesValue.Add(assignmentNode.LeftPartIdentifier, assignmentNode.FirstOperand);
-                    variablesValue[assignmentNode.LeftPartIdentifier] = assignmentNode.FirstOperand;
+                        variablesValue.Add(assignmentNode.LeftPartIdentifier, rightPart);
+                    else variablesValue[assignmentNode.LeftPartIdentifier] = rightPart;
                 }
 
                 if (line is TacIfGotoNode ifGotoNode && Equals(variablesValue[ifGotoNode.Condition], "True") || line.GetType() == typeof(TacGotoNode))
                 {
                     var gotoNode = line as TacGotoNode;
-                    if (CheckLabels(labels, currentNode.Next, gotoNode.TargetLabel, linesToDelete))
-                    {
-                        currentNode.Value = new TacGotoNode { Label = gotoNode.Label, TargetLabel = gotoNode.TargetLabel };
-                        tac.RemoveNodes(linesToDelete);
-                        linesToDelete.Clear();
-                        isApplied = true;
-                    }
+                    if (!previuosNodes.Contains(tac[gotoNode.TargetLabel]))
+                        if (CheckLabels(labels, currentNode.Next, gotoNode.TargetLabel, linesToDelete))
+                        {
+                            currentNode.Value = new TacGotoNode { Label = gotoNode.Label, TargetLabel = gotoNode.TargetLabel };
+                            isApplied = true;
+                        }
                 }
+                previuosNodes.Add(line);
                 currentNode = currentNode.Next;
             }
+            tac.RemoveNodes(linesToDelete);
 
             return isApplied;
         }
