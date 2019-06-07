@@ -12,23 +12,23 @@ using SimpleLang.IterationAlgorithms.CollectionOperators;
 
 namespace SimpleLang.IterationAlgorithms
 {
-    public abstract class IterationAlgorithm :IIterationAlgorithm
+    public abstract class IterationAlgorithm<T> :IIterationAlgorithm<T>
     {
-        public InOutContainer InOut { get; set; } = new InOutContainer();
+        public InOutContainer<T> InOut { get; set; } = new InOutContainer<T>();
 
         private ControlFlowGraph controlFlowGraph;
         private Func<ThreeAddressCode, IEnumerable<ThreeAddressCode>> GetPredVertices;
-        private Func<HashSet<TacNode>, ThreeAddressCode, HashSet<TacNode>> TransmissionFunc;
-        private Func<HashSet<TacNode>, HashSet<TacNode>, HashSet<TacNode>> CollectionOperator;
+        private Func<HashSet<T>, ThreeAddressCode, HashSet<T>> TransmissionFunc;
+        private Func<HashSet<T>, HashSet<T>, HashSet<T>> CollectionOperator;
 
-        protected HashSet<TacNode> InitilizationSet { get; set; } = new HashSet<TacNode>();
+        protected HashSet<T> InitilizationSet { get; set; } = new HashSet<T>();
         protected bool isForwardDirection = true;
         //protected abstract HashSet<TacNode> CollectionOperator(HashSet<TacNode> x, HashSet<TacNode> y);
 
         protected IterationAlgorithm(
             ControlFlowGraph cfg,
-            ITransmissionFunction func,
-            ICollectionOperator collectionOperator,
+            ITransmissionFunction<T> func,
+            ICollectionOperator<T> collectionOperator,
             bool forwardDirection = true)
         {
             controlFlowGraph = cfg;
@@ -68,7 +68,7 @@ namespace SimpleLang.IterationAlgorithms
                 foreach(var vertex in vertices)
                 {
                     var pred = (entryPoints.Contains(vertex))?
-                        new HashSet<TacNode>() :
+                        new HashSet<T>() :
                         GetPredVertices(vertex)
                         .Select(e => InOut.Out[e])
                         .Aggregate((a,b) => CollectionOperator(a,b));
