@@ -5,8 +5,8 @@ using SimpleLang.TACode.TacNodes;
 
 namespace SimpleLang.IterationAlgorithms.CollectionOperators
 {
-    public interface ICollectionOperator
+    public interface ICollectionOperator<T>
     {
-        HashSet<TacNode> Collect(HashSet<TacNode> firstSet, HashSet<TacNode> secondSet);
+        HashSet<T> Collect(HashSet<T> firstSet, HashSet<T> secondSet);
     }
 }

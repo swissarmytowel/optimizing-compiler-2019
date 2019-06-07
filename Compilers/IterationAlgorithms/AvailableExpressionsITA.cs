@@ -11,12 +11,12 @@ using SimpleLang.IterationAlgorithms.CollectionOperators;
 
 namespace SimpleLang.IterationAlgorithms
 {
-    class AvailableExpressionsITA: IterationAlgorithm
+    class AvailableExpressionsITA: IterationAlgorithm<TacNode>
     {
         public AvailableExpressionsITA(
             ControlFlowGraph cfg,
             Dictionary<ThreeAddressCode, IExpressionSetsContainer> lines
-            ) : base(cfg, new TFByComposition(lines), new IntersectCollectionOperator())
+            ) : base(cfg, new TFByComposition(lines), new IntersectCollectionOperator<TacNode>())
         {
             InitilizationSet = lines
                 .Values
