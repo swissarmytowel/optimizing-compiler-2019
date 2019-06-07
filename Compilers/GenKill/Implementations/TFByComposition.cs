@@ -51,12 +51,12 @@ namespace SimpleLang.GenKill.Implementations
 
         public HashSet<TacNode> GetLineGen(TacNode tacNode)
         {
-            return lineGenKill[basicBlock].GetSecondSet();
+            return lineGenKill[basicBlock].GetFirstSet();
         }
 
         public HashSet<TacNode> GetLineKill(TacNode tacNode)
         {
-            return lineGenKill[basicBlock].GetFirstSet();
+            return lineGenKill[basicBlock].GetSecondSet();
         }
     }
 }
