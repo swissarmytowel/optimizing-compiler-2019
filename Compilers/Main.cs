@@ -12,7 +12,6 @@ using SimpleScanner;
 using SimpleParser;
 using SimpleLang.Visitors;
 using SimpleLang.Optimizations;
-using System.Linq;
 using SimpleLang.GenKill.Implementations;
 using SimpleLang.InOut;
 using SimpleLang.DefUse;
@@ -126,6 +125,9 @@ namespace SimpleCompiler
                     var dstClassifier = new DstEdgeClassifier(cfg);
                     dstClassifier.ClassificateEdges(cfg);
                     Console.WriteLine(dstClassifier);
+
+                    var depth = cfg.GetDepth(dstClassifier.EdgeTypes);
+                    Console.WriteLine($"Depth CFG = {depth}");
                     //Console.WriteLine(threeAddressCodeVisitor.TACodeContainer);
                     //var availExprOpt = new AvailableExprOptimization();
                     //availExprOpt.Optimize(cfg);
