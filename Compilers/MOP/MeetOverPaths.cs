@@ -18,12 +18,19 @@ namespace SimpleLang.MOP
         public Dictionary<ThreeAddressCode, HashSet<TacNode>> Out { get; set; }
         public ITransmissionFunction TransmissionFunction { get; }
         public ICollectionOperator CollectionOperator { get; }
+        public bool IsForwardDirection { get; }
 
-        public MeetOverPaths(ControlFlowGraph controlFlowGraph, ITransmissionFunction transmissionFunction, ICollectionOperator collectionOperator)
+        public MeetOverPaths(ControlFlowGraph controlFlowGraph,
+            ITransmissionFunction transmissionFunction,
+            ICollectionOperator collectionOperator,
+            HashSet<TacNode> initSet,
+            bool isForwardDirection=true
+            )
         {
             TransmissionFunction = transmissionFunction;
             ControlFlowGraph = controlFlowGraph;
             CollectionOperator = collectionOperator;
+            IsForwardDirection = isForwardDirection;
             In = new Dictionary<ThreeAddressCode, HashSet<TacNode>>();
             Out = new Dictionary<ThreeAddressCode, HashSet<TacNode>>();
         }

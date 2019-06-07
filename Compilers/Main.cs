@@ -190,8 +190,11 @@ namespace SimpleCompiler
 
                     var tfBComposition = new TFByComposition(genkill);
                     var unionCollection = new UnionCollectionOperator();
-                    var mop = new MeetOverPaths(cfg, tfBComposition, unionCollection);
+                    var intersectCollection = new IntersectCollectionOperator();
+                    var mop = new MeetOverPaths(cfg, tfBComposition, unionCollection, new HashSet<TacNode>());
                     mop.Compute();
+
+                    var iterationAlgo = new ReachingDefenitionsITA(cfg, genkill);
 
                     var bblocks = new BasicBlocks();
                     bblocks.SplitTACode(threeAddressCodeVisitor.TACodeContainer);
