@@ -12,30 +12,29 @@ using SimpleLang.Utility;
 
 namespace SimpleLang.Optimizations
 {
-    public class ReachingDefinitionsConstPropagation : IAlgorithmOptimizer<TacNode>
+    public class ReachingDefinitionsConstPropagation : IIterativeAlgorithmOptimizer<TacNode>
     {
-        private static string Routine(HashSet<TacNode> inData, HashSet<TacNode> outData, string operand)
+        private static TacAssignmentNode Routine(HashSet<TacNode> inData, HashSet<TacNode> outData, string operand)
         {
             var reachedDefinitions = new HashSet<TacNode>();
             foreach (var entry in inData)
             {
                 if (!(entry is TacAssignmentNode assignmentEntry)) continue;
-                if (!outData.Contains(assignmentEntry)) continue;
 
                 if (assignmentEntry.LeftPartIdentifier == operand &&
                     assignmentEntry.SecondOperand == null &&
                     Utility.Utility.IsNum(assignmentEntry.FirstOperand))
                 {
-                    reachedDefinitions.Add(assignmentEntry);   
-                }                
+                    reachedDefinitions.Add(assignmentEntry);
+                }
             }
 
             if (reachedDefinitions.Count == 0) return null;
 
-            var tmpValue = (reachedDefinitions.First() as TacAssignmentNode)?.FirstOperand;
+            var tmpValue = (reachedDefinitions.First() as TacAssignmentNode);
 
             if (reachedDefinitions.Count == 1 || reachedDefinitions.All(entry =>
-                    (entry as TacAssignmentNode)?.FirstOperand == tmpValue))
+                    tmpValue != null && (entry as TacAssignmentNode)?.FirstOperand == tmpValue.FirstOperand))
             {
                 return tmpValue;
             }
@@ -43,18 +42,29 @@ namespace SimpleLang.Optimizations
             return null;
         }
 
-        public bool Optimize(BasicBlocks bb, IterationAlgorithm<TacNode> ita)
+        public bool Optimize(IterationAlgorithm<TacNode> ita)
         {
             var wasApplied = false;
+            ita.Execute();
+            
             foreach (var basicBlock in ita.controlFlowGraph.SourceBasicBlocks)
             {
+                var isFirstBlock = false;
+
+                var traversedNodesInBlock = new HashSet<TacAssignmentNode>();
                 var inData = ita.InOut.In[basicBlock];
                 var outData = ita.InOut.Out[basicBlock];
 
-                if (inData.Count == 0) continue;
+                if (inData.Count == 0)
+                {
+                    inData = outData;
+                    isFirstBlock = true;
+                }
+
                 foreach (var line in basicBlock)
                 {
                     if (!(line is TacAssignmentNode assignmentNode)) continue;
+                    traversedNodesInBlock.Add(assignmentNode);
 
                     var firstOperand = assignmentNode.FirstOperand;
                     var secondOperand = assignmentNode.SecondOperand;
@@ -64,7 +74,18 @@ namespace SimpleLang.Optimizations
                         var tmpValue = Routine(inData, outData, firstOperand);
                         if (tmpValue != null)
                         {
-                            assignmentNode.FirstOperand = tmpValue;
+                            var encounteredRedefinition = traversedNodesInBlock.FirstOrDefault(entry =>
+                                                              string.Equals(tmpValue.LeftPartIdentifier,
+                                                                  entry.LeftPartIdentifier)) != null;
+                            if (isFirstBlock)
+                            {
+                                if (!encounteredRedefinition) continue;
+                            }
+                            else
+                            {
+                                if (encounteredRedefinition) continue;
+                            }
+                            assignmentNode.FirstOperand = tmpValue.FirstOperand;
                             wasApplied = true;
                         }
                     }
@@ -74,13 +95,25 @@ namespace SimpleLang.Optimizations
                         var tmpValue = Routine(inData, outData, secondOperand);
                         if (tmpValue != null)
                         {
-                            assignmentNode.SecondOperand = tmpValue;
+                            var encounteredRedefinition = traversedNodesInBlock.FirstOrDefault(entry =>
+                                                              string.Equals(tmpValue.LeftPartIdentifier,
+                                                                  entry.LeftPartIdentifier)) != null;
+                            if (isFirstBlock)
+                            {
+                                if (!encounteredRedefinition) continue;
+                            }
+                            else
+                            {
+                                if (encounteredRedefinition) continue;
+                            }
+                            assignmentNode.SecondOperand = tmpValue.FirstOperand;
                             wasApplied = true;
                         }
                     }
                 }
             }
-
+            
+            ita.controlFlowGraph.Rebuild(ita.controlFlowGraph.SourceCode);
             return wasApplied;
         }
     }
