@@ -79,6 +79,7 @@
     <Compile Include="Optimizations\CommonSubexprOptimization.cs" />
     <Compile Include="Optimizations\DefUseConstPropagation.cs" />
     <Compile Include="Optimizations\DefUseCopyPropagation.cs" />
+    <Compile Include="Optimizations\ReachingDefinitionsConstPropagation.cs" />
     <Compile Include="TacBasicBlocks\DefUse\DefUseDetector.cs" />
     <Compile Include="CFG\ControlFlowGraph.cs" />
     <Compile Include="Optimizations\AlgebraicIdentityOptimization.cs" />
