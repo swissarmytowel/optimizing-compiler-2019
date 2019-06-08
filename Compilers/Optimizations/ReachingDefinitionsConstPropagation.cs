@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using QuickGraph;
 using SimpleLang.Optimizations.Interfaces;
@@ -19,13 +20,14 @@ namespace SimpleLang.Optimizations
             foreach (var entry in inData)
             {
                 if (!(entry is TacAssignmentNode assignmentEntry)) continue;
-                
-                if (assignmentEntry.LeftPartIdentifier != operand || 
-                    assignmentEntry.SecondOperand != null ||
-                    !Utility.Utility.IsNum(assignmentEntry.FirstOperand)) continue;
-                
-                if (outData.Contains(assignmentEntry))
-                    reachedDefinitions.Add(assignmentEntry);
+                if (!outData.Contains(assignmentEntry)) continue;
+
+                if (assignmentEntry.LeftPartIdentifier == operand &&
+                    assignmentEntry.SecondOperand == null &&
+                    Utility.Utility.IsNum(assignmentEntry.FirstOperand))
+                {
+                    reachedDefinitions.Add(assignmentEntry);   
+                }                
             }
 
             if (reachedDefinitions.Count == 0) return null;
@@ -61,19 +63,25 @@ namespace SimpleLang.Optimizations
                     {
                         var tmpValue = Routine(inData, outData, firstOperand);
                         if (tmpValue != null)
+                        {
                             assignmentNode.FirstOperand = tmpValue;
+                            wasApplied = true;
+                        }
                     }
 
                     if (secondOperand != null)
                     {
                         var tmpValue = Routine(inData, outData, secondOperand);
                         if (tmpValue != null)
+                        {
                             assignmentNode.SecondOperand = tmpValue;
+                            wasApplied = true;
+                        }
                     }
                 }
             }
 
-            return true;
+            return wasApplied;
         }
     }
 }

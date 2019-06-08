@@ -217,7 +217,7 @@ namespace SimpleCompiler
                     
                     foreach (var bblock in bblocks)
                     {
-                        Console.WriteLine(bblock);
+                        Console.Write(bblock);
                     }
 //                    var activeVariablesITA = new ActiveVariablesITA(cfg, defUseContainers);
 //                    Console.WriteLine("=== InOut после итерационного алгоритма для активных переменных ===");
