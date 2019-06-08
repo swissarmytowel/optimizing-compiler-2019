@@ -79,6 +79,7 @@
     <Compile Include="Optimizations\CommonSubexprOptimization.cs" />
     <Compile Include="Optimizations\DefUseConstPropagation.cs" />
     <Compile Include="Optimizations\DefUseCopyPropagation.cs" />
+    <Compile Include="Optimizations\ReachingDefinitionsConstPropagation.cs" />
     <Compile Include="TacBasicBlocks\DefUse\DefUseDetector.cs" />
     <Compile Include="CFG\ControlFlowGraph.cs" />
     <Compile Include="Optimizations\AlgebraicIdentityOptimization.cs" />
@@ -131,6 +132,7 @@
     <Compile Include="GenKill\Implementations\GenKillConatainer.cs" />
     <Compile Include="Optimizations\UnreachableCodeOpt.cs" />
     <Compile Include="Optimizations\EliminateTranToTranOpt.cs" />
+    <Compile Include="MOP\MeetOverPaths.cs" />
     <Compile Include="GenKill\Interfaces\ITransmissionFunction.cs" />
     <Compile Include="GenKill\Implementations\TFByComposition.cs" />
     <Compile Include="IterationAlgorithms\CollectionOperators\ICollectionOperator.cs" />
@@ -148,6 +150,12 @@
     <Content Include="TACode\README.md" />
   </ItemGroup>
   <ItemGroup />
+  <ItemGroup>
+    <Folder Include="MOP\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="IterationAlgorithms\CollectionOperators\" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
