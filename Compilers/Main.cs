@@ -283,8 +283,8 @@ namespace SimpleCompiler
                     var reachingDefConstPropagation = new ReachingDefinitionsConstPropagation();
                     Console.WriteLine(threeAddressCodeVisitor);
 
-                    reachingDefConstPropagation.Optimize(bblocks, reachingDefenitionsITA);
-                    reachingDefConstPropagation.Optimize(bblocks, reachingDefenitionsITA);
+                    reachingDefConstPropagation.Optimize(reachingDefenitionsITA);
+                    reachingDefConstPropagation.Optimize(reachingDefenitionsITA);
 
                     
                     foreach (var bblock in bblocks)

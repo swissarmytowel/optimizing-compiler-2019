@@ -45,7 +45,6 @@ namespace SimpleLang.Optimizations
         public bool Optimize(IterationAlgorithm<TacNode> ita)
         {
             var wasApplied = false;
-            ita.Execute();
             
             foreach (var basicBlock in ita.controlFlowGraph.SourceBasicBlocks)
             {
@@ -113,7 +112,6 @@ namespace SimpleLang.Optimizations
                 }
             }
             
-            ita.controlFlowGraph.Rebuild(ita.controlFlowGraph.SourceCode);
             return wasApplied;
         }
     }

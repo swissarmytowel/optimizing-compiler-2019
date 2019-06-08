@@ -11,7 +11,14 @@ for (i=0 to 3) {
   b = c + tmp;
   d = a + 1; 
 }
+if(c){
+a = 1;
+}else{
+a = 3;
+}
+f = func();
+ss = func1();
 b = a + c;
 a = 2;
-c = 0; 
+c = a; 
 a = 11;
