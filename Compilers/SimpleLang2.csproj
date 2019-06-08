@@ -15,7 +15,7 @@
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
-    <PlatformTarget>x86</PlatformTarget>
+    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
@@ -57,6 +57,11 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CFG\DSTEdgeClassifier.cs" />
+    <Compile Include="ConstDistrib\ConstDistribFunction.cs" />
+    <Compile Include="ConstDistrib\ConstDistribOperator.cs" />
+    <Compile Include="ConstDistrib\ConstDistribTest.cs" />
+    <Compile Include="ConstDistrib\DataStreamTable.cs" />
+    <Compile Include="ConstDistrib\DataStreamValue.cs" />
     <Compile Include="ConstDistrib\SemilatticeTest.cs" />
     <Compile Include="ConstDistrib\SemilatticeValue.cs" />
     <Compile Include="DefUse\DefUseForBlocksPrinter.cs" />
