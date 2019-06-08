@@ -78,7 +78,7 @@ namespace SimpleLang.CFG.DominatorsTree
 
                     var tmp = InOut.Out[curBlock];
 
-                    InOut.Out[curBlock] = (HashSet<ThreeAddressCode>) InOut.Out[curBlock].Union(new HashSet<ThreeAddressCode>(){curBlock});
+                    InOut.Out[curBlock] = new HashSet<ThreeAddressCode>(InOut.Out[curBlock].Union(new HashSet<ThreeAddressCode>(){curBlock}));
                     if (!tmp.SequenceEqual(InOut.Out[curBlock]))
                     {
                         outWasChanged = true;
