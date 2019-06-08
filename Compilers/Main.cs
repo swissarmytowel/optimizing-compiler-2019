@@ -315,8 +315,9 @@ namespace SimpleCompiler
 
                     var availableExprOptimization = new AvailableExprOptimization();
                     bool isUsed = availableExprOptimization.Optimize(availableExpressionsITA);
+                    Console.WriteLine("AvailableExprOptimization isUsed: " + isUsed);
                     isUsed = availableExprOptimization.Optimize(availableExpressionsITA);
-                    Console.WriteLine("After AvailableExprOptimization");
+                    Console.WriteLine("AvailableExprOptimization isUsed: " + isUsed);
                     Console.WriteLine(cfg.SourceBasicBlocks
                         .BasicBlockItems.Select((bl, ind) => $"BLOCK{ind}:\n" + bl.ToString()).Aggregate((b1, b2) => b1 + b2));
                     /* -----------------------AvailableExpressions END---------------------------------*/

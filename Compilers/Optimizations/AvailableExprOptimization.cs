@@ -34,7 +34,7 @@ namespace SimpleLang.Optimizations
         }
     }
 
-    class AvailableExprOptimization: IIterativeAlgorithmOptimizer<TacNode>
+    public class AvailableExprOptimization: IIterativeAlgorithmOptimizer<TacNode>
     {
         private Dictionary<TacExpr, string> idsForExprDic = new Dictionary<TacExpr, string>();
 
@@ -112,8 +112,11 @@ namespace SimpleLang.Optimizations
                     {
                         string assignId = assign.LeftPartIdentifier;
                         TacExpr expr = new TacExpr(assign);
+                        bool isCommonExpr = false;
+                        if (idsForExprDic.Keys.Contains(expr) && idsForExprDic[expr] == assignId)
+                            isCommonExpr = true;
                         // если выражений больше 1 делаем оптимизацию
-                        if (tacExprCount.Keys.Contains(expr) && tacExprCount[expr] > 1)
+                        if (!isCommonExpr && tacExprCount.Keys.Contains(expr) && tacExprCount[expr] > 1)
                         {
                             isUsed = true;
                             if (!varsExprChange.Keys.Contains(expr))
