@@ -137,6 +137,7 @@
     <Compile Include="IterationAlgorithms\CollectionOperators\ICollectionOperator.cs" />
     <Compile Include="IterationAlgorithms\CollectionOperators\UnionCollectionOperator.cs" />
     <Compile Include="IterationAlgorithms\CollectionOperators\IntersectCollectionOperator.cs" />
+    <Compile Include="Tests\ZeroMulOptVisitorTest.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
@@ -151,6 +152,7 @@
   <ItemGroup />
   <ItemGroup>
     <Folder Include="MOP\" />
+    <Folder Include="Tests\" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="IterationAlgorithms\CollectionOperators\" />
