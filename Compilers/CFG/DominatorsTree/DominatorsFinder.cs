@@ -14,6 +14,7 @@ using SimpleLang.IterationAlgorithms.CollectionOperators;
 using SimpleLang.IterationAlgorithms.Interfaces;
 using SimpleLang.TacBasicBlocks;
 using SimpleLang.Utility;
+using System.Text;
 
 namespace SimpleLang.CFG.DominatorsTree
 {
@@ -45,21 +46,23 @@ namespace SimpleLang.CFG.DominatorsTree
 
             var vertices = cfg.Vertices.ToList();
             var union = new UnionCollectionOperator<ThreeAddressCode>();
-            var threeAddressCode = new ThreeAddressCode();
-            foreach (var vertex in vertices.Where(vertex => vertex != entryPoint))
-            {
-                threeAddressCode.TACodeLines.Concat(vertex.TACodeLines);
+            //var threeAddressCode = new List<ThreeAddressCode>();
+            var threeAddressCodeHashSet = new HashSet<ThreeAddressCode>();
+            foreach (var vertex in vertices.Where(vertex => vertex != entryPoint)) {
+                //threeAddressCode.Add(vertex);
+                threeAddressCodeHashSet.Add(vertex);
             }
             
-            var initializationSet = new HashSet<ThreeAddressCode>()
-                {threeAddressCode};
-
             InOut.Out.Add(entryPoint, new HashSet<ThreeAddressCode>() {entryPoint});
             InOut.In[entryPoint] = new HashSet<ThreeAddressCode>();
+            //int k = 0;
             foreach (var basicBlock in cfg.SourceBasicBlocks)
             {
-                if (basicBlock == entryPoint) continue;
-                InOut.Out[basicBlock] = initializationSet;
+                if (basicBlock == entryPoint) 
+                {
+                    continue;
+                }
+                InOut.Out[basicBlock] = threeAddressCodeHashSet; //new HashSet<ThreeAddressCode>() { threeAddressCode[k++] }; 
             }
 
             var outWasChanged = true;
@@ -73,19 +76,30 @@ namespace SimpleLang.CFG.DominatorsTree
 
                     var prevBlock = vertices[i - 1];
                     InOut.In[curBlock] = new HashSet<ThreeAddressCode>();
-                    InOut.In[curBlock] = _collectionOperator.Collect(InOut.In[prevBlock], InOut.Out[prevBlock]);
-                    
 
-                    var tmp = InOut.Out[curBlock];
+                    if (prevBlock == entryPoint) {
+                        InOut.In[curBlock] = InOut.Out[prevBlock];
+                    } else {
+                        InOut.In[curBlock] = _collectionOperator.Collect(InOut.In[prevBlock], InOut.Out[prevBlock]);
+                    }
 
-                    InOut.Out[curBlock] = new HashSet<ThreeAddressCode>(InOut.Out[curBlock].Union(new HashSet<ThreeAddressCode>(){curBlock}));
-                    if (!tmp.SequenceEqual(InOut.Out[curBlock]))
-                    {
+                    var builder1 = new StringBuilder();
+                    foreach (var entry in InOut.Out[curBlock]) {
+                        builder1.Append(entry);
+                    }
+
+                    InOut.Out[curBlock] = new HashSet<ThreeAddressCode>(InOut.In[curBlock].Union(new HashSet<ThreeAddressCode>(){curBlock}));
+
+                    var builder2 = new StringBuilder();
+                    foreach (var entry in InOut.Out[curBlock]) {
+                        builder2.Append(entry);
+                    }
+
+                    if (!builder1.Equals(builder2)) {
                         outWasChanged = true;
                     }
                 }
             }
-
             Dominators = InOut.Out;
         }
     }
