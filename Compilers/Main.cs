@@ -12,6 +12,7 @@ using SimpleParser;
 using SimpleLang.Visitors;
 using SimpleLang.Optimizations;
 using System.Linq;
+using SimpleLang.CFG.DominatorsTree;
 using SimpleLang.GenKill.Implementations;
 using SimpleLang.InOut;
 using SimpleLang.DefUse;
@@ -213,11 +214,20 @@ namespace SimpleCompiler
 
                     reachingDefConstPropagation.Optimize(bblocks, reachingDefenitionsITA);
                     reachingDefConstPropagation.Optimize(bblocks, reachingDefenitionsITA);
-
                     
                     foreach (var bblock in bblocks)
                     {
-                        Console.Write(bblock);
+                        Console.WriteLine(bblock);
+                    }
+
+                    var dominators = new DominatorsFinder(cfg);
+                    for(var i = 0; i < dominators.Dominators.Count; ++i)
+                    {
+                        Console.WriteLine(i + ": ");
+                        foreach (var tacNode in dominators.Dominators.ElementAt(i).Value)
+                        {
+                            Console.WriteLine(tacNode);
+                        }
                     }
 //                    var activeVariablesITA = new ActiveVariablesITA(cfg, defUseContainers);
 //                    Console.WriteLine("=== InOut после итерационного алгоритма для активных переменных ===");

@@ -49,7 +49,7 @@ namespace SimpleLang.TacBasicBlocks.DefUse
                     {
                         // Registration and pushing to tmpUsages of an assignment TAC operands
                         FillTmpUsagesForNode(assignmentNode.FirstOperand, lastNode, tmpUsagesNodes);
-
+                        
                         if (assignmentNode.SecondOperand != null)
                         {
                             FillTmpUsagesForNode(assignmentNode.SecondOperand, lastNode, tmpUsagesNodes);
