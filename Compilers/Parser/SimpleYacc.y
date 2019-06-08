@@ -99,7 +99,7 @@ while	: WHILE OPEN_BRACKET expr  CLOSE_BRACKET statement { $$ = new WhileNode($3
 for		: FOR OPEN_BRACKET assign TO expr CLOSE_BRACKET statement { $$ = new ForNode($3, $5, $7); }
 		;
 
-println	: PRINTLN OPEN_BRACKET expr CLOSE_BRACKET SEMICOLON
+println	: PRINTLN OPEN_BRACKET expr CLOSE_BRACKET SEMICOLON { $$ = new PrintNode($3); }
 		;
 
 if      : IF OPEN_BRACKET expr CLOSE_BRACKET statement { $$ = new IfNode($3, $5); }

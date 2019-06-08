@@ -17,7 +17,7 @@ using SimpleLang.DefUse;
 using SimpleLang.IterationAlgorithms;
 using SimpleLang.TacBasicBlocks;
 using SimpleLang.TacBasicBlocks.DefUse;
-
+using SimpleLang.E_GenKill.Implementations;
 
 namespace SimpleCompiler
 {
@@ -90,6 +90,40 @@ namespace SimpleCompiler
 //
 //                    var compareFalseVisitor = new CompareToItselfFalseOptVisitor();
 //                    parser.root.Visit(compareFalseVisitor);
+                    var operv = new OperatorCountVisitor();
+                    parser.root.Visit(operv);
+                    Console.WriteLine(operv.Result);
+
+                    var maxcv = new MaxOpExprVisitor();
+                    parser.root.Visit(maxcv);
+                    Console.WriteLine(maxcv.Result);
+
+                    var inncycv = new IsInnerCycleVisitor();
+                    parser.root.Visit(inncycv);
+                    Console.WriteLine(inncycv.Result);
+
+                    var innifv = new IsInnerIfCycleVisitor();
+                    parser.root.Visit(innifv);
+                    Console.WriteLine(innifv.Result);
+
+                    var maxdeepv = new MaxDeepCycleVistor();
+                    parser.root.Visit(maxdeepv);
+                    Console.WriteLine(maxdeepv.Result);
+
+                    var parentv = new FillParentVisitor();
+                    parser.root.Visit(parentv);
+
+                    var sameminusv = new SameMinusOptVisitor();
+                    parser.root.Visit(sameminusv);
+
+                    var whilefalsev = new WhileFalseOptVisitor();
+                    parser.root.Visit(whilefalsev);
+
+                    var zeroMulVisitor = new ZeroMulOptVisitor();
+                    parser.root.Visit(zeroMulVisitor);
+
+                    var compareFalseVisitor = new CompareToItselfFalseOptVisitor();
+                    parser.root.Visit(compareFalseVisitor);
 
                     Console.WriteLine("-------------------------------");
 //
@@ -260,6 +294,31 @@ namespace SimpleCompiler
 //                    var activeVariablesITA = new ActiveVariablesITA(cfg, defUseContainers);
 //                    Console.WriteLine("=== InOut после итерационного алгоритма для активных переменных ===");
 //                    Console.WriteLine(activeVariablesITA.InOut);
+                    var activeVariablesITA = new ActiveVariablesITA(cfg, defUseContainers);
+                    Console.WriteLine("=== InOut после итерационного алгоритма для активных переменных ===");
+                    Console.WriteLine(activeVariablesITA.InOut);
+
+                    /* -----------------------AvailableExpressions START---------------------------------*/
+                    Console.WriteLine("AvailableExpressions Optimization");
+
+                    Console.WriteLine("Before AvailableExprOptimization");
+                    Console.WriteLine(cfg.SourceBasicBlocks
+                        .BasicBlockItems.Select((bl, ind) => $"BLOCK{ind}:\n" + bl.ToString()).Aggregate((b1, b2) => b1 + b2));
+
+                    E_GenKillVisitor availExprVisitor = new E_GenKillVisitor();
+                    var availExprContainers = availExprVisitor.GenerateAvailableExpressionForBlocks(cfg.SourceBasicBlocks);
+
+                    var availableExpressionsITA = new AvailableExpressionsITA(cfg, availExprContainers);
+                    Console.WriteLine("=== InOut после итерационного алгоритма для доступных выражений ===");
+                    Console.WriteLine(availableExpressionsITA.InOut);
+
+                    var availableExprOptimization = new AvailableExprOptimization();
+                    bool isUsed = availableExprOptimization.Optimize(availableExpressionsITA);
+                    isUsed = availableExprOptimization.Optimize(availableExpressionsITA);
+                    Console.WriteLine("After AvailableExprOptimization");
+                    Console.WriteLine(cfg.SourceBasicBlocks
+                        .BasicBlockItems.Select((bl, ind) => $"BLOCK{ind}:\n" + bl.ToString()).Aggregate((b1, b2) => b1 + b2));
+                    /* -----------------------AvailableExpressions END---------------------------------*/
                 }
             }
             catch (FileNotFoundException)
@@ -275,3 +334,4 @@ namespace SimpleCompiler
         }
     }
 }
+ 
