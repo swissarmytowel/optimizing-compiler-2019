@@ -4,7 +4,7 @@
 
 // GPPG version 1.3.6
 // Machine:  9F13
-// DateTime: 07.06.19 1:16:08
+// DateTime: 08.06.19 12:44:35
 // UserName: mihailatoan
 // Input file <SimpleYacc.y>
 
@@ -320,6 +320,9 @@ public class Parser: ShiftReduceParser<ValueType, LexLocation>
         break;
       case 27: // for -> FOR, OPEN_BRACKET, assign, TO, expr, CLOSE_BRACKET, statement
 { CurrentSemanticValue.stVal = new ForNode(ValueStack[ValueStack.Depth-5].stVal, ValueStack[ValueStack.Depth-3].eVal, ValueStack[ValueStack.Depth-1].stVal); }
+        break;
+      case 28: // println -> PRINTLN, OPEN_BRACKET, expr, CLOSE_BRACKET, SEMICOLON
+{ CurrentSemanticValue.stVal = new PrintNode(ValueStack[ValueStack.Depth-3].eVal); }
         break;
       case 29: // if -> IF, OPEN_BRACKET, expr, CLOSE_BRACKET, statement
 { CurrentSemanticValue.stVal = new IfNode(ValueStack[ValueStack.Depth-3].eVal, ValueStack[ValueStack.Depth-1].stVal); }
