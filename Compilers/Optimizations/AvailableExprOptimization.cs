@@ -113,6 +113,7 @@ namespace SimpleLang.Optimizations
                         // если выражений больше 1 делаем оптимизацию
                         if (tacExprCount.Keys.Contains(expr) && tacExprCount[expr] > 1)
                         {
+                            isUsed = true;
                             if (!varsExprChange.Keys.Contains(expr))
                                 varsExprChange.Add(expr, !IN_EXPR[block].Contains(expr));
                             // если это первая замена общего выражения

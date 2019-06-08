@@ -231,7 +231,8 @@ namespace SimpleCompiler
                     Console.WriteLine(availableExpressionsITA.InOut);
 
                     var availableExprOptimization = new AvailableExprOptimization();
-                    availableExprOptimization.Optimize(availableExpressionsITA);
+                    bool isUsed = availableExprOptimization.Optimize(availableExpressionsITA);
+                    isUsed = availableExprOptimization.Optimize(availableExpressionsITA);
                     Console.WriteLine("After AvailableExprOptimization");
                     Console.WriteLine(cfg.SourceBasicBlocks
                         .BasicBlockItems.Select((bl, ind) => $"BLOCK{ind}:\n" + bl.ToString()).Aggregate((b1, b2) => b1 + b2));
