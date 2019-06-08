@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
@@ -18,22 +18,20 @@ using System.Text;
 
 namespace SimpleLang.CFG.DominatorsTree
 {
-//    public class DominatorsFinder : IterationAlgorithm<TacNode>
-//    {
-//        public Dictionary<ThreeAddressCode, HashSet<TacNode>> Dominators;
-//
-//        public DominatorsFinder(ControlFlowGraph cfg, Dictionary<ThreeAddressCode, IExpressionSetsContainer> lines)
-//            : base(cfg, new TFByComposition(lines), new IntersectCollectionOperator<TacNode>(), true)
-//        {
-//            Execute();
-//            Dominators = InOut.Out;
-//        }
-//    }
     public class DominatorsFinder : IIterationAlgorithm<ThreeAddressCode>
     {
         public InOutContainer<ThreeAddressCode> InOut { get; set; } = new InOutContainer<ThreeAddressCode>();
 
+        /// <summary>
+        /// Все доминаторы
+        /// </summary>
         public Dictionary<ThreeAddressCode, HashSet<ThreeAddressCode>> Dominators =
+            new Dictionary<ThreeAddressCode, HashSet<ThreeAddressCode>>();
+
+        /// <summary>
+        /// Непосредственные доминаторы
+        /// </summary>
+        public Dictionary<ThreeAddressCode, HashSet<ThreeAddressCode>> ImmediateDominators =
             new Dictionary<ThreeAddressCode, HashSet<ThreeAddressCode>>();
 
         private ICollectionOperator<ThreeAddressCode> _collectionOperator =
@@ -46,23 +44,20 @@ namespace SimpleLang.CFG.DominatorsTree
 
             var vertices = cfg.Vertices.ToList();
             var union = new UnionCollectionOperator<ThreeAddressCode>();
-            //var threeAddressCode = new List<ThreeAddressCode>();
             var threeAddressCodeHashSet = new HashSet<ThreeAddressCode>();
             foreach (var vertex in vertices.Where(vertex => vertex != entryPoint)) {
-                //threeAddressCode.Add(vertex);
                 threeAddressCodeHashSet.Add(vertex);
             }
             
             InOut.Out.Add(entryPoint, new HashSet<ThreeAddressCode>() {entryPoint});
             InOut.In[entryPoint] = new HashSet<ThreeAddressCode>();
-            //int k = 0;
             foreach (var basicBlock in cfg.SourceBasicBlocks)
             {
                 if (basicBlock == entryPoint) 
                 {
                     continue;
                 }
-                InOut.Out[basicBlock] = threeAddressCodeHashSet; //new HashSet<ThreeAddressCode>() { threeAddressCode[k++] }; 
+                InOut.Out[basicBlock] = threeAddressCodeHashSet; 
             }
 
             var outWasChanged = true;
@@ -73,14 +68,17 @@ namespace SimpleLang.CFG.DominatorsTree
                 for (var i = 1; i < vertices.Count; ++i)
                 {
                     var curBlock = vertices[i];
-
-                    var prevBlock = vertices[i - 1];
+                    var ancestors = cfg.Edges.Where(edge => edge.Target == curBlock).Select(e => e.Source).ToList();
+                    
                     InOut.In[curBlock] = new HashSet<ThreeAddressCode>();
+                    InOut.In[curBlock] = InOut.Out[ancestors[0]];
 
-                    if (prevBlock == entryPoint) {
-                        InOut.In[curBlock] = InOut.Out[prevBlock];
-                    } else {
-                        InOut.In[curBlock] = _collectionOperator.Collect(InOut.In[prevBlock], InOut.Out[prevBlock]);
+                    // Если несколько непосредственных предков
+                    if (ancestors.Count > 1) { 
+                        for (int ind = 1; ind < ancestors.Count; ++ind) {
+                            if (curBlock == ancestors[ind]) continue;
+                            InOut.In[curBlock] = _collectionOperator.Collect(InOut.In[curBlock], InOut.Out[ancestors[ind]]);
+                        }
                     }
 
                     var builder1 = new StringBuilder();
