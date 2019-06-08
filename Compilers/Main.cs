@@ -135,7 +135,11 @@ namespace SimpleCompiler
                     //Console.WriteLine("======= After algebraic identity =======");
                     //Console.WriteLine(cfg);
 
-                    Console.WriteLine("======= DV =======");
+                    Console.WriteLine();
+                    Console.WriteLine("Before optimization");
+                    Console.WriteLine(threeAddressCodeVisitor.TACodeContainer);
+
+                    /*Console.WriteLine("======= DV =======");
                     Console.WriteLine(threeAddressCodeVisitor);
                     var detector = new DefUseDetector();
                     detector.DetectAndFillDefUse(threeAddressCodeVisitor.TACodeContainer);
@@ -158,6 +162,7 @@ namespace SimpleCompiler
 
                     Console.WriteLine("======= After copy propagation =======");
                     Console.WriteLine(threeAddressCodeVisitor);
+                    */
 
                     //var bblocks = new BasicBlocks();
                     //bblocks.SplitTACode(threeAddressCodeVisitor.TACodeContainer);
