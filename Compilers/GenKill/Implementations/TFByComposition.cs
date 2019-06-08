@@ -8,7 +8,6 @@ namespace SimpleLang.GenKill.Implementations
 {
     public class TFByComposition : ITransmissionFunction<TacNode>
     {
-        private int test = 0;
         private ThreeAddressCode basicBlock;
         private Dictionary<ThreeAddressCode, IExpressionSetsContainer> lineGenKill;
 
