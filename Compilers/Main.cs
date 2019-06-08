@@ -11,7 +11,6 @@ using SimpleScanner;
 using SimpleParser;
 using SimpleLang.Visitors;
 using SimpleLang.Optimizations;
-using System.Linq;
 using SimpleLang.GenKill.Implementations;
 using SimpleLang.InOut;
 using SimpleLang.DefUse;
@@ -126,6 +125,7 @@ namespace SimpleCompiler
                     Console.WriteLine(threeAddressCodeVisitor);
                     
                     var cfg = new ControlFlowGraph(threeAddressCodeVisitor.TACodeContainer);
+
 //                    Console.WriteLine(cfg);
 //                    cfg.SaveToFile(@"cfg.txt");
                     
@@ -133,20 +133,41 @@ namespace SimpleCompiler
 //                    dstClassifier.ClassificateEdges(cfg);
 //                    Console.WriteLine(dstClassifier);
 
+                    Console.WriteLine(cfg);
+                    cfg.SaveToFile(@"cfg.txt");
+                    var dstClassifier = new DstEdgeClassifier(cfg);
+                    dstClassifier.ClassificateEdges(cfg);
+                    Console.WriteLine(dstClassifier);
+
+                    var depth = cfg.GetDepth(dstClassifier.EdgeTypes);
+                    Console.WriteLine($"Depth CFG = {depth}");
+
                     //Console.WriteLine(threeAddressCodeVisitor.TACodeContainer);
                     //var availExprOpt = new AvailableExprOptimization();
                     //availExprOpt.Optimize(cfg);
                     //Console.WriteLine("======= After algebraic identity =======");
                     //Console.WriteLine(cfg);
 
+
 //                    Console.WriteLine("======= DV =======");
 //                    Console.WriteLine(threeAddressCodeVisitor);
 //                    var detector = new DefUseDetector();
 //                    detector.DetectAndFillDefUse(threeAddressCodeVisitor.TACodeContainer);
+
+                    Console.WriteLine();
+                    Console.WriteLine("Before optimization");
+                    Console.WriteLine(threeAddressCodeVisitor.TACodeContainer);
+
+                    /*Console.WriteLine("======= DV =======");
+                    Console.WriteLine(threeAddressCodeVisitor);
+                    var detector = new DefUseDetector();
+                    detector.DetectAndFillDefUse(threeAddressCodeVisitor.TACodeContainer);
+
                     //Console.WriteLine("======= Detector 1 =======");
                     //Console.WriteLine(detector);
                     //Console.WriteLine("======= Detector 2 =======");
                     //Console.WriteLine(detector.ToString2());
+                    
 //                    var constPropagationOptimizer = new DefUseConstPropagation(detector);
 //                    var result = constPropagationOptimizer.Optimize(threeAddressCodeVisitor.TACodeContainer);
 //
@@ -162,6 +183,23 @@ namespace SimpleCompiler
 //
 //                    Console.WriteLine("======= After copy propagation =======");
 //                    Console.WriteLine(threeAddressCodeVisitor);
+=======
+                    var constPropagationOptimizer = new DefUseConstPropagation(detector);
+                    var result = constPropagationOptimizer.Optimize(threeAddressCodeVisitor.TACodeContainer);
+
+                    Console.WriteLine("======= After const propagation =======");
+                    Console.WriteLine(threeAddressCodeVisitor);
+
+                    result = constPropagationOptimizer.Optimize(threeAddressCodeVisitor.TACodeContainer);
+                    Console.WriteLine("======= After const propagation =======");
+                    Console.WriteLine(threeAddressCodeVisitor);
+
+                    var copyPropagationOptimizer = new DefUseCopyPropagation(detector);
+                    result = copyPropagationOptimizer.Optimize(threeAddressCodeVisitor.TACodeContainer);
+
+                    Console.WriteLine("======= After copy propagation =======");
+                    Console.WriteLine(threeAddressCodeVisitor);
+                    */
 
                     //var bblocks = new BasicBlocks();
                     //bblocks.SplitTACode(threeAddressCodeVisitor.TACodeContainer);

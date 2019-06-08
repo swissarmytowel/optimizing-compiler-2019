@@ -3,6 +3,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using SimpleLang.CFG;
 using SimpleLang.Optimizations;
 using SimpleLang.TACode;
+using SimpleLang.TacBasicBlocks;
 
 namespace UnitTests.CFG
 {

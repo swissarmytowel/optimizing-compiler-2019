@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using SimpleLang.Optimizations.Interfaces;
+﻿using SimpleLang.Optimizations.Interfaces;
 using SimpleLang.TACode.TacNodes;
 using SimpleLang.TACode;
 
@@ -26,12 +22,18 @@ namespace SimpleLang.Optimizations
                     {
                         isUsed = true;
                         var ifVal = val as TacIfGotoNode;
-                        ifVal.Condition = "!(" + ifVal.Condition + ")";
-                        var oldTarget = ifVal.TargetLabel;
+                        string tempVar = TmpNameManager.Instance.GenerateTmpVariableName();
+                        TacNode tempAssign = new TacAssignmentNode()
+                        {
+                            LeftPartIdentifier = tempVar,
+                            Operation = "!",
+                            SecondOperand = ifVal.Condition
+                        };
+                        tac.TACodeLines.AddBefore(tac.TACodeLines.Find(val), tempAssign);
+                        ifVal.Condition = tempVar;
                         ifVal.TargetLabel = (nextVal as TacGotoNode).TargetLabel;
                         var remove = next;
-                        next = next.Next;
-                        next.Value.Label = null;
+                        next = node;
                         tac.TACodeLines.Remove(remove);
                     }
                 }
