@@ -13,18 +13,18 @@ using SimpleLang.InOut;
 
 namespace SimpleLang.MOP
 {
-    public class MeetOverPaths : IIterationAlgorithm
+    public class MeetOverPaths : IIterationAlgorithm<TacNode>
     {
         public ControlFlowGraph ControlFlowGraph { get; }
-        public ITransmissionFunction TransmissionFunction { get; }
-        public ICollectionOperator CollectionOperator { get; }
+        public ITransmissionFunction<TacNode> TransmissionFunction { get; }
+        public ICollectionOperator<TacNode> CollectionOperator { get; }
         public bool IsForwardDirection { get; }
-        public InOutContainer InOut { get; set; }
+        public InOutContainer<TacNode> InOut { get; set; }
         public HashSet<TacNode> InitSet { get; set; }
 
         public MeetOverPaths(ControlFlowGraph controlFlowGraph,
-            ITransmissionFunction transmissionFunction,
-            ICollectionOperator collectionOperator,
+            ITransmissionFunction<TacNode> transmissionFunction,
+            ICollectionOperator<TacNode> collectionOperator,
             HashSet<TacNode> initSet,
             bool isForwardDirection=true
             )
@@ -34,7 +34,7 @@ namespace SimpleLang.MOP
             CollectionOperator = collectionOperator;
             IsForwardDirection = isForwardDirection;
             InitSet = initSet;
-            InOut = new InOutContainer();
+            InOut = new InOutContainer<TacNode>();
         }
 
         public void Compute()

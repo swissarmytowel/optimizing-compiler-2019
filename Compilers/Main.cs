@@ -199,10 +199,13 @@ namespace SimpleCompiler
                     var genkill = genKillVisitor.GenerateReachingDefinitionForBlocks(cfg.SourceBasicBlocks);
                     //var genkill = genKillVisitor.GenerateReachingDefinitionForBlocks(bblocks);
 
-                    var tfBComposition = new TFByComposition(genkill);
-                    var unionCollection = new UnionCollectionOperator();
-                    var intersectCollection = new IntersectCollectionOperator();
-                    var mop = new MeetOverPaths(cfg, tfBComposition, unionCollection, new HashSet<TacNode>());
+                    var defUseContainers = DefUseForBlocksGenerator.Execute(cfg.SourceBasicBlocks);
+                    DefUseForBlocksPrinter.Execute(defUseContainers);
+
+                    var tfBComposition = new TFByComposition(defUseContainers);
+                    var unionCollection = new UnionCollectionOperator<TacNode>();
+                    //var intersectCollection = new IntersectCollectionOperator<TacNode>();
+                    var mop = new MeetOverPaths(cfg, tfBComposition, unionCollection, new HashSet<TacNode>(), false);
                     mop.Compute();
 
                     var iterationAlgo = new ReachingDefinitionsITA(cfg, genkill);

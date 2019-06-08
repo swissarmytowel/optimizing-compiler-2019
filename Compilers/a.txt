@@ -1,11 +1,8 @@
-c = 123; 
-goto l 7: 
-m = 1 + c + y; 
-l 7: 
-if (m) { 
+c = 123;
+m = 1 + c + y;
+if (m > 2) {
     c = 3;
-} else { 
-    c = 456; 
-} 
+} else {
+    c = 456;
+}
 a = 11;
-print(a);
