@@ -16,7 +16,7 @@ namespace SimpleLang.IterationAlgorithms
     {
         public InOutContainer<T> InOut { get; set; } = new InOutContainer<T>();
 
-        private ControlFlowGraph controlFlowGraph;
+        public ControlFlowGraph controlFlowGraph;
         private Func<ThreeAddressCode, IEnumerable<ThreeAddressCode>> GetPredVertices;
         private Func<HashSet<T>, ThreeAddressCode, HashSet<T>> TransmissionFunc;
         private Func<HashSet<T>, HashSet<T>, HashSet<T>> CollectionOperator;
