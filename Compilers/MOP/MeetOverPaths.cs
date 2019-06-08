@@ -105,7 +105,7 @@ namespace SimpleLang.MOP
             predecessors.Push(currentBlock);
             foreach (var outEdge in getNextEdges(currentBlock))
             {
-                var outVertex = outEdge.Target;
+                var outVertex = IsForwardDirection ? outEdge.Target : outEdge.Source;
                 if (!visited[outVertex]) DepthFirstSearch(outVertex, visited, predecessors, checkForNext, getNextEdges);
             }
 
