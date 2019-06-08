@@ -1,13 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using SimpleLang.Optimizations.Interfaces;
+using SimpleLang.TacBasicBlocks.DefUse;
 using SimpleLang.TACode;
 using SimpleLang.TACode.TacNodes;
 using VarNodePair = System.Tuple<string, System.Collections.Generic.LinkedListNode<SimpleLang.TACode.TacNodes.TacNode>>;
 
-namespace SimpleLang.Optimizations.DefUse
+namespace SimpleLang.Optimizations
 {
     public class DefUseConstPropagation : IOptimizer
     {

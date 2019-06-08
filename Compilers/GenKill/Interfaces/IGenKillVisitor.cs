@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using SimpleLang.TACode;
 using SimpleLang.TACode.TacNodes;
 using SimpleLang.Optimizations;
+using SimpleLang.TacBasicBlocks;
 
 namespace SimpleLang.GenKill.Interfaces
 {

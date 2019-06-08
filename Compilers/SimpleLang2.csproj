@@ -56,6 +56,7 @@
     <Reference Include="nunit.framework" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CFG\DSTEdgeClassifier.cs" />
     <Compile Include="ConstDistrib\SemilatticeTest.cs" />
     <Compile Include="ConstDistrib\SemilatticeValue.cs" />
     <Compile Include="DefUse\DefUseForBlocksPrinter.cs" />
@@ -73,9 +74,9 @@
     <Compile Include="IterationAlgorithms\ReachingDefinitionsITA.cs" />
     <Compile Include="Optimizations\AvailableExprOptimization.cs" />
     <Compile Include="Optimizations\CommonSubexprOptimization.cs" />
-    <Compile Include="Optimizations\DefUse\DefUseConstPropagation.cs" />
-    <Compile Include="Optimizations\DefUse\DefUseCopyPropagation.cs" />
-    <Compile Include="Optimizations\DefUse\DefUseDetector.cs" />
+    <Compile Include="Optimizations\DefUseConstPropagation.cs" />
+    <Compile Include="Optimizations\DefUseCopyPropagation.cs" />
+    <Compile Include="TacBasicBlocks\DefUse\DefUseDetector.cs" />
     <Compile Include="CFG\ControlFlowGraph.cs" />
     <Compile Include="Optimizations\AlgebraicIdentityOptimization.cs" />
     <Compile Include="Optimizations\ConvConstOptimization.cs" />
@@ -117,7 +118,7 @@
     <Compile Include="Parser\ShiftReduceParserCode.cs" />
     <Compile Include="Parser\SimpleLex.cs" />
     <Compile Include="Parser\SimpleYacc.cs" />
-    <Compile Include="Optimizations\BasicBlocks.cs" />
+    <Compile Include="TacBasicBlocks\BasicBlocks.cs" />
     <Compile Include="Visitors\ZeroMulOptVisitor.cs" />
     <Compile Include="Visitors\CompareToItselfFalseOptVisitor.cs" />
     <Compile Include="GenKill\Interfaces\IGenKillVisitor.cs" />

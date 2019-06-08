@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using SimpleLang.Optimizations.Interfaces;
+using SimpleLang.TacBasicBlocks;
 using SimpleLang.TACode;
 using SimpleLang.TACode.TacNodes;
 

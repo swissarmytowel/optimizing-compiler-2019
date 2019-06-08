@@ -1,7 +1,3 @@
-using System;
-using System.IO;
-using System.Linq;
-using System.Collections;
 using System.Collections.Generic;
 using System.Text;
 using SimpleLang.TACode;
@@ -11,7 +7,7 @@ using LinkedListTacNode = System.Collections.Generic.LinkedListNode<SimpleLang.T
 using VarNodePair = System.Tuple<string, System.Collections.Generic.LinkedListNode<SimpleLang.TACode.TacNodes.TacNode>>;
 
 
-namespace SimpleLang.Optimizations.DefUse
+namespace SimpleLang.TacBasicBlocks.DefUse
 {
     /// <summary>
     /// Detects definitions and usages of three-address code variables in a basic block
@@ -52,7 +48,9 @@ namespace SimpleLang.Optimizations.DefUse
                     case TacAssignmentNode assignmentNode:
                     {
                         // Registration and pushing to tmpUsages of an assignment TAC operands
-                        FillTmpUsagesForNode(assignmentNode.FirstOperand, lastNode, tmpUsagesNodes);
+                        if (assignmentNode.FirstOperand != null) {
+                            FillTmpUsagesForNode(assignmentNode.FirstOperand, lastNode, tmpUsagesNodes);
+                        }
 
                         if (assignmentNode.SecondOperand != null)
                         {
@@ -138,12 +136,12 @@ namespace SimpleLang.Optimizations.DefUse
 
             foreach (var definition in Definitions)
             {
-                builder.Append("[" + definition.Key.Item1 + ", " + definition.Key.Item2.Value.Label + "]: ");
+                builder.Append("[" + definition.Key.Item1 + ", " + definition.Key.Item2.Value + "]: ");
                 if (definition.Value.Count > 0)
                 {
                     foreach (var elem in definition.Value)
                     {
-                        builder.Append($"{elem.Value.Label} ");
+                        builder.Append($"{elem.Value} ");
                     }
 
                     builder.Append("\n");
@@ -157,8 +155,8 @@ namespace SimpleLang.Optimizations.DefUse
             builder.Append("USE:\n");
             foreach (var usage in Usages)
             {
-                builder.Append("[" + usage.Key.Item1 + ", " + usage.Key.Item2.Value.Label + "]: " +
-                               (usage.Value == null ? "no definitions" : usage.Value.Value.Label) + "\n");
+                builder.Append("[" + usage.Key.Item1 + ", " + usage.Key.Item2.Value + "]: " +
+                               (usage.Value == null ? "no definitions" : usage.Value.Value.ToString()) + "\n");
             }
 
             return builder.ToString();

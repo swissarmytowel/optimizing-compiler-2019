@@ -1,8 +1,10 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 using SimpleLang.Optimizations;
 using SimpleLang.TACode;
 using SimpleLang.TACode.TacNodes;
 using QuickGraph;
+using SimpleLang.TacBasicBlocks;
 
 namespace SimpleLang.CFG
 {
@@ -67,6 +69,32 @@ namespace SimpleLang.CFG
                     Graph.AddEdge(new Edge<ThreeAddressCode>(currentBlock, nextBlock));
                 }
             }
+        }
+
+        public int GetDepth(Dictionary<Edge<ThreeAddressCode>, EdgeType> EdgeTypes)
+        {
+            var visitedEdges = new HashSet<Edge<ThreeAddressCode>>();
+            return CalcDepth(EntryBlock, visitedEdges, EdgeTypes);
+        }      
+
+        private int CalcDepth(ThreeAddressCode currentBlock, HashSet<Edge<ThreeAddressCode>> visitedEdges, 
+                              Dictionary<Edge<ThreeAddressCode>, EdgeType> EdgeTypes)
+        {
+            var childrenDepths = new List<int>();
+
+            foreach (var edge in OutEdges(currentBlock))
+            {
+                if (!visitedEdges.Contains(edge))
+                {
+                    visitedEdges.Add(edge);
+                    if (EdgeTypes[edge] == EdgeType.Retreating)
+                        childrenDepths.Add(1 + CalcDepth(edge.Target, visitedEdges, EdgeTypes));
+                    else childrenDepths.Add(CalcDepth(edge.Target, visitedEdges, EdgeTypes));
+                }
+                visitedEdges.Remove(edge);
+            }
+
+            return childrenDepths.Count > 0 ? childrenDepths.Max() : 0;
         }
     }
 }

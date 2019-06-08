@@ -6,7 +6,7 @@ using SimpleLang.TACode.TacNodes;
 
 namespace SimpleLang.GenKill.Implementations
 {
-    public class TFByComposition : ITransmissionFunction
+    public class TFByComposition : ITransmissionFunction<TacNode>
     {
         private ThreeAddressCode basicBlock;
         private Dictionary<ThreeAddressCode, IExpressionSetsContainer> lineGenKill;

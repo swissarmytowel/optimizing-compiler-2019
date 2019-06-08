@@ -10,12 +10,12 @@ using SimpleLang.IterationAlgorithms.CollectionOperators;
 
 namespace SimpleLang.IterationAlgorithms
 {
-    class ActiveVariablesITA : IterationAlgorithm
+    class ActiveVariablesITA : IterationAlgorithm<TacNode>
     {  
         public ActiveVariablesITA(
             ControlFlowGraph cfg,
             Dictionary<ThreeAddressCode, IExpressionSetsContainer> lines
-            ) : base(cfg, new TFByComposition(lines), new UnionCollectionOperator(), false)
+            ) : base(cfg, new TFByComposition(lines), new UnionCollectionOperator<TacNode>(), false)
         {
             Execute();
         }

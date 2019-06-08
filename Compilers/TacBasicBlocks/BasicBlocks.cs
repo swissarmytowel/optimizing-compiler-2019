@@ -1,11 +1,9 @@
-﻿using System;
 using System.Collections;
 using System.Collections.Generic;
-
-using SimpleLang.TACode.TacNodes;
 using SimpleLang.TACode;
+using SimpleLang.TACode.TacNodes;
 
-namespace SimpleLang.Optimizations
+namespace SimpleLang.TacBasicBlocks
 {
     public class BasicBlocks : IEnumerable
     {

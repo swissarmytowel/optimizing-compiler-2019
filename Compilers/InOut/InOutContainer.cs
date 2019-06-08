@@ -9,12 +9,11 @@ using System.Text;
 
 namespace SimpleLang.InOut
 {
-    public class InOutContainer
+    public class InOutContainer<T>
     {
-        public Dictionary<ThreeAddressCode, HashSet<TacNode>> In = new Dictionary<ThreeAddressCode, HashSet<TacNode>>();
+        public Dictionary<ThreeAddressCode, HashSet<T>> In = new Dictionary<ThreeAddressCode, HashSet<T>>();
 
-        public Dictionary<ThreeAddressCode, HashSet<TacNode>>
-            Out = new Dictionary<ThreeAddressCode, HashSet<TacNode>>();
+        public Dictionary<ThreeAddressCode, HashSet<T>> Out = new Dictionary<ThreeAddressCode, HashSet<T>>();
         
         public override string ToString()
         {

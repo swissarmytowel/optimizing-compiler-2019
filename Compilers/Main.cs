@@ -4,7 +4,6 @@ using System.Text;
 using System.Reflection;
 using System.Collections.Generic;
 using System.Linq;
-using SimpleLang.Optimizations.DefUse;
 using SimpleLang.CFG;
 using SimpleLang.TACode;
 using SimpleLang.TACode.TacNodes;
@@ -12,11 +11,12 @@ using SimpleScanner;
 using SimpleParser;
 using SimpleLang.Visitors;
 using SimpleLang.Optimizations;
-using System.Linq;
 using SimpleLang.GenKill.Implementations;
 using SimpleLang.InOut;
 using SimpleLang.DefUse;
 using SimpleLang.IterationAlgorithms;
+using SimpleLang.TacBasicBlocks;
+using SimpleLang.TacBasicBlocks.DefUse;
 using SimpleLang.MOP;
 using SimpleLang.IterationAlgorithms.CollectionOperators;
 
@@ -125,14 +125,23 @@ namespace SimpleCompiler
                     var cfg = new ControlFlowGraph(threeAddressCodeVisitor.TACodeContainer);
                     Console.WriteLine(cfg);
                     cfg.SaveToFile(@"cfg.txt");
+                    var dstClassifier = new DstEdgeClassifier(cfg);
+                    dstClassifier.ClassificateEdges(cfg);
+                    Console.WriteLine(dstClassifier);
 
+                    var depth = cfg.GetDepth(dstClassifier.EdgeTypes);
+                    Console.WriteLine($"Depth CFG = {depth}");
                     //Console.WriteLine(threeAddressCodeVisitor.TACodeContainer);
                     //var availExprOpt = new AvailableExprOptimization();
                     //availExprOpt.Optimize(cfg);
                     //Console.WriteLine("======= After algebraic identity =======");
                     //Console.WriteLine(cfg);
 
-                    Console.WriteLine("======= DV =======");
+                    Console.WriteLine();
+                    Console.WriteLine("Before optimization");
+                    Console.WriteLine(threeAddressCodeVisitor.TACodeContainer);
+
+                    /*Console.WriteLine("======= DV =======");
                     Console.WriteLine(threeAddressCodeVisitor);
                     var detector = new DefUseDetector();
                     detector.DetectAndFillDefUse(threeAddressCodeVisitor.TACodeContainer);
@@ -153,6 +162,9 @@ namespace SimpleCompiler
                     //var copyPropagationOptimizer = new DefUseCopyPropagation(detector);
                     //result = copyPropagationOptimizer.Optimize(threeAddressCodeVisitor.TACodeContainer);
 
+                    Console.WriteLine("======= After copy propagation =======");
+                    Console.WriteLine(threeAddressCodeVisitor);
+                    */
                     //Console.WriteLine("======= After copy propagation =======");
                     //Console.WriteLine(threeAddressCodeVisitor);
 

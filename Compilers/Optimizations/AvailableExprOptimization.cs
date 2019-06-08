@@ -4,6 +4,7 @@ using SimpleLang.Optimizations.Interfaces;
 using SimpleLang.TACode.TacNodes;
 using SimpleLang.TACode;
 using SimpleLang.IterationAlgorithms;
+using SimpleLang.TacBasicBlocks;
 
 namespace SimpleLang.Optimizations
 {
@@ -32,7 +33,7 @@ namespace SimpleLang.Optimizations
         }
     }
 
-    class AvailableExprOptimization : IAlgorithmOptimizer
+    class AvailableExprOptimization : IAlgorithmOptimizer<TacNode>
     {
         private Dictionary<TacExpr, string> idsForExprDic = new Dictionary<TacExpr, string>();
 
@@ -66,7 +67,7 @@ namespace SimpleLang.Optimizations
             else varsExprChange.Add(key, value);
         }
 
-        public bool Optimize(BasicBlocks bb, IterationAlgorithm ita)
+        public bool Optimize(BasicBlocks bb, IterationAlgorithm<TacNode> ita)
         {
             bool isUsed = false;
             Dictionary<ThreeAddressCode, HashSet<TacNode>> IN = ita.InOut.In;

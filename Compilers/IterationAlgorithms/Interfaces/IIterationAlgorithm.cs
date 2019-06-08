@@ -2,8 +2,8 @@
 
 namespace SimpleLang.IterationAlgorithms.Interfaces
 {
-    interface IIterationAlgorithm
+    interface IIterationAlgorithm<T>
     {
-        InOutContainer InOut { get; set; }
+        InOutContainer<T> InOut { get; set; }
     }
 }
