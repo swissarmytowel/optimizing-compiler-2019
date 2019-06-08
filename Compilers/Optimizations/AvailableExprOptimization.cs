@@ -73,6 +73,16 @@ namespace SimpleLang.Optimizations
             var bb = ita.controlFlowGraph.SourceBasicBlocks;
             Dictionary<ThreeAddressCode, HashSet<TacNode>> IN = ita.InOut.In;
             Dictionary<ThreeAddressCode, HashSet<TacNode>> OUT = ita.InOut.Out;
+            // переделываем IN OUT в нужный формат
+            var IN_EXPR = new Dictionary<ThreeAddressCode, HashSet<TacExpr>>();
+            var OUT_EXPR = new Dictionary<ThreeAddressCode, HashSet<TacExpr>>();
+            foreach (var block in bb.BasicBlockItems)
+            {
+                HashSet<TacExpr> inNode = TransformHashSetNodeToExpr(IN[block]);
+                IN_EXPR.Add(block, inNode);
+                HashSet<TacExpr> outNode = TransformHashSetNodeToExpr(OUT[block]);
+                OUT_EXPR.Add(block, outNode);
+            }
             Dictionary<TacExpr, int> tacExprCount = new Dictionary<TacExpr, int>();
             Dictionary<TacExpr, bool> varsExprChange = new Dictionary<TacExpr, bool>();
             // ищем какие выражения нужно оптимизировать
@@ -96,8 +106,8 @@ namespace SimpleLang.Optimizations
             for (int blockInd = 0; blockInd < bb.BasicBlockItems.Count(); blockInd++)
             {
                var block = bb.BasicBlockItems[blockInd];
-               HashSet<TacExpr> inNode = TransformHashSetNodeToExpr(IN[block]);
-               HashSet<TacExpr> outNode = TransformHashSetNodeToExpr(OUT[block]);
+               HashSet<TacExpr> inNode = IN_EXPR[block];
+               HashSet<TacExpr> outNode = OUT_EXPR[block];
                var codeLine = block.TACodeLines.First;
                while (codeLine != null)
                {
@@ -134,7 +144,7 @@ namespace SimpleLang.Optimizations
                             }
                         }
                         // для всех оптимизируемых выражений
-                        foreach (var _expr in varsExprChange.Keys)
+                        foreach (var _expr in varsExprChange.Keys.ToArray())
                         {
                             // если выражение недоступно на выходе и присваивание его изменяет
                             if (!outNode.Contains(_expr) && (_expr.FirstOperand == assignId || _expr.SecondOperand == assignId))

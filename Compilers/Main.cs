@@ -17,7 +17,7 @@ using SimpleLang.DefUse;
 using SimpleLang.IterationAlgorithms;
 using SimpleLang.TacBasicBlocks;
 using SimpleLang.TacBasicBlocks.DefUse;
-
+using SimpleLang.E_GenKill.Implementations;
 
 namespace SimpleCompiler
 {
@@ -216,18 +216,26 @@ namespace SimpleCompiler
                     Console.WriteLine("=== InOut после итерационного алгоритма для активных переменных ===");
                     Console.WriteLine(activeVariablesITA.InOut);
 
-                    var availableExpressionsITA = new AvailableExpressionsITA(cfg, genKillContainers);
-                    Console.WriteLine("=== InOut после итерационного алгоритма для доступных выражений ===");
-                    Console.WriteLine(availableExpressionsITA.InOut);
+                    /* -----------------------AvailableExpressions START---------------------------------*/
+                    Console.WriteLine("AvailableExpressions Optimization");
 
                     Console.WriteLine("Before AvailableExprOptimization");
                     Console.WriteLine(cfg.SourceBasicBlocks
-                        .BasicBlockItems.Select(bl => bl.ToString()).Aggregate((b1, b2) => b1 + b2));
+                        .BasicBlockItems.Select((bl, ind) => $"BLOCK{ind}:\n" + bl.ToString()).Aggregate((b1, b2) => b1 + b2));
+
+                    E_GenKillVisitor availExprVisitor = new E_GenKillVisitor();
+                    var availExprContainers = availExprVisitor.GenerateAvailableExpressionForBlocks(cfg.SourceBasicBlocks);
+
+                    var availableExpressionsITA = new AvailableExpressionsITA(cfg, availExprContainers);
+                    Console.WriteLine("=== InOut после итерационного алгоритма для доступных выражений ===");
+                    Console.WriteLine(availableExpressionsITA.InOut);
+
                     var availableExprOptimization = new AvailableExprOptimization();
                     availableExprOptimization.Optimize(availableExpressionsITA);
                     Console.WriteLine("After AvailableExprOptimization");
                     Console.WriteLine(cfg.SourceBasicBlocks
-                        .BasicBlockItems.Select(bl => bl.ToString()).Aggregate((b1, b2) => b1 + b2));
+                        .BasicBlockItems.Select((bl, ind) => $"BLOCK{ind}:\n" + bl.ToString()).Aggregate((b1, b2) => b1 + b2));
+                    /* -----------------------AvailableExpressions END---------------------------------*/
                 }
             }
             catch (FileNotFoundException)
@@ -243,3 +251,4 @@ namespace SimpleCompiler
         }
     }
 }
+ 
