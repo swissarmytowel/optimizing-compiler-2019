@@ -68,7 +68,6 @@ namespace SimpleLang.Optimizations
 
                                 var tmpTacNode = new TacAssignmentNode()
                                 {
-                                    Label = TmpNameManager.Instance.GenerateLabel(),
                                     LeftPartIdentifier = TmpNameManager.Instance.GenerateTmpVariableName(),
                                     FirstOperand = numberToT[tmp]
                                 };
