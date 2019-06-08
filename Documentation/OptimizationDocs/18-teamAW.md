@@ -2,7 +2,7 @@
 
 ## Постановка задачи
 
-Реализация классов для представления и хранения строк трехадрессного кода, реализация визитора  для генерации строк трехадресного кода по AST-дереву.
+Реализация классов для представления и хранения строк трехадрессного кода, реализация визитора  для генерации строк трехадресного кода по AST.
 
 ## Команда — исполнитель
 
@@ -12,7 +12,7 @@ AW
 
 Зависит от:
 
-- Парсер языка и генерация AST-дерева (M&M)  
+- Парсер языка и генерация AST (M&M)  
 
 Препятствует:
 
@@ -150,10 +150,205 @@ namespace SimpleLang.TACode.TacNodes
 
 - `TacEmptyNode` &mdash; пустой оператор, наследник `TacNode` в виде неабстрактного класса для возможности инстанцирования
 
+В качестве контейнера для трехадресного кода используется класс `ThreeAddressCode`.
+
+Он написан на основе связного списка `LinkedList` (get-only поле
+`TACodeLines`) с элементами типа `<TacNode>` и реализует интерфейс
+`IEnumerable`
+
+Он предоставляет следующий функционал:
+
+1. Доступ к элементам на чтение и модификацию;
+2. модификация контейнера;
+   1. добавление строки кода (нод) в конец списка `PushNode`;
+   2. добавление нескольких строк кода (нод) в конец списка
+      `PushNodes(IEnumerable)`;
+   3. удаление ноды из списка `RemoveNode`;
+   4. удаление ноды из списка по метке `RemoveNodeByLabel`;
+   5. удаление нескольких нод из списка `RemoveNodes(IEnumerable)`;
+3. набор методов для удобства добавления тривиальных нод;
+4. поля First/Last для удобства получения соответствующих
+   LinkedListNode<>.
+
+```csharp
+/// <summary>
+/// Добавить несколько строк в конец контейнера
+/// </summary>
+/// <param name="nodes">Перечислимое строк, которые требуется добавить</param>
+public void PushNodes(IEnumerable<TacNode> nodes)
+{
+    foreach (var tacNode in nodes)
+    {
+        TACodeLines.AddLast(tacNode);
+    }
+}
+
+/// <summary>
+/// Удаление строки по значению
+/// <exception>InvalidOperationException</exception>
+/// <exception>ArgumentNullException</exception>
+/// </summary>
+/// <param name="node">Строка, которую требуется удалить</param>
+public void RemoveNode(TacNode node)
+{
+    TACodeLines.Remove(node);
+}
+```
+
+
+Для генерации имен временных переменных и меток и обеспечения сквозной нумерации используется класс
+`TmpNameManager`. 
+
+Он реализует паттерн синглтон, доступ к методам происходит через
+статическое поле `Instance`.
+
+В нем заложен счетчик меток и переменных, для генерации нового имени
+следует пользоваться методами.
+
+- TmpNameManager.Instance.GenerateTmpVariableName()
+- TmpNameManager.Instance.GenerateTmpLabel()
+
+```csharp
+namespace SimpleLang.TACode
+{
+    public class TmpNameManager
+    {
+        public static readonly TmpNameManager Instance = new TmpNameManager();
+
+        /// <summary>
+        /// Счетчики меток и переменных
+        /// </summary>
+        private int _currentVariableCounter = 0;
+        private int _currentLabelCounter = 0;
+        
+        /// <summary>
+        /// Генерация новой переменной с уникальным именем
+        /// </summary>
+        /// <returns>Уникальное имя временной переменной</returns>
+        public string GenerateTmpVariableName() => $"t{++_currentVariableCounter}";
+        
+        /// <summary>
+        /// Генерация новой метки
+        /// </summary>
+        /// <returns>Уничкальная метка</returns>
+        public string GenerateLabel() => $"L{++_currentLabelCounter}";
+
+        /// <summary>
+        /// Сбросить счетчики
+        /// </summary>
+        public void Drop() { _currentLabelCounter = 0; _currentVariableCounter = 0; }
+    }
+}
+```
+
+Для генерации трехадресного кода используется визитор
+`ThreeAddressCodeVisitor`. 
+
+В нем переопределены соответствующие методы для обхода AST и генерации
+TAC для 
+
+- Операторов присваивания (с обработкой тривиальных кейсов и логических
+  операций)
+- Циклов for и while
+- Уловного опретора if-else
+
+Пример рекурсивной функции, генерирующей строки трехадресного кода по выражению.
+```csharp
+ /// <summary>
+/// Генерация строк трехадресного кода по выражению
+/// </summary>
+/// <param name="expression">Целевое выражение, по которому будет проводится генерация</param>
+/// <returns>Последний идентификатор, возвращенный процессом генерации</returns>
+private string GenerateThreeAddressLine(ExprNode expression)
+{
+    // Эти строки используются для слияния меток от предыдущего парсинга if/while/for
+    // Из пустого оператора к строке кода
+    string label = null;
+    if (TACodeContainer.Last != null && TACodeContainer.Last.Value.IsUtility)
+    {
+        label = TACodeContainer.Last.Value.Label;
+        TACodeContainer.RemoveNode(TACodeContainer.Last.Value);
+    }
+
+    switch (expression)
+    {
+        // Тривиальные случаи
+        case IdNode idNode:
+        {
+            return TACodeContainer.CreateAndPushIdNode(idNode, label);
+        }
+        case IntNumNode intNumNode:
+        {
+            return TACodeContainer.CreateAndPushIntNumNode(intNumNode, label);
+        }
+        case BoolNode boolNode:
+        {
+            return TACodeContainer.CreateAndPushBoolNode(boolNode, label);
+        }
+        // Унарный оператор
+        case UnOpNode unOpNode:
+        {
+            var unaryExp = ManageTrivialCases(unOpNode.Unary);
+            
+            var tmpName = TmpNameManager.Instance.GenerateTmpVariableName();
+            TACodeContainer.PushNode(new TacAssignmentNode()
+            {
+                Label = label,
+                LeftPartIdentifier = tmpName,
+                FirstOperand = null,
+                Operation = unOpNode.Op,
+                SecondOperand = unaryExp
+            });
+            return tmpName;
+        }
+        // Обработка сложного случая с бинарной операцией
+        case BinOpNode binOpNode:
+        {   
+            var leftPart = ManageTrivialCases(binOpNode.Left);
+            var rightPart = ManageTrivialCases(binOpNode.Right);
+            
+            // Создание и добавление в контейнер полученной бинарной операции между
+            // двумя сгенерированными выше переменными
+            var tmpName = TmpNameManager.Instance.GenerateTmpVariableName();
+            TACodeContainer.PushNode(new TacAssignmentNode()
+            {
+                Label = label,
+                LeftPartIdentifier = tmpName,
+                FirstOperand = leftPart,
+                Operation = binOpNode.Op,
+                SecondOperand = rightPart
+            });
+            return tmpName;
+        }
+        // Обработка логического отрицания
+        case LogicNotNode logicNotNode:
+        {
+            var unaryExp = ManageTrivialCases(logicNotNode.LogExpr);
+            
+            var tmpName = TmpNameManager.Instance.GenerateTmpVariableName();
+            TACodeContainer.PushNode(new TacAssignmentNode()
+            {
+                Label = label,
+                LeftPartIdentifier = tmpName,
+                FirstOperand = null,
+                Operation = "!",
+                SecondOperand = unaryExp
+            });
+            return tmpName;
+        }
+    }
+
+    return default(string);
+}
+
+```
+
 ## Тесты
 
 Узнать как должны выглядить тесты в докуметации.
 
 ## Вывод
 
-Была реализована структура для хранения 
+Были реализованы структуры для предсавления и хранения программы в виде строк трехадресного кода. 
+
+Был написан класс-визитор для обхода AST и генерации структур трехадресного кода.
