@@ -173,6 +173,8 @@ namespace SimpleLang.Visitors
         }
         public override void VisitBoolNode(BoolNode v) => Text += v.Value.ToString().ToLower();
 
+        public override void VisitPrintNode(PrintNode p) => Text += p.ToString();
+
         public override void VisitLabelNode(LabelNode l)
         {
             Text += l.ToString();
