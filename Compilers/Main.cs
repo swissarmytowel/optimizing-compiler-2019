@@ -85,6 +85,9 @@ namespace SimpleCompiler
                     var sameminusv = new SameMinusOptVisitor();
                     parser.root.Visit(sameminusv);
 
+                    var whilefalsev = new WhileFalseOptVisitor();
+                    parser.root.Visit(whilefalsev);
+
                     var zeroMulVisitor = new ZeroMulOptVisitor();
                     parser.root.Visit(zeroMulVisitor);
 
@@ -212,6 +215,19 @@ namespace SimpleCompiler
                     var activeVariablesITA = new ActiveVariablesITA(cfg, defUseContainers);
                     Console.WriteLine("=== InOut после итерационного алгоритма для активных переменных ===");
                     Console.WriteLine(activeVariablesITA.InOut);
+
+                    var availableExpressionsITA = new AvailableExpressionsITA(cfg, genKillContainers);
+                    Console.WriteLine("=== InOut после итерационного алгоритма для доступных выражений ===");
+                    Console.WriteLine(availableExpressionsITA.InOut);
+
+                    Console.WriteLine("Before AvailableExprOptimization");
+                    Console.WriteLine(cfg.SourceBasicBlocks
+                        .BasicBlockItems.Select(bl => bl.ToString()).Aggregate((b1, b2) => b1 + b2));
+                    var availableExprOptimization = new AvailableExprOptimization();
+                    availableExprOptimization.Optimize(availableExpressionsITA);
+                    Console.WriteLine("After AvailableExprOptimization");
+                    Console.WriteLine(cfg.SourceBasicBlocks
+                        .BasicBlockItems.Select(bl => bl.ToString()).Aggregate((b1, b2) => b1 + b2));
                 }
             }
             catch (FileNotFoundException)

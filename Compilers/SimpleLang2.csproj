@@ -119,6 +119,7 @@
     <Compile Include="Parser\SimpleLex.cs" />
     <Compile Include="Parser\SimpleYacc.cs" />
     <Compile Include="TacBasicBlocks\BasicBlocks.cs" />
+    <Compile Include="Visitors\WhileFalseOptVisitor.cs" />
     <Compile Include="Visitors\ZeroMulOptVisitor.cs" />
     <Compile Include="Visitors\CompareToItselfFalseOptVisitor.cs" />
     <Compile Include="GenKill\Interfaces\IGenKillVisitor.cs" />

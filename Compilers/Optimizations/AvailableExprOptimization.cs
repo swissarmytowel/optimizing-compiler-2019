@@ -33,7 +33,7 @@ namespace SimpleLang.Optimizations
         }
     }
 
-    class AvailableExprOptimization : IAlgorithmOptimizer<TacNode>
+    class AvailableExprOptimization
     {
         private Dictionary<TacExpr, string> idsForExprDic = new Dictionary<TacExpr, string>();
 
@@ -67,9 +67,10 @@ namespace SimpleLang.Optimizations
             else varsExprChange.Add(key, value);
         }
 
-        public bool Optimize(BasicBlocks bb, IterationAlgorithm<TacNode> ita)
+        public bool Optimize(AvailableExpressionsITA ita)
         {
             bool isUsed = false;
+            var bb = ita.controlFlowGraph.SourceBasicBlocks;
             Dictionary<ThreeAddressCode, HashSet<TacNode>> IN = ita.InOut.In;
             Dictionary<ThreeAddressCode, HashSet<TacNode>> OUT = ita.InOut.Out;
             Dictionary<TacExpr, int> tacExprCount = new Dictionary<TacExpr, int>();
@@ -81,10 +82,13 @@ namespace SimpleLang.Optimizations
                 {
                     if (node is TacAssignmentNode assign)
                     {
-                        TacExpr expr = new TacExpr(assign);
-                        if (!tacExprCount.Keys.Contains(expr))
-                            tacExprCount.Add(expr, 1);
-                        else tacExprCount[expr] += 1;
+                        if (assign.Operation != null && assign.SecondOperand != null)
+                        {
+                            TacExpr expr = new TacExpr(assign);
+                            if (!tacExprCount.Keys.Contains(expr))
+                                tacExprCount.Add(expr, 1);
+                            else tacExprCount[expr] += 1;
+                        }
                     }
                 }
             }
@@ -103,7 +107,7 @@ namespace SimpleLang.Optimizations
                         string assignId = assign.LeftPartIdentifier;
                         TacExpr expr = new TacExpr(assign);
                         // если выражений больше 1 делаем оптимизацию
-                        if (tacExprCount[expr] > 1)
+                        if (tacExprCount.Keys.Contains(expr) && tacExprCount[expr] > 1)
                         {
                             DictionarySetOrAdd(varsExprChange, expr, !inNode.Contains(expr));
                             // если это первая замена общего выражения
@@ -139,6 +143,7 @@ namespace SimpleLang.Optimizations
                             }
                         }
                     }
+                    codeLine = codeLine.Next;
                 }
             }
             return isUsed;
