@@ -16,7 +16,7 @@ namespace SimpleLang.CFG
         public bool IsVerticesEmpty => Graph.IsVerticesEmpty;
         public bool IsEdgesEmpty => Graph.IsEdgesEmpty;
 
-        public BidirectionalGraph<ThreeAddressCode, Edge<ThreeAddressCode>> Graph { get; }
+        protected BidirectionalGraph<ThreeAddressCode, Edge<ThreeAddressCode>> Graph;
 
         protected BidirectionalGraph()
         {
