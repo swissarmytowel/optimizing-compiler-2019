@@ -6,19 +6,19 @@ using SimpleLang.TACode.TacNodes;
 
 namespace SimpleLang.GenKill.Implementations
 {
-    public class TFByComposition : ITransmissionFunction<TacNode>
+    public class TFByComposition : ITransmissionFunction
     {
         private ThreeAddressCode basicBlock;
         private Dictionary<ThreeAddressCode, IExpressionSetsContainer> lineGenKill;
 
-        public TFByComposition(Dictionary<ThreeAddressCode, IExpressionSetsContainer> LineGenKill)
+        public TFByComposition(ThreeAddressCode BasicBlock, Dictionary<ThreeAddressCode, IExpressionSetsContainer> LineGenKill)
         {
+            basicBlock = BasicBlock;
             lineGenKill = LineGenKill;
         }
 
-        public HashSet<TacNode> Calculate(HashSet<TacNode> _in, ThreeAddressCode bblock)
+        public HashSet<TacNode> Calculate(HashSet<TacNode> _in)
         {
-            basicBlock = bblock;
             var func = _in;
 
             foreach (var line in GetBasicBlock())
@@ -50,12 +50,12 @@ namespace SimpleLang.GenKill.Implementations
 
         public HashSet<TacNode> GetLineGen(TacNode tacNode)
         {
-            return lineGenKill[basicBlock].GetFirstSet();
+            return lineGenKill[basicBlock].GetSecondSet();
         }
 
         public HashSet<TacNode> GetLineKill(TacNode tacNode)
         {
-            return lineGenKill[basicBlock].GetSecondSet();
+            return lineGenKill[basicBlock].GetFirstSet();
         }
     }
 }

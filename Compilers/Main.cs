@@ -18,6 +18,8 @@ using SimpleLang.IterationAlgorithms;
 using SimpleLang.TacBasicBlocks;
 using SimpleLang.TacBasicBlocks.DefUse;
 using SimpleLang.E_GenKill.Implementations;
+using SimpleLang.MOP;
+using SimpleLang.IterationAlgorithms.CollectionOperators;
 
 namespace SimpleCompiler
 {
@@ -150,22 +152,24 @@ namespace SimpleCompiler
                     //Console.WriteLine(detector);
                     //Console.WriteLine("======= Detector 2 =======");
                     //Console.WriteLine(detector.ToString2());
-                    var constPropagationOptimizer = new DefUseConstPropagation(detector);
-                    var result = constPropagationOptimizer.Optimize(threeAddressCodeVisitor.TACodeContainer);
+                    //var constPropagationOptimizer = new DefUseConstPropagation(detector);
+                    //var result = constPropagationOptimizer.Optimize(threeAddressCodeVisitor.TACodeContainer);
 
-                    Console.WriteLine("======= After const propagation =======");
-                    Console.WriteLine(threeAddressCodeVisitor);
+                    //Console.WriteLine("======= After const propagation =======");
+                    //Console.WriteLine(threeAddressCodeVisitor);
 
-                    result = constPropagationOptimizer.Optimize(threeAddressCodeVisitor.TACodeContainer);
-                    Console.WriteLine("======= After const propagation =======");
-                    Console.WriteLine(threeAddressCodeVisitor);
+                    //result = constPropagationOptimizer.Optimize(threeAddressCodeVisitor.TACodeContainer);
+                    //Console.WriteLine("======= After const propagation =======");
+                    //Console.WriteLine(threeAddressCodeVisitor);
 
-                    var copyPropagationOptimizer = new DefUseCopyPropagation(detector);
-                    result = copyPropagationOptimizer.Optimize(threeAddressCodeVisitor.TACodeContainer);
+                    //var copyPropagationOptimizer = new DefUseCopyPropagation(detector);
+                    //result = copyPropagationOptimizer.Optimize(threeAddressCodeVisitor.TACodeContainer);
 
                     Console.WriteLine("======= After copy propagation =======");
                     Console.WriteLine(threeAddressCodeVisitor);
                     */
+                    //Console.WriteLine("======= After copy propagation =======");
+                    //Console.WriteLine(threeAddressCodeVisitor);
 
                     //var bblocks = new BasicBlocks();
                     //bblocks.SplitTACode(threeAddressCodeVisitor.TACodeContainer);
@@ -193,24 +197,39 @@ namespace SimpleCompiler
                     Console.WriteLine("algebraic identity optimization");
                     Console.WriteLine(threeAddressCodeVisitor.TACodeContainer);
 
+
+                    var genKillVisitor = new GenKillVisitor();
+                    var genkill = genKillVisitor.GenerateReachingDefinitionForBlocks(cfg.SourceBasicBlocks);
+                    //var genkill = genKillVisitor.GenerateReachingDefinitionForBlocks(bblocks);
+
+                    var defUseContainers = DefUseForBlocksGenerator.Execute(cfg.SourceBasicBlocks);
+                    DefUseForBlocksPrinter.Execute(defUseContainers);
+
+                    var tfBComposition = new TFByComposition(defUseContainers);
+                    var unionCollection = new UnionCollectionOperator<TacNode>();
+                    //var intersectCollection = new IntersectCollectionOperator<TacNode>();
+                    var mop = new MeetOverPaths(cfg, tfBComposition, unionCollection, new HashSet<TacNode>(), false);
+                    mop.Compute();
+
+                    var iterationAlgo = new ReachingDefinitionsITA(cfg, genkill);
+
                     var bblocks = new BasicBlocks();
                     bblocks.SplitTACode(threeAddressCodeVisitor.TACodeContainer);
                     Console.WriteLine("Разбиение на базовые блоки завершилось");
                     Console.WriteLine();
 
-                    GenKillVisitor genKillVisitor = new GenKillVisitor();
-                    var genKillContainers = genKillVisitor.GenerateReachingDefinitionForBlocks(cfg.SourceBasicBlocks);
-//                    InOutContainerWithFilling inOutContainers =
-//                        new InOutContainerWithFilling(cfg.SourceBasicBlocks, genKillContainers);
-//                    Console.WriteLine("=== InOut для базовых блоков ===");
-//                    Console.WriteLine(inOutContainers.ToString());
+                    //GenKillVisitor genKillVisitor = new GenKillVisitor();
+                    //var genKillContainers = genKillVisitor.GenerateReachingDefinitionForBlocks(cfg.SourseBasicBlocks);
+                    //InOutContainer inOutContainers = new InOutContainer(cfg.SourseBasicBlocks, genKillContainers);
+                    //Console.WriteLine("=== InOut для базовых блоков ===");
+                    //Console.WriteLine(inOutContainers.ToString());
 
-                    var defUseContainers = DefUseForBlocksGenerator.Execute(cfg.SourceBasicBlocks);
-                    DefUseForBlocksPrinter.Execute(defUseContainers);
+                    //var defUseContainers = DefUseForBlocksGenerator.Execute(cfg.SourseBasicBlocks);
+                    //DefUseForBlocksPrinter.Execute(defUseContainers);
 
-                    var reachingDefenitionsITA = new ReachingDefinitionsITA(cfg, genKillContainers);
-                    Console.WriteLine("=== InOut после итерационного алгоритма для достигающих определения ===");
-                    Console.WriteLine(reachingDefenitionsITA.InOut);
+                    //var reachingDefenitionsITA = new ReachingDefinitionsITA(cfg, genKillContainers);
+                    //Console.WriteLine("=== InOut после итерационного алгоритма для достигающих определения ===");
+                    //Console.WriteLine(reachingDefenitionsITA.InOut);
 
                     var activeVariablesITA = new ActiveVariablesITA(cfg, defUseContainers);
                     Console.WriteLine("=== InOut после итерационного алгоритма для активных переменных ===");
