@@ -2,7 +2,7 @@
 
 namespace SimpleLang.IterationAlgorithms.Interfaces
 {
-    interface IIterationAlgorithm<T>
+    public interface IIterationAlgorithm<T>
     {
         InOutContainer<T> InOut { get; set; }
     }

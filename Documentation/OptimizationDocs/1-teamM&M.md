@@ -75,10 +75,7 @@ for(i = 0 to 10)
 	...
 }
 ```
-```csharp
-// оператор вывода
-print(a);
-```
+
 ```csharp
 // оператор goto
 goto l 7:
@@ -106,7 +103,6 @@ statement: assign SEMICOLON { $$ = $1; }
 		| empty SEMICOLON  { $$ = $1; }
 		| while { $$ = $1; }
 		| for { $$ = $1; }
-		| println { $$ = $1; }
 		| if { $$ = $1; }
 		| label { $$ = $1; }
 		| goto { $$ = $1; }
@@ -159,8 +155,6 @@ statement: assign SEMICOLON { $$ = $1; }
 -   IfNode.cs - класс для оператора сравнения
     
 -  LabelNode.cs - класс метки goto
-    
--   PrintNode.cs - класс оператора вывода
     
 -   EmptyNode.cs - класс для пустого узла
 

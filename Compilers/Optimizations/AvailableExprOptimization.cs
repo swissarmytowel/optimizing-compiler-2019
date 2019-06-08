@@ -4,6 +4,7 @@ using SimpleLang.Optimizations.Interfaces;
 using SimpleLang.TACode.TacNodes;
 using SimpleLang.TACode;
 using SimpleLang.IterationAlgorithms;
+using SimpleLang.IterationAlgorithms.Interfaces;
 using SimpleLang.TacBasicBlocks;
 
 namespace SimpleLang.Optimizations
@@ -33,7 +34,7 @@ namespace SimpleLang.Optimizations
         }
     }
 
-    class AvailableExprOptimization
+    class AvailableExprOptimization: IIterativeAlgorithmOptimizer<TacNode>
     {
         private Dictionary<TacExpr, string> idsForExprDic = new Dictionary<TacExpr, string>();
 
@@ -61,7 +62,8 @@ namespace SimpleLang.Optimizations
         }
 
 
-        public bool Optimize(AvailableExpressionsITA ita)
+//        public bool Optimize(AvailableExpressionsITA ita)
+        public bool Optimize(IterationAlgorithm<TacNode> ita)
         {
             bool isUsed = false;
             var bb = ita.controlFlowGraph.SourceBasicBlocks;
