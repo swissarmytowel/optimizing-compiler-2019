@@ -1,5 +1,6 @@
 using SimpleLang.CFG;
 using SimpleLang.IterationAlgorithms;
+using SimpleLang.IterationAlgorithms.Interfaces;
 using SimpleLang.TacBasicBlocks;
 using SimpleLang.TACode;
 
@@ -20,8 +21,8 @@ namespace SimpleLang.Optimizations.Interfaces
         bool Optimize(BasicBlocks bb);
     }
 
-    public interface IAlgorithmOptimizer<T>
+    public interface IIterativeAlgorithmOptimizer<T>
     {
-        bool Optimize(BasicBlocks bb, IterationAlgorithm<T> ita);
+        bool Optimize(IterationAlgorithm<T> ita);
     }
 }

@@ -27,5 +27,11 @@ namespace SimpleLang.TACode
         /// </summary>
         /// <returns>Unique label</returns>
         public string GenerateLabel() => $"L{++_currentLabelCounter}";
+
+        /// <summary>
+        /// Reset counters
+        /// </summary>
+        /// <returns>void</returns>
+        public void Drop() { _currentLabelCounter = 0; _currentVariableCounter = 0; }
     }
 }

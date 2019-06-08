@@ -102,7 +102,6 @@ class ScannerHelper
 	keywords.Add("to",(int)Tokens.TO);
 	keywords.Add("if",(int)Tokens.IF);
 	keywords.Add("else",(int)Tokens.ELSE);
-	keywords.Add("print",(int)Tokens.PRINTLN);
   }
   public static int GetIDToken(string s)
   {

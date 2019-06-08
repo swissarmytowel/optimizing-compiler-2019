@@ -239,22 +239,7 @@ namespace ProgramTree
             return str;
         }
     }
-    public class PrintNode : StatementNode
-    {
-        public ExprNode Expr { get; set; }
-       
-        public PrintNode(ExprNode expr)
-        {
-            Expr = expr;
-        }
-        public override void Visit(Visitor v)
-        {
-            v.VisitPrintNode(this);
-        }
-
-        public override string ToString() =>  "print(" + Expr + ");";
-        
-    }
+   
 
     public class BlockNode : StatementNode
     {
