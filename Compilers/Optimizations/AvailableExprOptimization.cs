@@ -60,12 +60,6 @@ namespace SimpleLang.Optimizations
             return Utility.Utility.IsVariable(var);
         }
 
-        private void DictionarySetOrAdd(Dictionary<TacExpr, bool> varsExprChange, TacExpr key, bool value)
-        {
-            if (varsExprChange.Keys.Contains(key))
-                varsExprChange[key] = value;
-            else varsExprChange.Add(key, value);
-        }
 
         public bool Optimize(AvailableExpressionsITA ita)
         {
@@ -106,9 +100,9 @@ namespace SimpleLang.Optimizations
             for (int blockInd = 0; blockInd < bb.BasicBlockItems.Count(); blockInd++)
             {
                var block = bb.BasicBlockItems[blockInd];
-               HashSet<TacExpr> inNode = IN_EXPR[block];
-               HashSet<TacExpr> outNode = OUT_EXPR[block];
                var codeLine = block.TACodeLines.First;
+               foreach (var _expr in varsExprChange.Keys.ToArray())
+                    varsExprChange[_expr] = !IN_EXPR[block].Contains(_expr);
                while (codeLine != null)
                {
                     var node = codeLine.Value;
@@ -119,7 +113,8 @@ namespace SimpleLang.Optimizations
                         // если выражений больше 1 делаем оптимизацию
                         if (tacExprCount.Keys.Contains(expr) && tacExprCount[expr] > 1)
                         {
-                            DictionarySetOrAdd(varsExprChange, expr, !inNode.Contains(expr));
+                            if (!varsExprChange.Keys.Contains(expr))
+                                varsExprChange.Add(expr, !IN_EXPR[block].Contains(expr));
                             // если это первая замена общего выражения
                             if (!idsForExprDic.Keys.Contains(expr))
                             {
@@ -147,7 +142,7 @@ namespace SimpleLang.Optimizations
                         foreach (var _expr in varsExprChange.Keys.ToArray())
                         {
                             // если выражение недоступно на выходе и присваивание его изменяет
-                            if (!outNode.Contains(_expr) && (_expr.FirstOperand == assignId || _expr.SecondOperand == assignId))
+                            if (_expr.FirstOperand == assignId || _expr.SecondOperand == assignId)
                             {
                                 varsExprChange[_expr] = true;
                             }
