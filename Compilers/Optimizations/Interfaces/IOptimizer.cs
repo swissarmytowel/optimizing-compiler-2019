@@ -19,9 +19,4 @@ namespace SimpleLang.Optimizations.Interfaces
     {
         bool Optimize(BasicBlocks bb);
     }
-
-    public interface IAlgorithmOptimizer<T>
-    {
-        bool Optimize(BasicBlocks bb, IterationAlgorithm<T> ita);
-    }
 }
