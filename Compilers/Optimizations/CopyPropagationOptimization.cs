@@ -23,11 +23,11 @@ namespace SimpleLang.Optimizations
                 {
                     if (currentNode.Value is TacAssignmentNode assignmentNode)
                     {
+                        if (directAssignments.ContainsKey(assignmentNode.LeftPartIdentifier))
+                            directAssignments.Remove(assignmentNode.LeftPartIdentifier);
+
                         if (assignmentNode.Operation == null)
                         {
-                            if (directAssignments.ContainsKey(assignmentNode.LeftPartIdentifier))
-                                directAssignments.Remove(assignmentNode.LeftPartIdentifier);
-
                             if (!int.TryParse(assignmentNode.FirstOperand, out int firstOpValue))
                             {
                                 var id = assignmentNode.LeftPartIdentifier;
@@ -48,9 +48,6 @@ namespace SimpleLang.Optimizations
                             isOptimized = true;
                         }
                         
-                        if (directAssignments.ContainsKey(assignmentNode.LeftPartIdentifier) &&
-                            assignmentNode.SecondOperand != null && assignmentNode.FirstOperand != null)
-                                directAssignments.Remove(assignmentNode.LeftPartIdentifier);
                     }
 
                     currentNode = currentNode.Next;

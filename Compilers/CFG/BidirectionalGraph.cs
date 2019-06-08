@@ -21,6 +21,7 @@ namespace SimpleLang.CFG
         protected BidirectionalGraph()
         {
             Graph = new BidirectionalGraph<ThreeAddressCode, Edge<ThreeAddressCode>>(false);
+
         }
 
         public void SaveToFile(string fileName)
