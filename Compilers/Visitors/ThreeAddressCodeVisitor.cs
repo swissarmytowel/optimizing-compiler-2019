@@ -88,7 +88,7 @@ namespace SimpleLang.Visitors
                 // Trivial cases. Each switch branch generate simple corresponding node
                 case IdNode idNode:
                 {
-                    return idNode.Name; //TACodeContainer.CreateAndPushIdNode(idNode, label);
+                    return TACodeContainer.CreateAndPushIdNode(idNode, label);
                 }
                 case IntNumNode intNumNode:
                 {
