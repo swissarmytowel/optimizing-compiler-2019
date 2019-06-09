@@ -94,6 +94,7 @@
     <Compile Include="IterationAlgorithms\ReachingDefinitionsSortedITA.cs" />
     <Compile Include="Optimizations\AvailableExprOptimization.cs" />
     <Compile Include="Optimizations\CommonSubexprOptimization.cs" />
+    <Compile Include="Optimizations\DeadCodeOptimizationWithITA.cs" />
     <Compile Include="Optimizations\DefUseConstPropagation.cs" />
     <Compile Include="Optimizations\DefUseCopyPropagation.cs" />
     <Compile Include="Optimizations\ReachingDefinitionsConstPropagation.cs" />
@@ -174,9 +175,7 @@
   <ItemGroup />
   <ItemGroup />
   <ItemGroup />
-  <ItemGroup>
-    <Folder Include="Optimizations\BooleanOptimization\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>
