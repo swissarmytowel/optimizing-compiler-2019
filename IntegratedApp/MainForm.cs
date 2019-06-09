@@ -17,8 +17,13 @@ using SimpleLang.Optimizations.BooleanOptimization;
 using SimpleLang.TACode.TacNodes;
 using SimpleLang.ConstDistrib;
 using SimpleLang.TacBasicBlocks;
-using SimpleLang.CFG;
 using SimpleLang.CFG.DominatorsTree;
+using SimpleLang.DefUse;
+using SimpleLang.CFG;
+using SimpleLang.IterationAlgorithms;
+using SimpleLang.GenKill.Implementations;
+using SimpleLang.E_GenKill.Implementations;
+
 
 namespace IntegratedApp
 {
@@ -243,7 +248,55 @@ namespace IntegratedApp
 #region Optimizations by Iteration Algorithm
 
             if (checkedOptimizationsBlock3.Count != 0) {
-                // TO DO FOR GLEB
+                var counter = 0;
+                var ind = 0;
+                for(ind = 0; ind < checkedOptimizationsBlock3.Count; ind++)
+                {
+                    var opt = checkedOptimizationsBlock3[ind];
+                    string typeOpt = "";
+                    bool isOptimized = false;
+                    switch(opt)
+                    {
+                        case OptimizationsByIterationAlgorithm.opt1:
+                            var defUseContainers = DefUseForBlocksGenerator.Execute(cfg.SourceBasicBlocks);
+                            var ita1 = new ActiveVariablesITA(cfg, defUseContainers);
+                            isOptimized = new DeadCodeOptimizationWithITA().Optimize(ita1);
+                            typeOpt = "Dead code optimization";
+                            break;
+                        case OptimizationsByIterationAlgorithm.opt3:
+                            GenKillVisitor genKillVisitor = new GenKillVisitor();
+                            var genKillContainers = genKillVisitor.GenerateReachingDefinitionForBlocks(cfg.SourceBasicBlocks);
+                            var ita3 = new ReachingDefinitionsITA(cfg, genKillContainers);
+                            isOptimized = new ReachingDefinitionsConstPropagation().Optimize(ita3);
+                            typeOpt = "Const propagation by reaching definition";
+                            break;
+                        case OptimizationsByIterationAlgorithm.opt5:
+                            E_GenKillVisitor availExprVisitor = new E_GenKillVisitor();
+                            var availExprContainers = availExprVisitor.GenerateAvailableExpressionForBlocks(cfg.SourceBasicBlocks);
+                            var availableExpressionsITA = new AvailableExpressionsITA(cfg, availExprContainers);
+                            var availableExprOptimization = new AvailableExprOptimization();
+                            isOptimized = availableExprOptimization.Optimize(availableExpressionsITA);
+                            typeOpt = "Available expr optimization";
+                            break;
+                        case OptimizationsByIterationAlgorithm.opt7:
+                            var constDistITA = new ConstDistributionITA(cfg);
+                            var constDistOpt = new ConstDistributionOptimization();
+                            isOptimized = constDistOpt.Optimize(constDistITA);
+                            typeOpt = "Const distribution";
+                            break;
+                    }
+
+                    if(isOptimized)
+                    {
+                        ind = -1;
+                        continue;
+                    }
+
+                    OutputTextBox.Text += $"===== Optimization {typeOpt} iteration #{counter++} =====\n\n";
+                    OutputTextBox.Text += cfg.SourceCode.ToString();
+                    OutputTextBox.Text += "\n";
+                }
+
             }
 
 #endregion
