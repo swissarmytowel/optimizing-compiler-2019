@@ -24,34 +24,46 @@ namespace SimpleLang.CFG.DominatorsTree
 
         /// <summary>
         /// Все доминаторы
+        /// Ключ - блок
+        /// Значение - Все доминаторы текущего блока
         /// </summary>
         public Dictionary<ThreeAddressCode, HashSet<ThreeAddressCode>> Dominators =
             new Dictionary<ThreeAddressCode, HashSet<ThreeAddressCode>>();
 
         /// <summary>
         /// Непосредственные доминаторы
+        /// Ключ - блок
+        /// Значение - непосредственный доминатор
         /// </summary>
-        public Dictionary<ThreeAddressCode, List<ThreeAddressCode>> ImmediateDominators =
-            new Dictionary<ThreeAddressCode, List<ThreeAddressCode>>();
+        public Dictionary<ThreeAddressCode, ThreeAddressCode> ImmediateDominators =
+            new Dictionary<ThreeAddressCode, ThreeAddressCode>();
 
+        /// <summary>
+        /// Оператор сбора
+        /// </summary>
         private ICollectionOperator<ThreeAddressCode> _collectionOperator =
             new IntersectCollectionOperator<ThreeAddressCode>();
 
         public DominatorsFinder(ControlFlowGraph cfg)
         {
+            // Входной узел программы
             var entryPoint = cfg.Vertices.FirstOrDefault(e => cfg.InDegree(e) == 0);
             if (entryPoint == null) return;
 
             var vertices = cfg.Vertices.ToList();
-            var union = new UnionCollectionOperator<ThreeAddressCode>();
             var threeAddressCodeHashSet = new HashSet<ThreeAddressCode>();
+
+            // Добавляем все базовые блоки, кроме входного узла
             foreach (var vertex in vertices.Where(vertex => vertex != entryPoint)) {
                 threeAddressCodeHashSet.Add(vertex);
             }
-            
-            InOut.Out.Add(entryPoint, new HashSet<ThreeAddressCode>() {entryPoint});
-            ImmediateDominators[entryPoint] = new List<ThreeAddressCode>(){ entryPoint };
+
+            // Для входного узла In - пустой, Out - сам базовый блок
             InOut.In[entryPoint] = new HashSet<ThreeAddressCode>();
+            InOut.Out.Add(entryPoint, new HashSet<ThreeAddressCode>() {entryPoint});
+            ImmediateDominators[entryPoint] = entryPoint;
+
+            // Для всех ББл, кроме входного, Out явл. множеством всех ББл, кроме входного
             foreach (var basicBlock in cfg.SourceBasicBlocks)
             {
                 if (basicBlock == entryPoint) 
@@ -63,12 +75,15 @@ namespace SimpleLang.CFG.DominatorsTree
 
             var outWasChanged = true;
 
+            // Цикл: пока вносятся изменения в Out хотя бы одного базового блока
             while (outWasChanged)
             {
                 outWasChanged = false;
                 for (var i = 1; i < vertices.Count; ++i)
                 {
                     var curBlock = vertices[i];
+
+                    // Предки текущего узла
                     var ancestors = cfg.Edges.Where(edge => edge.Target == curBlock).Select(e => e.Source).ToList();
 
 #region All Dominators 
@@ -99,22 +114,25 @@ namespace SimpleLang.CFG.DominatorsTree
                         outWasChanged = true;
 
 #region Immediate Dominators
-                        ImmediateDominators[curBlock] = InOut.Out[curBlock].Where(block => block != curBlock).Select(p => p).ToList();
-
+                        // Находим непосредственных доминаоров, т.е. доминаторов не являющихся:
+                        // 1) рассматриваемым узлом;
+                        // 2) доминатором над каким-либо из доминаторов данного узла
+                        var immediateDomsCurBlock = InOut.Out[curBlock].Where(block => block != curBlock).Select(p => p).ToList();
                         var needToDeleteElems = new List<ThreeAddressCode>();
-                        foreach (var dom in ImmediateDominators[curBlock]) {
-                            var itsDoms = ImmediateDominators[dom];
-                            var needToDelete = itsDoms.Where(d => ImmediateDominators[curBlock].Contains(d) && d != dom).Select(p => p);
-                            needToDeleteElems.AddRange(needToDelete);
+                        foreach (var dom in immediateDomsCurBlock) {
+                            if (immediateDomsCurBlock.Contains(ImmediateDominators[dom]) && ImmediateDominators[dom] != dom) {
+                                needToDeleteElems.Add(ImmediateDominators[dom]);
+                            }
                         }
                         needToDeleteElems.Distinct();
-                        foreach(var elem in needToDeleteElems) {
-                            ImmediateDominators[curBlock].Remove(elem);
-                        }
+                        ImmediateDominators[curBlock] = immediateDomsCurBlock
+                            .Where(d => !needToDeleteElems.Contains(d))
+                            .FirstOrDefault();
 #endregion
                     }
                 }
             }
+            ImmediateDominators[entryPoint] = null;
             Dominators = InOut.Out;
         }
     }
