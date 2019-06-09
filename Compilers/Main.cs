@@ -330,6 +330,19 @@ namespace SimpleCompiler
                     ConstDistribTest.TestForFunction();
                     Console.WriteLine("ConstDistribTests done success");
                     /* -----------------------ConstDistrib END---------------------------------*/
+
+                    /* -----------------------ConstDistribOptimization START---------------------------------*/
+                    Console.WriteLine("ConstDistributionOptimization: Before");
+                    Console.WriteLine(cfg.SourceBasicBlocks
+                        .BasicBlockItems.Select((bl, ind) => $"BLOCK{ind}:\n" + bl.ToString()).Aggregate((b1, b2) => b1 + b2));
+
+                    var constDistITA = new ConstDistributionITA(cfg);
+                    var constDistOpt = new ConstDistributionOptimization();
+                    var isConstDistApplied = constDistOpt.Optimize(constDistITA);
+                    Console.WriteLine("ConstDistributionOptimization isUsed: " + isConstDistApplied);
+                    Console.WriteLine(cfg.SourceBasicBlocks
+                        .BasicBlockItems.Select((bl, ind) => $"BLOCK{ind}:\n" + bl.ToString()).Aggregate((b1, b2) => b1 + b2));
+                    /* -----------------------ConstDistrib END---------------------------------*/
                 }
             }
             catch (FileNotFoundException)
