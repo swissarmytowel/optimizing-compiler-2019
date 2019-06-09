@@ -93,11 +93,13 @@ namespace UnitTests.Optimizations
 
             var availableExprOptimization = new AvailableExprOptimization();
             bool isOptimized = availableExprOptimization.Optimize(availableExpressionsITA);
-            var basicBlockItems = cfg.SourceBasicBlocks.BasicBlockItems;
-            var codeText = cfg.SourceBasicBlocks.BasicBlockItems
+            var basicBlockItems = availableExprOptimization.Blocks.BasicBlockItems;
+            var beforeText = expectedResult.ToString();
+            var afterText = basicBlockItems
                 .Select(bl => bl.ToString()).Aggregate((b1, b2) => b1 + b2);
-
             Assert.IsTrue(isOptimized);
+            var needText = expectedResult.ToString();
+            //Assert.AreEqual(afterText, needText);
         }
 
         [TestMethod]

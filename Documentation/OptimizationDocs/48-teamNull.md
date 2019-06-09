@@ -38,7 +38,19 @@
 
 ## Реализация
 
-TODO
+```
+public class ConstDistributionITA: IterationAlgorithm<SemilatticeStreamValue>
+{
+
+public ConstDistributionITA(ControlFlowGraph cfg)
+	:base(cfg, new ConstDistribFunction(), new ConstDistribOperator())
+{
+	InitilizationSet = new HashSet<SemilatticeStreamValue>();
+	Execute();
+}
+
+}
+```
 
 ## Тесты
 

@@ -37,6 +37,7 @@ namespace SimpleLang.Optimizations
     public class AvailableExprOptimization: IIterativeAlgorithmOptimizer<TacNode>
     {
         private Dictionary<TacExpr, string> idsForExprDic = new Dictionary<TacExpr, string>();
+        public BasicBlocks Blocks;
 
         private HashSet<TacExpr> TransformHashSetNodeToExpr(HashSet<TacNode> nodes)
         {
@@ -67,6 +68,7 @@ namespace SimpleLang.Optimizations
         {
             bool isUsed = false;
             var bb = ita.controlFlowGraph.SourceBasicBlocks;
+            Blocks = bb;
             Dictionary<ThreeAddressCode, HashSet<TacNode>> IN = ita.InOut.In;
             Dictionary<ThreeAddressCode, HashSet<TacNode>> OUT = ita.InOut.Out;
             // переделываем IN OUT в нужный формат

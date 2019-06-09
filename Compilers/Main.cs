@@ -19,6 +19,8 @@ using SimpleLang.TacBasicBlocks;
 using SimpleLang.TacBasicBlocks.DefUse;
 using SimpleLang.E_GenKill.Implementations;
 using SimpleLang.ConstDistrib;
+using SimpleLang.CFG.DominatorsTree;
+using SimpleLang.CFG.NaturalCycles;
 
 namespace SimpleCompiler
 {
@@ -177,6 +179,20 @@ namespace SimpleCompiler
                     var depth = cfg.GetDepth(dstClassifier.EdgeTypes);
                     Console.WriteLine($"Depth CFG = {depth}");
 
+
+                    /* -----------------------CFG TASKS START---------------------------------*/
+                    Console.WriteLine("\nCFG TASKS START");
+                    Console.WriteLine(cfg);
+                    var edgeClassifierService = new EdgeClassifierService(cfg);
+                    Console.WriteLine("EdgeClassifierService: \n" + edgeClassifierService);
+                    bool isReducibility = DSTReducibility.IsReducibility(cfg);
+                    Console.WriteLine("IsReducibility: " + isReducibility);
+                    var naturalCycles = new CFGNaturalCycles(cfg);
+                    Console.WriteLine("\nNaturalCycles: \n" + naturalCycles);
+                    //Console.WriteLine("\nNestedCycles: \n" + naturalCycles.NestedLoopsText());
+                    Console.WriteLine("\nCFG TASKS END");
+                    /* -----------------------CFG TASKS END---------------------------------*/
+
                     //Console.WriteLine(threeAddressCodeVisitor.TACodeContainer);
                     //var availExprOpt = new AvailableExprOptimization();
                     //availExprOpt.Optimize(cfg);
@@ -184,10 +200,10 @@ namespace SimpleCompiler
                     //Console.WriteLine(cfg);
 
 
-//                    Console.WriteLine("======= DV =======");
-//                    Console.WriteLine(threeAddressCodeVisitor);
-//                    var detector = new DefUseDetector();
-//                    detector.DetectAndFillDefUse(threeAddressCodeVisitor.TACodeContainer);
+                    //                    Console.WriteLine("======= DV =======");
+                    //                    Console.WriteLine(threeAddressCodeVisitor);
+                    //                    var detector = new DefUseDetector();
+                    //                    detector.DetectAndFillDefUse(threeAddressCodeVisitor.TACodeContainer);
 
                     Console.WriteLine();
                     Console.WriteLine("Before optimization");
@@ -253,9 +269,9 @@ namespace SimpleCompiler
                     //elimintaion.Optimize(threeAddressCodeVisitor.TACodeContainer);
                     //Console.WriteLine("Удаление переходов к переходам завершилось");
 
-//                    var unreachableCode = new UnreachableCodeOpt();
-//                    var res = unreachableCode.Optimize(threeAddressCodeVisitor.TACodeContainer);
-//                    Console.WriteLine("Оптимизация для недостижимых блоков");
+//                   var unreachableCode = new UnreachableCodeOpt();
+//                   var res = unreachableCode.Optimize(threeAddressCodeVisitor.TACodeContainer);
+//                   Console.WriteLine("Оптимизация для недостижимых блоков");
 
                     var algOpt = new AlgebraicIdentityOptimization();
                     algOpt.Optimize(threeAddressCodeVisitor.TACodeContainer);
@@ -269,6 +285,18 @@ namespace SimpleCompiler
 
                     GenKillVisitor genKillVisitor = new GenKillVisitor();
                     var genKillContainers = genKillVisitor.GenerateReachingDefinitionForBlocks(cfg.SourceBasicBlocks);
+
+                    //start 
+                    var commonTf = new TFByCommonWay(genKillContainers);
+                    var composTf = new TFByComposition(genKillContainers);
+
+                    Console.WriteLine("=== Compos ===");
+                    Console.WriteLine(composTf.Calculate(new HashSet<TacNode>(), cfg.SourceBasicBlocks.BasicBlockItems.First()));
+                   
+                    Console.WriteLine("=== Common ===");
+                    Console.WriteLine(commonTf.Calculate(new HashSet<TacNode>(), cfg.SourceBasicBlocks.BasicBlockItems.First()));
+
+                    //end
 //                    InOutContainerWithFilling inOutContainers =
 //                        new InOutContainerWithFilling(cfg.SourceBasicBlocks, genKillContainers);
 //                    Console.WriteLine("=== InOut для базовых блоков ===");
@@ -292,6 +320,31 @@ namespace SimpleCompiler
                     {
                         Console.Write(bblock);
                     }
+
+                    Console.WriteLine("============ Dominators ============");
+                    var dominators = new DominatorsFinder(cfg);
+                    for(var i = 0; i < dominators.Dominators.Count; ++i)
+                    {
+                        Console.WriteLine(i + ": ");
+                        foreach (var tacNode in dominators.Dominators.ElementAt(i).Value)
+                        {
+                            Console.WriteLine(tacNode);
+                        }
+                    }
+                    Console.WriteLine("============ Immediate Dominators ============");
+                    for (var i = 0; i < dominators.ImmediateDominators.Count; ++i) {
+                        Console.WriteLine(i + ": ");
+                        if (dominators.ImmediateDominators.ElementAt(i).Value == null) {
+                            Console.WriteLine("null");
+                        } else {
+                            foreach (var tacNode in dominators.ImmediateDominators.ElementAt(i).Value) {
+                                Console.WriteLine(tacNode);
+                            }
+                        }
+                        Console.WriteLine();
+                    }
+
+
 //                    var activeVariablesITA = new ActiveVariablesITA(cfg, defUseContainers);
 //                    Console.WriteLine("=== InOut после итерационного алгоритма для активных переменных ===");
 //                    Console.WriteLine(activeVariablesITA.InOut);
@@ -329,6 +382,19 @@ namespace SimpleCompiler
                     ConstDistribTest.TestForOperator();
                     ConstDistribTest.TestForFunction();
                     Console.WriteLine("ConstDistribTests done success");
+                    /* -----------------------ConstDistrib END---------------------------------*/
+
+                    /* -----------------------ConstDistribOptimization START---------------------------------*/
+                    Console.WriteLine("ConstDistributionOptimization: Before");
+                    Console.WriteLine(cfg.SourceBasicBlocks
+                        .BasicBlockItems.Select((bl, ind) => $"BLOCK{ind}:\n" + bl.ToString()).Aggregate((b1, b2) => b1 + b2));
+
+                    var constDistITA = new ConstDistributionITA(cfg);
+                    var constDistOpt = new ConstDistributionOptimization();
+                    var isConstDistApplied = constDistOpt.Optimize(constDistITA);
+                    Console.WriteLine("ConstDistributionOptimization isUsed: " + isConstDistApplied);
+                    Console.WriteLine(cfg.SourceBasicBlocks
+                        .BasicBlockItems.Select((bl, ind) => $"BLOCK{ind}:\n" + bl.ToString()).Aggregate((b1, b2) => b1 + b2));
                     /* -----------------------ConstDistrib END---------------------------------*/
                 }
             }

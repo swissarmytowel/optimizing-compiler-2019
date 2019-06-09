@@ -74,14 +74,7 @@ namespace SimpleLang.Visitors
         /// <returns>Last tmp identifier left from TAC decomposition</returns>
         private string GenerateThreeAddressLine(ExprNode expression)
         {
-            // This is used to merge the label from previous if/while/for node parsing
-            // From an empty node to current parsed
             string label = null;
-            if (TACodeContainer.Last != null && TACodeContainer.Last.Value.IsUtility)
-            {
-                label = TACodeContainer.Last.Value.Label;
-                TACodeContainer.RemoveNode(TACodeContainer.Last.Value);
-            }
             // Main switcher
             switch (expression)
             {
@@ -195,31 +188,6 @@ namespace SimpleLang.Visitors
                 Label = exitingLabel,
                 IsUtility = true
             });
-           
-            ClashUtilityLabels(lastNodeBeforeGeneration);
-        }
-        
-        /// <summary>
-        /// Merge utility labels to lead to code lines instead of empty nodes
-        /// </summary>
-        /// <param name="lastNodeBeforeGeneration">Last node present before a new construction was generated</param>
-        private void ClashUtilityLabels(LinkedListNode<TacNode> lastNodeBeforeGeneration)
-        {
-            var nodesToRemove = new List<TacNode>();
-            lastNodeBeforeGeneration = lastNodeBeforeGeneration ?? TACodeContainer.First;
-            while (lastNodeBeforeGeneration != null)
-            {
-                if (lastNodeBeforeGeneration.Value is TacEmptyNode label)
-                {
-                    if (lastNodeBeforeGeneration.Next != null)
-                    {
-                        lastNodeBeforeGeneration.Next.Value.Label = label.Label;
-                        nodesToRemove.Add(label);
-                    }
-                }
-                lastNodeBeforeGeneration = lastNodeBeforeGeneration.Next;
-            }
-            TACodeContainer.RemoveNodes(nodesToRemove);
         }
 
         public override void VisitWhileNode(WhileNode c)
@@ -278,8 +246,6 @@ namespace SimpleLang.Visitors
                 Label = endOfWhileStatementLabel,
                 IsUtility = true
             });
-            
-            ClashUtilityLabels(lastNodeBeforeGeneration);
         }
 
         public override void VisitForNode(ForNode c)
@@ -339,8 +305,6 @@ namespace SimpleLang.Visitors
                 Condition = conditionalExpressionId,
                 TargetLabel = startOfForStatementLabel
             });
-            
-            ClashUtilityLabels(lastNodeBeforeGeneration);
         }
 
         public override void VisitEmptyNode(EmptyNode w)
@@ -353,7 +317,7 @@ namespace SimpleLang.Visitors
             TACodeContainer.PushNode(new TacGotoNode()
             {
                 IsUtility = false,
-                TargetLabel = "L" + gt.L.Inum
+                TargetLabel = "l" + gt.L.Inum
             });
         }
 
@@ -361,7 +325,7 @@ namespace SimpleLang.Visitors
         {
             TACodeContainer.PushNode(new TacEmptyNode()
             {
-                Label = "L" + l.Inum
+                Label = "l" + l.Inum
             });
         }
 

@@ -1,4 +1,4 @@
-﻿
+
 # Очистка от пустых операторов, устранение переходов через переходы.
 
 ## Постановка задачи
@@ -110,7 +110,32 @@ class  GotoOptimization : IOptimizer
 }
 ```
 ## Тесты
-Узнать как должны выглядить тесты в докуметации.
+
+```csharp
+[TestMethod]
+public void Optimize_RightOptimized()
+{
+    var tacContainer = new ThreeAddressCode();
+    Utils.AddAssignmentNode(tacContainer, null, "t1", "m" , ">", "2");
+    Utils.AddIfGotoNode(tacContainer, null, "L1", "t1");
+    Utils.AddGotoNode(tacContainer, null, "L2");
+    Utils.AddAssignmentNode(tacContainer, "L1", "c", "3");
+    Utils.AddAssignmentNode(tacContainer, "L2", null, null);
+
+    var expectedResult = new ThreeAddressCodeVisitor();
+    Utils.AddAssignmentNode(expectedResult, null, "t1", "m", ">", "2");
+    Utils.AddAssignmentNode(expectedResult, null, "t5", null, "!", "t1");
+    Utils.AddIfGotoNode(expectedResult, null, "L2", "t5");
+    Utils.AddAssignmentNode(expectedResult, "L1", "c", "3");
+    Utils.AddAssignmentNode(expectedResult, "L2", null, null);
+
+    var optimization = new GotoOptimization();
+    var isOptimized = optimization.Optimize(tacContainer);
+
+    Assert.AreEqual(tacContainer.ToString(), expectedResult.ToString());
+    Assert.IsTrue(isOptimized);
+}
+```
 
 ## Вывод
 Используя методы, описанные выше, мы получили оптимизации: очистка от пустых операторов и устранение переходов через переходы.

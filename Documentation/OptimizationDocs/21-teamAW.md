@@ -101,7 +101,73 @@ private void ChangeByConst(TacNode node, TacAssignmentNode replacingNode)
 ```
 
 ## Тесты
-Узнать как должны выглядить тесты в докуметации.
+#### INPUT: 
+```csharp
+i = 2;
+a1 = 4 * i; 
+b = i;
+c = b;
+i = 3;
+if (b * c) { 
+a3 = 4 * i * d; 
+} 
+a2 = 4 * i; 
+```
+
+#### Three address code:
+```csharp
+i = 2
+t1 = 4 * i
+a1 = t1
+b = i
+c = b
+i = 3
+t2 = b * c
+if t2 goto L1
+goto L2
+L1: t3 = 4 * i
+t4 = t3 * d
+a3 = t4
+L2: t5 = 4 * i
+a2 = t5
+```
+
+#### OUTPUT:
+Результат после одной итерации протяжки констант:
+```csharp
+i = 2
+t1 = 4 * 2
+a1 = t1
+b = 2
+c = b
+i = 3
+t2 = b * c
+if t2 goto L1
+goto L2
+L1: t3 = 4 * 3
+t4 = t3 * d
+a3 = t4
+L2: t5 = 4 * 3
+a2 = t5
+```
+
+Конечный результат протяжки констант:
+```csharp
+i = 2
+t1 = 4 * 2
+a1 = t1
+b = 2
+c = 2
+i = 3
+t2 = 2 * 2
+if t2 goto L1
+goto L2
+L1: t3 = 4 * 3
+t4 = t3 * d
+a3 = t4
+L2: t5 = 4 * 3
+a2 = t5
+```
 
 ## Вывод
 Используя метод, описанные выше, мы смогли выполнить протяжку констант на основе Def-Use в пределах базового блока. 

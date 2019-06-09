@@ -67,10 +67,11 @@
     <Compile Include="IterationAlgorithms\ReachingDefinitionsSortedTests.cs" />
     <Compile Include="IterationAlgorithms\ReachingDefinitionsTests.cs" />
     <Compile Include="Optimizations\CommonSubexprTests.cs" />
-    <Compile Include="Optimizations\ConstsConvolutionTests.cs" />
+    <Compile Include="Optimizations\ConvConstTests.cs" />
     <Compile Include="Optimizations\CopyPropagationTests.cs" />
     <Compile Include="Optimizations\LocalValueNumberingTests.cs" />
     <Compile Include="Optimizations\AvailableExprTest.cs" />
+    <Compile Include="Optimizations\GotoTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Utils.cs" />
     <Compile Include="Visitors\ThreeAddressCodeTests.cs" />
