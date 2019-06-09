@@ -14,9 +14,9 @@ namespace UnitTests.Optimizations
         {
             /*
 	            a = b
-	            c = b - a     -----> c = b - b
+	            c = b - a  ---> c = b - b
 	            a = 1
-	            e = d * a     -----> e = d * a
+	            e = d * a  ---> e = d * a
             */
 
             var tacContainer = new ThreeAddressCode();
@@ -45,11 +45,11 @@ namespace UnitTests.Optimizations
         {
             /*
 	            a = b
-	            c = b - a     -----> c = b - b
+	            c = b - a  ---> c = b - b
 	            a = f
-	            e = d * a     -----> e = d * f
+	            e = d * a  ---> e = d * f
                 a = x
-                y = a + a     -----> y = x + x
+                y = a + a  ---> y = x + x
             */
 
             var tacContainer = new ThreeAddressCode();
@@ -78,15 +78,15 @@ namespace UnitTests.Optimizations
         }
 
         [TestMethod]
-        public void Optimize_SimpleMultipleCopyPropagation()
+        public void Optimize_MultipleCopyPropagation1()
         {
             /*
 	            a = b
-	            c = b - a     -----> c = b - b
+	            c = b - a ---> c = b - b
 	            a = 5
-	            e = d * a     -----> e = d * a
+	            e = d * a  ---> e = d * a
                 a = x
-                y = a + a     -----> y = x + x
+                y = a + a  ---> y = x + x
             */
 
             var tacContainer = new ThreeAddressCode();
@@ -115,15 +115,15 @@ namespace UnitTests.Optimizations
         }
 
         [TestMethod]
-        public void Optimize_MultipleCopyPropagation()
+        public void Optimize_MultipleCopyPropagation2()
         {
             /*
 	            a = b
-	            c = b - a     -----> c = b - b
+	            c = b - a  ---> c = b - b
 	            d = c + 1
-	            e = d * a     -----> e = d * b
+	            e = d * a  ---> e = d * b
 	            a = 35 - f
-	            k = c + a     -----> k = c + a
+	            k = c + a  ---> k = c + a
             */
 
             var tacContainer = new ThreeAddressCode();

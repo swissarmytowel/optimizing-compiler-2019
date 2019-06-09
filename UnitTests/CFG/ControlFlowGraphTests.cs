@@ -1,7 +1,6 @@
 ﻿using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using SimpleLang.CFG;
-using SimpleLang.Optimizations;
 using SimpleLang.TACode;
 using SimpleLang.TacBasicBlocks;
 
@@ -59,11 +58,11 @@ namespace UnitTests.CFG
              * 3 -> [ 1 ]  
              */
 
-            Assert.IsTrue(Utils.IsContainsEdge(cfg, basicBlocks.BasicBlockItems[0], basicBlocks.BasicBlockItems[1]));
-            Assert.IsTrue(Utils.IsContainsEdge(cfg, basicBlocks.BasicBlockItems[1], basicBlocks.BasicBlockItems[2]));
-            Assert.IsTrue(Utils.IsContainsEdge(cfg, basicBlocks.BasicBlockItems[2], basicBlocks.BasicBlockItems[2]));
-            Assert.IsTrue(Utils.IsContainsEdge(cfg, basicBlocks.BasicBlockItems[2], basicBlocks.BasicBlockItems[3]));
-            Assert.IsTrue(Utils.IsContainsEdge(cfg, basicBlocks.BasicBlockItems[3], basicBlocks.BasicBlockItems[1]));
+            Assert.IsTrue(Utils.IsContainsEdge(cfg, cfg[0], cfg[1]));
+            Assert.IsTrue(Utils.IsContainsEdge(cfg, cfg[1], cfg[2]));
+            Assert.IsTrue(Utils.IsContainsEdge(cfg, cfg[2], cfg[2]));
+            Assert.IsTrue(Utils.IsContainsEdge(cfg, cfg[2], cfg[3]));
+            Assert.IsTrue(Utils.IsContainsEdge(cfg, cfg[3], cfg[1]));
         }
 
         [TestMethod]

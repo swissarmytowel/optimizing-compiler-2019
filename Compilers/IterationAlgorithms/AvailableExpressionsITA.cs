@@ -11,7 +11,7 @@ using SimpleLang.IterationAlgorithms.CollectionOperators;
 
 namespace SimpleLang.IterationAlgorithms
 {
-    class AvailableExpressionsITA: IterationAlgorithm<TacNode>
+    public class AvailableExpressionsITA: IterationAlgorithm<TacNode>
     {
         public AvailableExpressionsITA(
             ControlFlowGraph cfg,

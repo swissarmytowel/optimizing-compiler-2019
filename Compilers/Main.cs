@@ -18,8 +18,7 @@ using SimpleLang.IterationAlgorithms;
 using SimpleLang.TacBasicBlocks;
 using SimpleLang.TacBasicBlocks.DefUse;
 using SimpleLang.E_GenKill.Implementations;
-using SimpleLang.MOP;
-using SimpleLang.IterationAlgorithms.CollectionOperators;
+using SimpleLang.ConstDistrib;
 
 namespace SimpleCompiler
 {
@@ -61,6 +60,37 @@ namespace SimpleCompiler
                     Console.WriteLine("Количество присваиваний = {0}", avis.Count);
                     Console.WriteLine("-------------------------------");
 
+//                    var operv = new OperatorCountVisitor();
+//                    parser.root.Visit(operv);
+//                    Console.WriteLine(operv.Result);
+//
+//                    var maxcv = new MaxOpExprVisitor();
+//                    parser.root.Visit(maxcv);
+//                    Console.WriteLine(maxcv.Result);
+//
+//                    var inncycv = new IsInnerCycleVisitor();
+//                    parser.root.Visit(inncycv);
+//                    Console.WriteLine(inncycv.Result);
+//
+//                    var innifv = new IsInnerIfCycleVisitor();
+//                    parser.root.Visit(innifv);
+//                    Console.WriteLine(innifv.Result);
+//
+//                    var maxdeepv = new MaxDeepCycleVistor();
+//                    parser.root.Visit(maxdeepv);
+//                    Console.WriteLine(maxdeepv.Result);
+//
+//                    var parentv = new FillParentVisitor();
+//                    parser.root.Visit(parentv);
+//
+//                    var sameminusv = new SameMinusOptVisitor();
+//                    parser.root.Visit(sameminusv);
+//
+//                    var zeroMulVisitor = new ZeroMulOptVisitor();
+//                    parser.root.Visit(zeroMulVisitor);
+//
+//                    var compareFalseVisitor = new CompareToItselfFalseOptVisitor();
+//                    parser.root.Visit(compareFalseVisitor);
                     var operv = new OperatorCountVisitor();
                     parser.root.Visit(operv);
                     Console.WriteLine(operv.Result);
@@ -97,9 +127,9 @@ namespace SimpleCompiler
                     parser.root.Visit(compareFalseVisitor);
 
                     Console.WriteLine("-------------------------------");
-
-                    var ifNodeWithBoolExpr = new IfNodeWithBoolExprVisitor();
-                    parser.root.Visit(ifNodeWithBoolExpr);
+//
+//                    var ifNodeWithBoolExpr = new IfNodeWithBoolExprVisitor();
+//                    parser.root.Visit(ifNodeWithBoolExpr);
 
                     //var plusZeroExpr = new PlusZeroExprVisitor();
                     //parser.root.Visit(plusZeroExpr);
@@ -125,7 +155,19 @@ namespace SimpleCompiler
                     var threeAddressCodeVisitor = new ThreeAddressCodeVisitor();
                     r.Visit(threeAddressCodeVisitor);
                     threeAddressCodeVisitor.Postprocess();
+                   
+                    Console.WriteLine("========== TAC ==============");
+                    Console.WriteLine(threeAddressCodeVisitor);
+                    
                     var cfg = new ControlFlowGraph(threeAddressCodeVisitor.TACodeContainer);
+
+//                    Console.WriteLine(cfg);
+//                    cfg.SaveToFile(@"cfg.txt");
+                    
+//                    var dstClassifier = new DstEdgeClassifier(cfg);
+//                    dstClassifier.ClassificateEdges(cfg);
+//                    Console.WriteLine(dstClassifier);
+
                     Console.WriteLine(cfg);
                     cfg.SaveToFile(@"cfg.txt");
                     var dstClassifier = new DstEdgeClassifier(cfg);
@@ -134,11 +176,18 @@ namespace SimpleCompiler
 
                     var depth = cfg.GetDepth(dstClassifier.EdgeTypes);
                     Console.WriteLine($"Depth CFG = {depth}");
+
                     //Console.WriteLine(threeAddressCodeVisitor.TACodeContainer);
                     //var availExprOpt = new AvailableExprOptimization();
                     //availExprOpt.Optimize(cfg);
                     //Console.WriteLine("======= After algebraic identity =======");
                     //Console.WriteLine(cfg);
+
+
+//                    Console.WriteLine("======= DV =======");
+//                    Console.WriteLine(threeAddressCodeVisitor);
+//                    var detector = new DefUseDetector();
+//                    detector.DetectAndFillDefUse(threeAddressCodeVisitor.TACodeContainer);
 
                     Console.WriteLine();
                     Console.WriteLine("Before optimization");
@@ -148,28 +197,44 @@ namespace SimpleCompiler
                     Console.WriteLine(threeAddressCodeVisitor);
                     var detector = new DefUseDetector();
                     detector.DetectAndFillDefUse(threeAddressCodeVisitor.TACodeContainer);
+
                     //Console.WriteLine("======= Detector 1 =======");
                     //Console.WriteLine(detector);
                     //Console.WriteLine("======= Detector 2 =======");
                     //Console.WriteLine(detector.ToString2());
-                    //var constPropagationOptimizer = new DefUseConstPropagation(detector);
-                    //var result = constPropagationOptimizer.Optimize(threeAddressCodeVisitor.TACodeContainer);
+                    
+//                    var constPropagationOptimizer = new DefUseConstPropagation(detector);
+//                    var result = constPropagationOptimizer.Optimize(threeAddressCodeVisitor.TACodeContainer);
+//
+//                    Console.WriteLine("======= After const propagation =======");
+//                    Console.WriteLine(threeAddressCodeVisitor);
+//
+//                    result = constPropagationOptimizer.Optimize(threeAddressCodeVisitor.TACodeContainer);
+//                    Console.WriteLine("======= After const propagation =======");
+//                    Console.WriteLine(threeAddressCodeVisitor);
+//
+//                    var copyPropagationOptimizer = new DefUseCopyPropagation(detector);
+//                    result = copyPropagationOptimizer.Optimize(threeAddressCodeVisitor.TACodeContainer);
+//
+//                    Console.WriteLine("======= After copy propagation =======");
+//                    Console.WriteLine(threeAddressCodeVisitor);
+=======
+                    var constPropagationOptimizer = new DefUseConstPropagation(detector);
+                    var result = constPropagationOptimizer.Optimize(threeAddressCodeVisitor.TACodeContainer);
 
-                    //Console.WriteLine("======= After const propagation =======");
-                    //Console.WriteLine(threeAddressCodeVisitor);
+                    Console.WriteLine("======= After const propagation =======");
+                    Console.WriteLine(threeAddressCodeVisitor);
 
-                    //result = constPropagationOptimizer.Optimize(threeAddressCodeVisitor.TACodeContainer);
-                    //Console.WriteLine("======= After const propagation =======");
-                    //Console.WriteLine(threeAddressCodeVisitor);
+                    result = constPropagationOptimizer.Optimize(threeAddressCodeVisitor.TACodeContainer);
+                    Console.WriteLine("======= After const propagation =======");
+                    Console.WriteLine(threeAddressCodeVisitor);
 
-                    //var copyPropagationOptimizer = new DefUseCopyPropagation(detector);
-                    //result = copyPropagationOptimizer.Optimize(threeAddressCodeVisitor.TACodeContainer);
+                    var copyPropagationOptimizer = new DefUseCopyPropagation(detector);
+                    result = copyPropagationOptimizer.Optimize(threeAddressCodeVisitor.TACodeContainer);
 
                     Console.WriteLine("======= After copy propagation =======");
                     Console.WriteLine(threeAddressCodeVisitor);
                     */
-                    //Console.WriteLine("======= After copy propagation =======");
-                    //Console.WriteLine(threeAddressCodeVisitor);
 
                     //var bblocks = new BasicBlocks();
                     //bblocks.SplitTACode(threeAddressCodeVisitor.TACodeContainer);
@@ -179,58 +244,57 @@ namespace SimpleCompiler
                     Console.WriteLine("Empty node optimization");
                     Console.WriteLine(threeAddressCodeVisitor.TACodeContainer);
 
-                    var gotoOpt = new GotoOptimization();
-                    gotoOpt.Optimize(threeAddressCodeVisitor.TACodeContainer);
-                    Console.WriteLine("Goto optimization");
-                    Console.WriteLine(threeAddressCodeVisitor.TACodeContainer);
+//                    var gotoOpt = new GotoOptimization();
+//                    gotoOpt.Optimize(threeAddressCodeVisitor.TACodeContainer);
+//                    Console.WriteLine("Goto optimization");
+//                    Console.WriteLine(threeAddressCodeVisitor.TACodeContainer);
 
                     //var elimintaion = new EliminateTranToTranOpt();
                     //elimintaion.Optimize(threeAddressCodeVisitor.TACodeContainer);
                     //Console.WriteLine("Удаление переходов к переходам завершилось");
 
-                    var unreachableCode = new UnreachableCodeOpt();
-                    var res = unreachableCode.Optimize(threeAddressCodeVisitor.TACodeContainer);
-                    Console.WriteLine("Оптимизация для недостижимых блоков");
+//                    var unreachableCode = new UnreachableCodeOpt();
+//                    var res = unreachableCode.Optimize(threeAddressCodeVisitor.TACodeContainer);
+//                    Console.WriteLine("Оптимизация для недостижимых блоков");
 
                     var algOpt = new AlgebraicIdentityOptimization();
                     algOpt.Optimize(threeAddressCodeVisitor.TACodeContainer);
                     Console.WriteLine("algebraic identity optimization");
                     Console.WriteLine(threeAddressCodeVisitor.TACodeContainer);
 
-
-                    var genKillVisitor = new GenKillVisitor();
-                    var genkill = genKillVisitor.GenerateReachingDefinitionForBlocks(cfg.SourceBasicBlocks);
-                    //var genkill = genKillVisitor.GenerateReachingDefinitionForBlocks(bblocks);
-
-                    var defUseContainers = DefUseForBlocksGenerator.Execute(cfg.SourceBasicBlocks);
-                    DefUseForBlocksPrinter.Execute(defUseContainers);
-
-                    var tfBComposition = new TFByComposition(defUseContainers);
-                    var unionCollection = new UnionCollectionOperator<TacNode>();
-                    //var intersectCollection = new IntersectCollectionOperator<TacNode>();
-                    var mop = new MeetOverPaths(cfg, tfBComposition, unionCollection, new HashSet<TacNode>(), false);
-                    mop.Compute();
-
-                    var iterationAlgo = new ReachingDefinitionsITA(cfg, genkill);
-
                     var bblocks = new BasicBlocks();
                     bblocks.SplitTACode(threeAddressCodeVisitor.TACodeContainer);
                     Console.WriteLine("Разбиение на базовые блоки завершилось");
                     Console.WriteLine();
 
-                    //GenKillVisitor genKillVisitor = new GenKillVisitor();
-                    //var genKillContainers = genKillVisitor.GenerateReachingDefinitionForBlocks(cfg.SourseBasicBlocks);
-                    //InOutContainer inOutContainers = new InOutContainer(cfg.SourseBasicBlocks, genKillContainers);
-                    //Console.WriteLine("=== InOut для базовых блоков ===");
-                    //Console.WriteLine(inOutContainers.ToString());
+                    GenKillVisitor genKillVisitor = new GenKillVisitor();
+                    var genKillContainers = genKillVisitor.GenerateReachingDefinitionForBlocks(cfg.SourceBasicBlocks);
+//                    InOutContainerWithFilling inOutContainers =
+//                        new InOutContainerWithFilling(cfg.SourceBasicBlocks, genKillContainers);
+//                    Console.WriteLine("=== InOut для базовых блоков ===");
+//                    Console.WriteLine(inOutContainers.ToString());
 
-                    //var defUseContainers = DefUseForBlocksGenerator.Execute(cfg.SourseBasicBlocks);
-                    //DefUseForBlocksPrinter.Execute(defUseContainers);
+                    var defUseContainers = DefUseForBlocksGenerator.Execute(cfg.SourceBasicBlocks);
+                    DefUseForBlocksPrinter.Execute(defUseContainers);
 
-                    //var reachingDefenitionsITA = new ReachingDefinitionsITA(cfg, genKillContainers);
-                    //Console.WriteLine("=== InOut после итерационного алгоритма для достигающих определения ===");
-                    //Console.WriteLine(reachingDefenitionsITA.InOut);
+                    var reachingDefenitionsITA = new ReachingDefinitionsITA(cfg, genKillContainers);
+                    Console.WriteLine("=== InOut после итерационного алгоритма для достигающих определения ===");
+                    Console.WriteLine(reachingDefenitionsITA.InOut);
+                    Console.WriteLine("=======================================================================");
+                    var reachingDefConstPropagation = new ReachingDefinitionsConstPropagation();
+                    Console.WriteLine(threeAddressCodeVisitor);
 
+                    reachingDefConstPropagation.Optimize(reachingDefenitionsITA);
+                    reachingDefConstPropagation.Optimize(reachingDefenitionsITA);
+
+                    
+                    foreach (var bblock in bblocks)
+                    {
+                        Console.Write(bblock);
+                    }
+//                    var activeVariablesITA = new ActiveVariablesITA(cfg, defUseContainers);
+//                    Console.WriteLine("=== InOut после итерационного алгоритма для активных переменных ===");
+//                    Console.WriteLine(activeVariablesITA.InOut);
                     var activeVariablesITA = new ActiveVariablesITA(cfg, defUseContainers);
                     Console.WriteLine("=== InOut после итерационного алгоритма для активных переменных ===");
                     Console.WriteLine(activeVariablesITA.InOut);
@@ -251,11 +315,21 @@ namespace SimpleCompiler
 
                     var availableExprOptimization = new AvailableExprOptimization();
                     bool isUsed = availableExprOptimization.Optimize(availableExpressionsITA);
+                    Console.WriteLine("AvailableExprOptimization isUsed: " + isUsed);
                     isUsed = availableExprOptimization.Optimize(availableExpressionsITA);
-                    Console.WriteLine("After AvailableExprOptimization");
+                    Console.WriteLine("AvailableExprOptimization isUsed: " + isUsed);
                     Console.WriteLine(cfg.SourceBasicBlocks
                         .BasicBlockItems.Select((bl, ind) => $"BLOCK{ind}:\n" + bl.ToString()).Aggregate((b1, b2) => b1 + b2));
                     /* -----------------------AvailableExpressions END---------------------------------*/
+
+                    /* -----------------------ConstDistrib START---------------------------------*/
+                    SemilatticeTest.TestForValueOperator();
+                    SemilatticeTest.TestForStreamValueOperator();
+                    Console.WriteLine("SemilatticeTests done success");
+                    ConstDistribTest.TestForOperator();
+                    ConstDistribTest.TestForFunction();
+                    Console.WriteLine("ConstDistribTests done success");
+                    /* -----------------------ConstDistrib END---------------------------------*/
                 }
             }
             catch (FileNotFoundException)
@@ -271,4 +345,5 @@ namespace SimpleCompiler
         }
     }
 }
+
  

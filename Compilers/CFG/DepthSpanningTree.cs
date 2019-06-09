@@ -1,16 +1,20 @@
 ﻿using System.Collections.Generic;
 using QuickGraph;
+using SimpleLang.TacBasicBlocks;
 using SimpleLang.TACode;
 
 namespace SimpleLang.CFG
 {
     public class DepthSpanningTree : BidirectionalGraph
     {
+        public BasicBlocks SortedBasicBlocks { get; }
+
         private HashSet<ThreeAddressCode> _visitedBlocks;
         private ControlFlowGraph _cfg;
 
         public DepthSpanningTree(ControlFlowGraph cfg)
         {
+            SortedBasicBlocks = new BasicBlocks();
             _cfg = cfg;
             _visitedBlocks = new HashSet<ThreeAddressCode>();
 
@@ -18,10 +22,12 @@ namespace SimpleLang.CFG
                 return;
 
             Build(_cfg.EntryBlock);
+            FillBasicBlocks();
         }
 
         public void Rebuild(ControlFlowGraph cfg)
         {
+            SortedBasicBlocks.BasicBlockItems.Clear();
             Graph.Clear();
             _cfg = cfg;
             _visitedBlocks.Clear();
@@ -30,6 +36,13 @@ namespace SimpleLang.CFG
                 return;
             
             Build(_cfg.EntryBlock);
+            FillBasicBlocks();
+        }
+
+        private void FillBasicBlocks()
+        {
+            foreach (var vertex in Vertices)
+                SortedBasicBlocks.BasicBlockItems.Add(vertex);
         }
 
         private void Build(ThreeAddressCode block)

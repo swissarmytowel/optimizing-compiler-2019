@@ -1,14 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Globalization;
-using System.Linq;
-using System.Text;
 
 namespace SimpleLang.ConstDistrib
 {
     public enum SemilatticeValueEnum { UNDEF = 0, NAC = 1, CONST = 2 }
 
-    class SemilatticeValue
+    public class SemilatticeValue
     {
         public SemilatticeValueEnum TypeValue { get; private set; }
         public string ConstValue { get; private set; }
@@ -60,5 +57,23 @@ namespace SimpleLang.ConstDistrib
                 return new SemilatticeValue(SemilatticeValueEnum.NAC);
             return new SemilatticeValue(SemilatticeValueEnum.UNDEF);
         }
+
+        public override bool Equals(object o)
+        {
+            var semVal = o as SemilatticeValue;
+            return semVal.TypeValue == this.TypeValue && semVal.ConstValue == this.ConstValue;
+        }
+        public override int GetHashCode()
+        {
+            return this.ToString().GetHashCode();
+        }
+        public static bool operator == (SemilatticeValue c1, SemilatticeValue c2)
+        {  
+            return c1.Equals(c2);  
+        }
+        public static bool operator != (SemilatticeValue c1, SemilatticeValue c2)
+        {  
+            return ! c1.Equals(c2);  
+        }  
     }
 }

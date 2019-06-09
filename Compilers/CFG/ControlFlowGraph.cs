@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using SimpleLang.Optimizations;
 using SimpleLang.TACode;
 using SimpleLang.TACode.TacNodes;
 using QuickGraph;
@@ -25,8 +24,30 @@ namespace SimpleLang.CFG
             Build();
         }
 
-        public DepthSpanningTree GetDepthSpanningTree()
-            => new DepthSpanningTree(this);
+        private ControlFlowGraph(ThreeAddressCode tac, BasicBlocks basicBlocks, 
+            IEnumerable<ThreeAddressCode> vertices, IEnumerable<Edge<ThreeAddressCode>> edges)
+        {
+            SourceCode = tac;
+            SourceBasicBlocks = basicBlocks;
+            Graph.AddVertexRange(vertices);
+            Graph.AddEdgeRange(edges);
+        }
+
+        /// <summary>
+        /// Returns a vertex at index position
+        /// </summary>
+        public ThreeAddressCode this[int index] => GetVertexAt(index);
+
+        /// <summary>
+        /// Returns a node at nodeIdx position from a vertex at nodeIdx position
+        /// </summary>
+        public TacNode this[int vertexIdx, int nodeIdx] => GetVertexAt(vertexIdx).ElementAt(nodeIdx);
+
+        public ControlFlowGraph GetCFGWithSortedVertices()
+        {
+            var dst = new DepthSpanningTree(this);
+            return new ControlFlowGraph(SourceCode, dst.SortedBasicBlocks, dst.Vertices, Edges);
+        }
 
         public void Rebuild(ThreeAddressCode tac)
         {
@@ -75,7 +96,15 @@ namespace SimpleLang.CFG
         {
             var visitedEdges = new HashSet<Edge<ThreeAddressCode>>();
             return CalcDepth(EntryBlock, visitedEdges, EdgeTypes);
-        }      
+        }
+
+        private ThreeAddressCode GetVertexAt(int index)
+        {
+            if (index < 0 || index > VertexCount - 1)
+                return null;
+
+            return SourceBasicBlocks.BasicBlockItems[index];
+        }
 
         private int CalcDepth(ThreeAddressCode currentBlock, HashSet<Edge<ThreeAddressCode>> visitedEdges, 
                               Dictionary<Edge<ThreeAddressCode>, EdgeType> EdgeTypes)

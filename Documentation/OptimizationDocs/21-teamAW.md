@@ -96,9 +96,6 @@ private void ChangeByConst(TacNode node, TacAssignmentNode replacingNode)
                 assNode.SecondOperand = replacingNode.FirstOperand;
             }
             break;
-        case TacIfGotoNode ifGotoNode:
-            //ifGotoNode.Condition = replacingNode.FirstOperand;
-            break;
     }
 }
 ```
