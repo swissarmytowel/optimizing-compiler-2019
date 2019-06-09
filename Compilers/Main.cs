@@ -20,6 +20,7 @@ using SimpleLang.TacBasicBlocks.DefUse;
 using SimpleLang.E_GenKill.Implementations;
 using SimpleLang.ConstDistrib;
 using SimpleLang.CFG.DominatorsTree;
+using SimpleLang.CFG.NaturalCycles;
 
 namespace SimpleCompiler
 {
@@ -186,6 +187,9 @@ namespace SimpleCompiler
                     Console.WriteLine("EdgeClassifierService: \n" + edgeClassifierService);
                     bool isReducibility = DSTReducibility.IsReducibility(cfg);
                     Console.WriteLine("IsReducibility: " + isReducibility);
+                    var naturalCycles = new CFGNaturalCycles(cfg);
+                    Console.WriteLine("\nNaturalCycles: \n" + naturalCycles);
+                    //Console.WriteLine("\nNestedCycles: \n" + naturalCycles.NestedLoopsText());
                     Console.WriteLine("\nCFG TASKS END");
                     /* -----------------------CFG TASKS END---------------------------------*/
 

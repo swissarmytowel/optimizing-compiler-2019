@@ -60,6 +60,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CFG\DominatorsTree\DominatorsFinder.cs" />
+    <Compile Include="CFG\NaturalCycles\CFGNaturalCycle.cs" />
+    <Compile Include="CFG\NaturalCycles\CFGNaturalCycles.cs" />
     <Compile Include="CFG\Services\DominatorsService.cs" />
     <Compile Include="CFG\DSTEdgeClassifier.cs" />
     <Compile Include="CFG\DSTReducibility.cs" />
