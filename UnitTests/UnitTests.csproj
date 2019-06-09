@@ -68,9 +68,11 @@
     <Compile Include="ConstDistrib\ConstDistribTests.cs" />
     <Compile Include="ConstDistrib\SemilatticeTests.cs" />
     <Compile Include="DefUse\DefUseTests.cs" />
+    <Compile Include="GenKill\Implementations\TFByCompositionTests.cs" />
     <Compile Include="IterationAlgorithms\ConstDistributionTests.cs" />
     <Compile Include="IterationAlgorithms\ReachingDefinitionsSortedTests.cs" />
     <Compile Include="IterationAlgorithms\ReachingDefinitionsTests.cs" />
+    <Compile Include="MOP\MOPTests.cs" />
     <Compile Include="Optimizations\CommonSubexprTests.cs" />
     <Compile Include="Optimizations\ConvConstTests.cs" />
     <Compile Include="Optimizations\CopyPropagationTests.cs" />
@@ -79,9 +81,12 @@
     <Compile Include="Optimizations\GotoTest.cs" />
     <Compile Include="Optimizations\DefUseBBlocksTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="TacBasicBlocks\BasicBlocksTests.cs" />
     <Compile Include="Utils.cs" />
     <Compile Include="Visitors\AstOptimizationsTests.cs" />
+    <Compile Include="Visitors\CompareToItselfFalseOptVisitorTests.cs" />
     <Compile Include="Visitors\ThreeAddressCodeTests.cs" />
+    <Compile Include="Visitors\ZeroMulOptVisitorTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

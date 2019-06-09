@@ -1,9 +1,8 @@
-﻿using System;
-using ProgramTree;
+﻿using ProgramTree;
 
 namespace SimpleLang.Visitors
 {
-    class CompareToItselfFalseOptVisitor : ChangeVisitor
+    public class CompareToItselfFalseOptVisitor : ChangeVisitor
     {
         public override void VisitBinOpNode(BinOpNode binop)
         {

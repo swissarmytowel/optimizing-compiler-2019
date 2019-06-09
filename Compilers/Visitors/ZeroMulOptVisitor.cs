@@ -3,7 +3,7 @@ using ProgramTree;
 
 namespace SimpleLang.Visitors
 {
-    class ZeroMulOptVisitor : ChangeVisitor
+    public class ZeroMulOptVisitor : ChangeVisitor
     {
 
         public override void VisitBinOpNode(BinOpNode binop)
