@@ -8,7 +8,7 @@ using SimpleLang.TACode;
 
 namespace SimpleLang.Optimizations
 {
-    class EmptyNodeOptimization : IOptimizer
+    public class EmptyNodeOptimization : IOptimizer
     {
         public bool Optimize(ThreeAddressCode tac)
         {
@@ -22,7 +22,7 @@ namespace SimpleLang.Optimizations
                     break;
                 var val = node.Value;
                 var label = val.Label;
-                if (val is TacEmptyNode)
+                if (val is TacEmptyNode && val.Label == null)
                 {
                     isUsed = true;
                     if (next != null)

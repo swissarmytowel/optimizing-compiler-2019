@@ -6,7 +6,7 @@ using SimpleLang.TACode.TacNodes;
 
 namespace SimpleLang.GenKill.Implementations
 {
-    public class TFByComposition : ITransmissionFunction
+    public class TFByComposition : ITransmissionFunction<TacNode>
     {
         private ThreeAddressCode basicBlock;
         private Dictionary<ThreeAddressCode, IExpressionSetsContainer> lineGenKill;
@@ -16,7 +16,6 @@ namespace SimpleLang.GenKill.Implementations
             lineGenKill = LineGenKill;
         }
 
-        // Это только для базового блока или для одной линии тоже?
         public HashSet<TacNode> Calculate(HashSet<TacNode> _in, ThreeAddressCode bblock)
         {
             basicBlock = bblock;
@@ -51,12 +50,12 @@ namespace SimpleLang.GenKill.Implementations
 
         public HashSet<TacNode> GetLineGen(TacNode tacNode)
         {
-            return lineGenKill[basicBlock].GetSecondSet();
+            return lineGenKill[basicBlock].GetFirstSet();
         }
 
         public HashSet<TacNode> GetLineKill(TacNode tacNode)
         {
-            return lineGenKill[basicBlock].GetFirstSet();
+            return lineGenKill[basicBlock].GetSecondSet();
         }
     }
 }

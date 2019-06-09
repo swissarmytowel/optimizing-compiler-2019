@@ -1,8 +1,9 @@
-﻿using System.Linq;
-using SimpleLang.Optimizations;
+﻿using System.Collections.Generic;
+using System.Linq;
 using SimpleLang.TACode;
 using SimpleLang.TACode.TacNodes;
 using QuickGraph;
+using SimpleLang.TacBasicBlocks;
 
 namespace SimpleLang.CFG
 {
@@ -11,7 +12,7 @@ namespace SimpleLang.CFG
         public ThreeAddressCode EntryBlock => IsVerticesEmpty ? null : Vertices.First();
         public ThreeAddressCode ExitBlock => IsVerticesEmpty ? null : Vertices.Last();
         public ThreeAddressCode SourceCode { get; private set; }
-        public BasicBlocks SourseBasicBlocks { get; private set; }
+        public BasicBlocks SourceBasicBlocks { get; private set; }
 
         public ControlFlowGraph(ThreeAddressCode tac)
         {
@@ -23,12 +24,36 @@ namespace SimpleLang.CFG
             Build();
         }
 
-        public DepthSpanningTree GetDepthSpanningTree()
-            => new DepthSpanningTree(this);
+        private ControlFlowGraph(ThreeAddressCode tac, BasicBlocks basicBlocks, 
+            IEnumerable<ThreeAddressCode> vertices, IEnumerable<Edge<ThreeAddressCode>> edges)
+        {
+            SourceCode = tac;
+            SourceBasicBlocks = basicBlocks;
+            Graph.AddVertexRange(vertices);
+            Graph.AddEdgeRange(edges);
+        }
+
+        /// <summary>
+        /// Returns a vertex at index position
+        /// </summary>
+        public ThreeAddressCode this[int index] => GetVertexAt(index);
+
+        /// <summary>
+        /// Returns a node at nodeIdx position from a vertex at nodeIdx position
+        /// </summary>
+        public TacNode this[int vertexIdx, int nodeIdx] => GetVertexAt(vertexIdx).ElementAt(nodeIdx);
+
+        public ControlFlowGraph GetCFGWithSortedVertices()
+        {
+            var dst = new DepthSpanningTree(this);
+            return new ControlFlowGraph(SourceCode, dst.SortedBasicBlocks, dst.Vertices, Edges);
+        }
 
         public void Rebuild(ThreeAddressCode tac)
         {
             SourceCode = tac;
+            SourceBasicBlocks = null;
+            Graph.Clear();
 
             if (SourceCode == null || SourceCode.TACodeLines.Count == 0)
                 return;
@@ -40,7 +65,7 @@ namespace SimpleLang.CFG
         {
             var blocks = new BasicBlocks();
             blocks.SplitTACode(SourceCode);
-            SourseBasicBlocks = blocks;
+            SourceBasicBlocks = blocks;
 
             Graph.AddVertexRange(blocks.BasicBlockItems);
 
@@ -65,6 +90,40 @@ namespace SimpleLang.CFG
                     Graph.AddEdge(new Edge<ThreeAddressCode>(currentBlock, nextBlock));
                 }
             }
+        }
+
+        public int GetDepth(Dictionary<Edge<ThreeAddressCode>, EdgeType> EdgeTypes)
+        {
+            var visitedEdges = new HashSet<Edge<ThreeAddressCode>>();
+            return CalcDepth(EntryBlock, visitedEdges, EdgeTypes);
+        }
+
+        private ThreeAddressCode GetVertexAt(int index)
+        {
+            if (index < 0 || index > VertexCount - 1)
+                return null;
+
+            return SourceBasicBlocks.BasicBlockItems[index];
+        }
+
+        private int CalcDepth(ThreeAddressCode currentBlock, HashSet<Edge<ThreeAddressCode>> visitedEdges, 
+                              Dictionary<Edge<ThreeAddressCode>, EdgeType> EdgeTypes)
+        {
+            var childrenDepths = new List<int>();
+
+            foreach (var edge in OutEdges(currentBlock))
+            {
+                if (!visitedEdges.Contains(edge))
+                {
+                    visitedEdges.Add(edge);
+                    if (EdgeTypes[edge] == EdgeType.Retreating)
+                        childrenDepths.Add(1 + CalcDepth(edge.Target, visitedEdges, EdgeTypes));
+                    else childrenDepths.Add(CalcDepth(edge.Target, visitedEdges, EdgeTypes));
+                }
+                visitedEdges.Remove(edge);
+            }
+
+            return childrenDepths.Count > 0 ? childrenDepths.Max() : 0;
         }
     }
 }

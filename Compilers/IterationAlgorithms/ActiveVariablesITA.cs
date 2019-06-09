@@ -6,20 +6,16 @@ using SimpleLang.CFG;
 using SimpleLang.GenKill.Interfaces;
 using System.Linq;
 using SimpleLang.GenKill.Implementations;
+using SimpleLang.IterationAlgorithms.CollectionOperators;
 
 namespace SimpleLang.IterationAlgorithms
 {
-    class ActiveVariablesITA : IterationAlgorithm
+    class ActiveVariablesITA : IterationAlgorithm<TacNode>
     {  
-        protected override HashSet<TacNode> CollectionOperator(HashSet<TacNode> x, HashSet<TacNode> y)
-        {
-            return new HashSet<TacNode>(x.Union(y));
-        }
-
         public ActiveVariablesITA(
             ControlFlowGraph cfg,
             Dictionary<ThreeAddressCode, IExpressionSetsContainer> lines
-            ) : base(cfg, new TFByComposition(lines), false)
+            ) : base(cfg, new TFByComposition(lines), new UnionCollectionOperator<TacNode>(), false)
         {
             Execute();
         }

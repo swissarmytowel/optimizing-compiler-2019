@@ -6,12 +6,12 @@ using SimpleLang.TACode;
 
 namespace SimpleLang.GenKill.Interfaces
 {
-    public interface ITransmissionFunction
+    public interface ITransmissionFunction<T>
     {
-        HashSet<TacNode> Calculate(HashSet<TacNode> _in, ThreeAddressCode bbloc);
+        HashSet<T> Calculate(HashSet<T> _in, ThreeAddressCode bbloc);
 
-        HashSet<TacNode> GetLineGen(TacNode tacNode);
-        HashSet<TacNode> GetLineKill(TacNode tacNode);
+        HashSet<T> GetLineGen(T tacNode);
+        HashSet<T> GetLineKill(T tacNode);
 
         ThreeAddressCode GetBasicBlock();
     }

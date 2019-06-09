@@ -198,6 +198,14 @@ namespace SimpleLang.TACode
 
         #endregion
 
+        #region utility methods
+
+        public static bool IsFunction(string operand)
+        {
+            return operand.StartsWith("func");
+        }
+
+        #endregion
         public IEnumerator<TacNode> GetEnumerator()
         {
             return TACodeLines.GetEnumerator();
@@ -214,6 +222,17 @@ namespace SimpleLang.TACode
             foreach (var tacNode in TACodeLines)
             {
                 builder.Append(tacNode?.ToString() + "\n");
+            }
+
+            return builder.ToString();
+        }
+        
+        public string ToString1()
+        {
+            var builder = new StringBuilder();
+            foreach (var tacNode in TACodeLines)
+            {
+                builder.Append(tacNode?.ToString() + "\\n");
             }
 
             return builder.ToString();

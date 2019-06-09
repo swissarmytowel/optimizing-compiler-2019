@@ -3,6 +3,7 @@ using System.Text.RegularExpressions;
 
 using SimpleLang.Optimizations;
 using SimpleLang.GenKill.Interfaces;
+using SimpleLang.TacBasicBlocks;
 using SimpleLang.TACode;
 using SimpleLang.TACode.TacNodes;
 
@@ -45,10 +46,10 @@ namespace SimpleLang.DefUse
         static public Dictionary<ThreeAddressCode, IExpressionSetsContainer> Execute(BasicBlocks bblocks)
         {
             var resultBlocksDefUse = new Dictionary<ThreeAddressCode, IExpressionSetsContainer>();
-            DefUseContainer defUseContainer = new DefUseContainer();
-
+            
             foreach (var bblock in bblocks)
             {
+                DefUseContainer defUseContainer = new DefUseContainer();
                 foreach (var line in bblock)
                 {
                     if (line is TacAssignmentNode assignmentNode)

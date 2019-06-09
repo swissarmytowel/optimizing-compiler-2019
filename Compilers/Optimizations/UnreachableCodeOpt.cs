@@ -7,31 +7,30 @@ using SimpleLang.TACode.TacNodes;
 
 namespace SimpleLang.Optimizations
 {
-    class UnreachableCodeOpt : IOptimizer
+    public class UnreachableCodeOpt : IOptimizer
     {
-        private HashSet<object> FindAllTargetLabels(ThreeAddressCode tac)
+        private HashSet<string> FindAllLabels(ThreeAddressCode tac)
         {
-            var setOfLables = new HashSet<object>();
+            var setOfLables = new HashSet<string>();
 
             foreach (var line in tac)
-                if (line is TacGotoNode gotoNode)
-                    setOfLables.Add(gotoNode.TargetLabel);
+                if (line.Label != null) setOfLables.Add(line.Label);
+
             return setOfLables;
         }
 
-        private bool CheckLabels(HashSet<object> targetLabels, 
-            LinkedListNode<TacNode> ifNode, object targetLabel, List<TacNode> tacNodesToRemove)
+        private bool CheckLabels(HashSet<string> lables, 
+            LinkedListNode<TacNode> ifNode, string targetLabel, List<TacNode> tacNodesToRemove)
         {
             var currentNode = ifNode;
             var line = currentNode.Value;
 
             while (!Equals(line.Label, targetLabel))
             {
-                /* if (targetLabels.Contains(line.Label))
+                if (lables.Contains(line.Label))
                 {
-                    tacNodesToRemove.Clear();
                     return false;
-                } */
+                } 
                 tacNodesToRemove.Add(line);
                 currentNode = currentNode.Next;
                 line = currentNode.Value;
@@ -43,37 +42,37 @@ namespace SimpleLang.Optimizations
         public bool Optimize(ThreeAddressCode tac)
         {
             var isApplied = false;
-            var targetLabels = FindAllTargetLabels(tac);
-
+            var labels = FindAllLabels(tac);
             var currentNode = tac.TACodeLines.First;
             var linesToDelete = new List<TacNode>();
+            var variablesValue = new Dictionary<string, string>();
+            var previuosNodes = new HashSet<TacNode>();
 
             while (currentNode != null)
             {
                 var line = currentNode.Value;
-
-                if (line is TacIfGotoNode ifGotoNode && Equals(ifGotoNode.Condition, "True"))
+                if (line is TacAssignmentNode assignmentNode)
                 {
-                    if (CheckLabels(targetLabels, currentNode.Next, ifGotoNode.TargetLabel, linesToDelete))
-                    {
-                        tac[line.Label] = new TacGotoNode { Label = ifGotoNode.Label, TargetLabel = ifGotoNode.TargetLabel };
-                        tac.RemoveNodes(linesToDelete);
-                        linesToDelete.Clear();
-                        isApplied = true;
-                    }
+                    var rightPart = $"{assignmentNode.FirstOperand} {assignmentNode.Operation} {assignmentNode.SecondOperand}";
+                    if (!variablesValue.ContainsKey(assignmentNode.LeftPartIdentifier))
+                        variablesValue.Add(assignmentNode.LeftPartIdentifier, rightPart);
+                    else variablesValue[assignmentNode.LeftPartIdentifier] = rightPart;
                 }
 
-                if (line is TacGotoNode tacGotoNode)
+                if (line is TacIfGotoNode ifGotoNode && Equals(variablesValue[ifGotoNode.Condition], "True") || line.GetType() == typeof(TacGotoNode))
                 {
-                    if (CheckLabels(targetLabels, currentNode.Next, tacGotoNode.TargetLabel, linesToDelete))
-                    {
-                        tac.RemoveNodes(linesToDelete);
-                        linesToDelete.Clear();
-                        isApplied = true;
-                    }
+                    var gotoNode = line as TacGotoNode;
+                    if (!previuosNodes.Contains(tac[gotoNode.TargetLabel]))
+                        if (CheckLabels(labels, currentNode.Next, gotoNode.TargetLabel, linesToDelete))
+                        {
+                            currentNode.Value = new TacGotoNode { Label = gotoNode.Label, TargetLabel = gotoNode.TargetLabel };
+                            isApplied = true;
+                        }
                 }
+                previuosNodes.Add(line);
                 currentNode = currentNode.Next;
             }
+            tac.RemoveNodes(linesToDelete);
 
             return isApplied;
         }

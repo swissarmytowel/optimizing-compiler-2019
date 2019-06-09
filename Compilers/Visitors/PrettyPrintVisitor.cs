@@ -6,7 +6,7 @@ using ProgramTree;
 
 namespace SimpleLang.Visitors
 {
-    class PrettyPrintVisitor: Visitor
+    public class PrettyPrintVisitor: Visitor
     {
         public string Text = "";
         private int Indent = 0;
@@ -171,22 +171,21 @@ namespace SimpleLang.Visitors
             }
             IsInner = prevInner;
         }
-        public override void VisitBoolNode(BoolNode v)
+        public override void VisitBoolNode(BoolNode v) => Text += v.Value.ToString().ToLower();
+
+        public override void VisitLabelNode(LabelNode l)
         {
-            Text += v.Value.ToString().ToLower();
+            Text += l.ToString();
+        }
+        public override void VisitGotoNode(GotoNode gt)
+        {
+            Text += gt.ToString();
         }
         public override void VisitLogicNotNode(LogicNotNode v)
         {
             Text += "!";
             v.LogExpr.Visit(this);
         }
-        public override void VisitLogicOpNode(LogicOpNode v)
-        {
-            Text += "(";
-            v.Left.Visit(this);
-            Text += " " + v.Operation + " ";
-            v.Right.Visit(this);
-            Text += ")";
-        }
+        
     }
 }

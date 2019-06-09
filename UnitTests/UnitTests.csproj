@@ -20,6 +20,7 @@
     <TestProjectType>UnitTest</TestProjectType>
     <NuGetPackageImportStamp>
     </NuGetPackageImportStamp>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -29,6 +30,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <PlatformTarget>AnyCPU</PlatformTarget>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -45,14 +47,38 @@
     <Reference Include="Microsoft.VisualStudio.TestPlatform.TestFramework.Extensions, Version=14.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <HintPath>..\Compilers\packages\MSTest.TestFramework.1.3.2\lib\net45\Microsoft.VisualStudio.TestPlatform.TestFramework.Extensions.dll</HintPath>
     </Reference>
+    <Reference Include="QuickGraph, Version=3.6.61114.0, Culture=neutral, PublicKeyToken=f3fb40175eec2af3, processorArchitecture=MSIL">
+      <HintPath>..\Compilers\packages\QuickGraph.3.6.61119.7\lib\net4\QuickGraph.dll</HintPath>
+    </Reference>
+    <Reference Include="QuickGraph.Data, Version=3.6.61114.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\Compilers\packages\QuickGraph.3.6.61119.7\lib\net4\QuickGraph.Data.dll</HintPath>
+    </Reference>
+    <Reference Include="QuickGraph.Graphviz, Version=3.6.61114.0, Culture=neutral, PublicKeyToken=f3fb40175eec2af3, processorArchitecture=MSIL">
+      <HintPath>..\Compilers\packages\QuickGraph.3.6.61119.7\lib\net4\QuickGraph.Graphviz.dll</HintPath>
+    </Reference>
+    <Reference Include="QuickGraph.Serialization, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\Compilers\packages\QuickGraph.3.6.61119.7\lib\net4\QuickGraph.Serialization.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="OptimizationTests\CommonSubexprOptimizationTests.cs" />
-    <Compile Include="OptimizationTests\ConstsConvolutionTests.cs" />
-    <Compile Include="OptimizationTests\LVNTests.cs" />
+    <Compile Include="CFG\ControlFlowGraphTests.cs" />
+    <Compile Include="ConstDistrib\ConstDistribTests.cs" />
+    <Compile Include="ConstDistrib\SemilatticeTests.cs" />
+    <Compile Include="IterationAlgorithms\ReachingDefinitionsSortedTests.cs" />
+    <Compile Include="IterationAlgorithms\ReachingDefinitionsTests.cs" />
+    <Compile Include="Optimizations\CommonSubexprTests.cs" />
+    <Compile Include="Optimizations\ConvConstTests.cs" />
+    <Compile Include="Optimizations\CopyPropagationTests.cs" />
+    <Compile Include="Optimizations\LocalValueNumberingTests.cs" />
+    <Compile Include="Optimizations\AvailableExprTest.cs" />
+    <Compile Include="Optimizations\GotoTest.cs" />
+    <Compile Include="Optimizations\DefUseBBlocksTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Utils.cs" />
+    <Compile Include="Visitors\AstOptimizationsTests.cs" />
+    <Compile Include="Visitors\ThreeAddressCodeTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

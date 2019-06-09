@@ -3,6 +3,7 @@ using System.Collections.Generic;
 
 using SimpleLang.Optimizations;
 using SimpleLang.GenKill.Interfaces;
+using SimpleLang.TacBasicBlocks;
 using SimpleLang.TACode;
 using SimpleLang.TACode.TacNodes;
 
@@ -20,20 +21,13 @@ namespace SimpleLang.GenKill.Implementations
 
             foreach (var bblock in bblocks)
             {
+                blocksKill.Add(bblock, new HashSet<TacNode>());
+                blocksGen.Add(bblock, new HashSet<TacNode>());
+
                 foreach (var line in bblock)
                 {
                     if (line is TacAssignmentNode assignmentNode)
                     {
-                        if (!blocksKill.ContainsKey(bblock))
-                        {
-                            blocksKill.Add(bblock, new HashSet<TacNode>());
-                        }
-
-                        if (!blocksGen.ContainsKey(bblock))
-                        {
-                            blocksGen.Add(bblock, new HashSet<TacNode>());
-                        }
-
                         blocksKill[bblock].UnionWith(lineGenKill[line].GetSecondSet());
                         blocksGen[bblock].UnionWith(lineGenKill[line].GetFirstSet());
                     }
@@ -42,7 +36,7 @@ namespace SimpleLang.GenKill.Implementations
 
             var resultBlocksGenKill = new Dictionary<ThreeAddressCode, IExpressionSetsContainer>();
 
-            foreach(var resultGKKey in blocksGen.Keys)
+            foreach (var resultGKKey in blocksGen.Keys)
             {
                 var genKillContainer = GetGenKillContainer();
 
@@ -68,9 +62,9 @@ namespace SimpleLang.GenKill.Implementations
             var variablesContainer = new Dictionary<string, HashSet<TacNode>>();
 
             // Прохождение по каждой строчке кода и нахождение gen и ипсользования переменных
-            foreach (var bblock in bblocks) 
+            foreach (var bblock in bblocks)
             {
-                foreach(var line in bblock)
+                foreach (var line in bblock)
                 {
                     if (line is TacAssignmentNode assignmentNode)
                     {
@@ -101,7 +95,7 @@ namespace SimpleLang.GenKill.Implementations
                         var variableSet = new HashSet<TacNode>();
                         variableSet.UnionWith(variablesContainer[assignmentNode.LeftPartIdentifier]);
 
-                        foreach(var variable in variableSet)
+                        foreach (var variable in variableSet)
                             if (!lineContainer[line].GetFirstSet().Contains(variable))
                                 lineContainer[line].AddToSecondSet(variable);
                     }
