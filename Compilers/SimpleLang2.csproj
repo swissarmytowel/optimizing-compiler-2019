@@ -153,6 +153,11 @@
     <Compile Include="IterationAlgorithms\CollectionOperators\ICollectionOperator.cs" />
     <Compile Include="IterationAlgorithms\CollectionOperators\UnionCollectionOperator.cs" />
     <Compile Include="IterationAlgorithms\CollectionOperators\IntersectCollectionOperator.cs" />
+    <Compile Include="GenKill\Implementations\TFByCommonWay.cs" />
+    <Compile Include="Optimizations\BooleanOptimization\AndRuleOptimization.cs" />
+    <Compile Include="Optimizations\BooleanOptimization\IRule.cs" />
+    <Compile Include="Optimizations\BooleanOptimization\OrRuleOptimization.cs" />
+    <Compile Include="Optimizations\BooleanOptimization\BooleanOptimizer.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
@@ -167,6 +172,9 @@
   <ItemGroup />
   <ItemGroup />
   <ItemGroup />
+  <ItemGroup>
+    <Folder Include="Optimizations\BooleanOptimization\" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>
