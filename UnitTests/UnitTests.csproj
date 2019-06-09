@@ -64,6 +64,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CFG\ControlFlowGraphTests.cs" />
+    <Compile Include="IterationAlgorithms\ReachingDefinitionsTests.cs" />
     <Compile Include="Optimizations\CommonSubexprTests.cs" />
     <Compile Include="Optimizations\ConstsConvolutionTests.cs" />
     <Compile Include="Optimizations\CopyPropagationTests.cs" />
