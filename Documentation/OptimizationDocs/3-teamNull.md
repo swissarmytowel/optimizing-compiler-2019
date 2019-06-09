@@ -22,7 +22,7 @@ x = 2 * 3; ==> x = 6;
 Для решения поставленной задачи был реализован визитор "ConstFoldingVisitor", наследуемый от ChangeVisitor.
 
 ```csharp
-class ConstFoldingVisitor : ChangeVisitor
+public class ConstFoldingVisitor : ChangeVisitor
     {
         public override void VisitBinOpNode(BinOpNode binop)
         {
@@ -57,7 +57,7 @@ class ConstFoldingVisitor : ChangeVisitor
 ## Тесты
 #### INPUT: 
 ```
-x = 450 + 35 + 15;
+x = 50 * 10;
 ```
 #### OUTPUT:
 ```
