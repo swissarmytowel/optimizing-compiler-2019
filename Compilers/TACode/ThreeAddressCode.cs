@@ -198,6 +198,14 @@ namespace SimpleLang.TACode
 
         #endregion
 
+        #region utility methods
+
+        public static bool IsFunction(string operand)
+        {
+            return operand.StartsWith("func");
+        }
+
+        #endregion
         public IEnumerator<TacNode> GetEnumerator()
         {
             return TACodeLines.GetEnumerator();

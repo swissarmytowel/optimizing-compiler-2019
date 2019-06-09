@@ -64,7 +64,7 @@ namespace ProgramTree
     {
         public ExprNode Unary { get; set; }
         public string Op { get; set; }
-        public UnOpNode(ExprNode unary,  string op)  {Unary = unary; Op = op; }
+        public UnOpNode(ExprNode unary,  string op = "-")  {Unary = unary; Op = op; }
         public override void Visit(Visitor v)
         {
             v.VisitUnOpNode(this);
@@ -100,28 +100,7 @@ namespace ProgramTree
         public override string ToString() => Value.ToString();
 
     }
-
-
-    public class LogicOpNode : ExprNode
-    {
-        public ExprNode Left { get; set; }
-        public ExprNode Right { get; set; }
-        public string Operation { get; set; }
-        public LogicOpNode(ExprNode Left, ExprNode Right, string op)
-        {
-            this.Left = Left;
-            this.Right = Right;
-            Operation = op;
-        }
-        public override void Visit(Visitor v)
-        {
-            v.VisitLogicOpNode(this);
-        }
-        public override string ToString()
-        {
-            return "(" + Left.ToString() + " " + Operation + " " + Right.ToString() + ")";
-        }
-    }
+    
 
     public class LogicNotNode : ExprNode
     {
@@ -162,20 +141,7 @@ namespace ProgramTree
         public override string ToString() => Id + " = " + Expr;
     }
 
-    public class CycleNode : StatementNode
-    {
-        public ExprNode Expr { get; set; }
-        public StatementNode Stat { get; set; }
-        public CycleNode(ExprNode expr, StatementNode stat)
-        {
-            Expr = expr;
-            Stat = stat;
-        }
-        public override void Visit(Visitor v)
-        {
-            v.VisitCycleNode(this);
-        }
-    }
+ 
 
     public class WhileNode : StatementNode
     {
@@ -217,6 +183,39 @@ namespace ProgramTree
         }
     }
 
+    public class LabelNode : StatementNode
+    {
+        public int Inum { get; set; }
+        public LabelNode(int inum)
+        {
+            Inum = inum;
+        }
+        public override void Visit(Visitor v)
+        {
+            v.VisitLabelNode(this);
+        }
+        public override string ToString()
+        {
+            return "l" + Inum + ": ";
+        }
+    }
+    public class GotoNode : StatementNode
+    {
+        public LabelNode L{ get; set; }
+        public GotoNode(LabelNode l)
+        {
+            L = l;
+        }
+        public override void Visit(Visitor v)
+        {
+            v.VisitGotoNode(this);
+        }
+        public override string ToString()
+        {
+            return "goto " + L;
+        }
+    }
+
     public class IfNode : StatementNode
     {
         public ExprNode Expr { get; set; }
@@ -240,6 +239,7 @@ namespace ProgramTree
             return str;
         }
     }
+   
 
     public class BlockNode : StatementNode
     {
@@ -265,18 +265,7 @@ namespace ProgramTree
         }
     }
 
-    public class WriteNode : StatementNode
-    {
-        public ExprNode Expr { get; set; }
-        public WriteNode(ExprNode Expr)
-        {
-            this.Expr = Expr;
-        }
-        public override void Visit(Visitor v)
-        {
-            v.VisitWriteNode(this);
-        }
-    }
+ 
 
     public class EmptyNode : StatementNode
     {
@@ -287,30 +276,5 @@ namespace ProgramTree
         public override string ToString() => "";
     }
 
-    public class VarDefNode : StatementNode
-    {
-        public List<IdNode> vars = new List<IdNode>();
-        public VarDefNode(IdNode id)
-        {
-            Add(id);
-        }
-
-        public void Add(IdNode id)
-        {
-            vars.Add(id);
-        }
-        public override void Visit(Visitor v)
-        {
-            v.VisitVarDefNode(this);
-        }
-        //public override string ToString()
-        //{
-        //    var s = new StringBuilder();
-        //    s.Append("var");
-        //    for (int i = 0; i < vars.Count - 1; i++)
-        //        s.Append(" " + vars[i].ToString() + ",");
-        //    s.Append(" " + vars[vars.Count - 1].ToString());
-        //    return s.ToString();
-        //}
-    }
+   
 }

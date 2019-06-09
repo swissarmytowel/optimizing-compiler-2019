@@ -1,5 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="packages\NUnit3TestAdapter.3.13.0\build\net35\NUnit3TestAdapter.props" Condition="Exists('packages\NUnit3TestAdapter.3.13.0\build\net35\NUnit3TestAdapter.props')" />
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
@@ -13,9 +14,11 @@
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <TargetFrameworkProfile>Client</TargetFrameworkProfile>
     <FileAlignment>512</FileAlignment>
+    <NuGetPackageImportStamp>
+    </NuGetPackageImportStamp>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
-    <PlatformTarget>x86</PlatformTarget>
+    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
@@ -56,17 +59,50 @@
     <Reference Include="nunit.framework" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CFG\DominatorsTree\DominatorsFinder.cs" />
+    <Compile Include="CFG\NaturalCycles\CFGNaturalCycle.cs" />
+    <Compile Include="CFG\NaturalCycles\CFGNaturalCycles.cs" />
+    <Compile Include="CFG\Services\DominatorsService.cs" />
+    <Compile Include="CFG\DSTEdgeClassifier.cs" />
+    <Compile Include="CFG\DSTReducibility.cs" />
+    <Compile Include="CFG\Services\EdgeClassifierService.cs" />
+    <Compile Include="ConstDistrib\ConstDistribFunction.cs" />
+    <Compile Include="ConstDistrib\ConstDistribOperator.cs" />
+    <Compile Include="ConstDistrib\ConstDistribTest.cs" />
+    <Compile Include="Optimizations\ConstDistributionOptimization.cs" />
+    <Compile Include="ConstDistrib\DataStreamTable.cs" />
+    <Compile Include="ConstDistrib\DataStreamValue.cs" />
+    <Compile Include="ConstDistrib\SemilatticeTest.cs" />
+    <Compile Include="ConstDistrib\SemilatticeValue.cs" />
+    <Compile Include="DefUse\DefUseForBlocksPrinter.cs" />
+    <Compile Include="DefUse\TacNodeVarDecorator.cs" />
+    <Compile Include="E_GenKill\Implementations\E_GenKillContatiner.cs" />
+    <Compile Include="E_GenKill\Implementations\E_GenKillVisitor.cs" />
+    <Compile Include="E_GenKill\Interfaces\IEGenKillVisitor.cs" />
+    <Compile Include="InOut\InOutContainer.cs" />
+    <Compile Include="InOut\InOutContainerWithFilling.cs" />
+    <Compile Include="CFG\BidirectionalGraph.cs" />
+    <Compile Include="CFG\DepthSpanningTree.cs" />
+    <Compile Include="DefUse\DefUseContainer.cs" />
+    <Compile Include="DefUse\DefUseForBlocksGenerator.cs" />
+    <Compile Include="IterationAlgorithms\ActiveVariablesITA.cs" />
+    <Compile Include="IterationAlgorithms\AvailableExpressionsITA.cs" />
+    <Compile Include="IterationAlgorithms\ConstDistributionITA.cs" />
+    <Compile Include="IterationAlgorithms\Interfaces\IIterationAlgorithm.cs" />
+    <Compile Include="IterationAlgorithms\IterationAlgorithm.cs" />
+    <Compile Include="IterationAlgorithms\ReachingDefinitionsITA.cs" />
+    <Compile Include="IterationAlgorithms\ReachingDefinitionsSortedITA.cs" />
     <Compile Include="Optimizations\AvailableExprOptimization.cs" />
     <Compile Include="Optimizations\CommonSubexprOptimization.cs" />
-    <Compile Include="Optimizations\DefUse\DefUseConstPropagation.cs" />
-    <Compile Include="Optimizations\DefUse\DefUseCopyPropagation.cs" />
-    <Compile Include="Optimizations\DefUse\DefUseDetector.cs" />
+    <Compile Include="Optimizations\DefUseConstPropagation.cs" />
+    <Compile Include="Optimizations\DefUseCopyPropagation.cs" />
+    <Compile Include="Optimizations\ReachingDefinitionsConstPropagation.cs" />
+    <Compile Include="TacBasicBlocks\DefUse\DefUseDetector.cs" />
     <Compile Include="CFG\ControlFlowGraph.cs" />
     <Compile Include="Optimizations\AlgebraicIdentityOptimization.cs" />
     <Compile Include="Optimizations\ConvConstOptimization.cs" />
     <Compile Include="Optimizations\CopyPropagationOptimization.cs" />
     <Compile Include="Optimizations\DeadCodeOptimization.cs" />
-    <Compile Include="Optimizations\DefUseSetForBlocks.cs" />
     <Compile Include="Optimizations\EmptyNodeOptimization.cs" />
     <Compile Include="Optimizations\GotoOptimization.cs" />
     <Compile Include="Optimizations\Interfaces\IOptimizer.cs" />
@@ -103,15 +139,27 @@
     <Compile Include="Parser\ShiftReduceParserCode.cs" />
     <Compile Include="Parser\SimpleLex.cs" />
     <Compile Include="Parser\SimpleYacc.cs" />
-    <Compile Include="Optimizations\BasicBlocks.cs" />
+    <Compile Include="TacBasicBlocks\BasicBlocks.cs" />
+    <Compile Include="Visitors\WhileFalseOptVisitor.cs" />
     <Compile Include="Visitors\ZeroMulOptVisitor.cs" />
     <Compile Include="Visitors\CompareToItselfFalseOptVisitor.cs" />
     <Compile Include="GenKill\Interfaces\IGenKillVisitor.cs" />
-    <Compile Include="GenKill\Interfaces\IGenKillContainer.cs" />
+    <Compile Include="GenKill\Interfaces\IExpressionSetsContainer.cs" />
     <Compile Include="GenKill\Implementations\GenKillVisitor.cs" />
     <Compile Include="GenKill\Implementations\GenKillConatainer.cs" />
     <Compile Include="Optimizations\UnreachableCodeOpt.cs" />
     <Compile Include="Optimizations\EliminateTranToTranOpt.cs" />
+    <Compile Include="MOP\MeetOverPaths.cs" />
+    <Compile Include="GenKill\Interfaces\ITransmissionFunction.cs" />
+    <Compile Include="GenKill\Implementations\TFByComposition.cs" />
+    <Compile Include="IterationAlgorithms\CollectionOperators\ICollectionOperator.cs" />
+    <Compile Include="IterationAlgorithms\CollectionOperators\UnionCollectionOperator.cs" />
+    <Compile Include="IterationAlgorithms\CollectionOperators\IntersectCollectionOperator.cs" />
+    <Compile Include="GenKill\Implementations\TFByCommonWay.cs" />
+    <Compile Include="Optimizations\BooleanOptimization\AndRuleOptimization.cs" />
+    <Compile Include="Optimizations\BooleanOptimization\IRule.cs" />
+    <Compile Include="Optimizations\BooleanOptimization\OrRuleOptimization.cs" />
+    <Compile Include="Optimizations\BooleanOptimization\BooleanOptimizer.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
@@ -123,12 +171,19 @@
     <Content Include="Optimizations\README.md" />
     <Content Include="TACode\README.md" />
   </ItemGroup>
+  <ItemGroup />
+  <ItemGroup />
+  <ItemGroup />
   <ItemGroup>
-    <Folder Include="GenKill\" />
-    <Folder Include="GenKill\Interfaces\" />
-    <Folder Include="GenKill\Implementations\" />
+    <Folder Include="Optimizations\BooleanOptimization\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>Данный проект ссылается на пакеты NuGet, отсутствующие на этом компьютере. Используйте восстановление пакетов NuGet, чтобы скачать их.  Дополнительную информацию см. по адресу: http://go.microsoft.com/fwlink/?LinkID=322105. Отсутствует следующий файл: {0}.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('packages\NUnit3TestAdapter.3.13.0\build\net35\NUnit3TestAdapter.props')" Text="$([System.String]::Format('$(ErrorText)', 'packages\NUnit3TestAdapter.3.13.0\build\net35\NUnit3TestAdapter.props'))" />
+  </Target>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">

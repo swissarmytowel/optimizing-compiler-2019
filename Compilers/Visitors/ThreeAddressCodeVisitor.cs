@@ -42,6 +42,12 @@ namespace SimpleLang.Visitors
 
                 case BoolNode boolNode:
                     return boolNode.ToString();
+                
+                case FunctionNode funcNode:
+                    return funcNode.ToString();
+                
+                case DoubleNumNode doubleNode:
+                    return doubleNode.ToString();
 
                 default:
                     // if the default case is hit, Expr is complex, and TAC simplification can't be done
@@ -68,14 +74,7 @@ namespace SimpleLang.Visitors
         /// <returns>Last tmp identifier left from TAC decomposition</returns>
         private string GenerateThreeAddressLine(ExprNode expression)
         {
-            // This is used to merge the label from previous if/while/for node parsing
-            // From an empty node to current parsed
             string label = null;
-            if (TACodeContainer.Last != null && TACodeContainer.Last.Value.IsUtility)
-            {
-                label = TACodeContainer.Last.Value.Label;
-                TACodeContainer.RemoveNode(TACodeContainer.Last.Value);
-            }
             // Main switcher
             switch (expression)
             {
@@ -91,6 +90,21 @@ namespace SimpleLang.Visitors
                 case BoolNode boolNode:
                 {
                     return TACodeContainer.CreateAndPushBoolNode(boolNode, label);
+                }
+                case UnOpNode unOpNode:
+                {
+                    var unaryExp = ManageTrivialCases(unOpNode.Unary);
+                    
+                    var tmpName = TmpNameManager.Instance.GenerateTmpVariableName();
+                    TACodeContainer.PushNode(new TacAssignmentNode()
+                    {
+                        Label = label,
+                        LeftPartIdentifier = tmpName,
+                        FirstOperand = null,
+                        Operation = unOpNode.Op,
+                        SecondOperand = unaryExp
+                    });
+                    return tmpName;
                 }
                 // Complex case, when a part of an expr is a binary operation
                 case BinOpNode binOpNode:
@@ -112,22 +126,18 @@ namespace SimpleLang.Visitors
                     });
                     return tmpName;
                 }
-                case LogicOpNode logicOpNode:
+                case LogicNotNode logicNotNode:
                 {
+                    var unaryExp = ManageTrivialCases(logicNotNode.LogExpr);
                     
-                    var leftPart = ManageTrivialCases(logicOpNode.Left);
-                    var rightPart = ManageTrivialCases(logicOpNode.Right);
-                    
-                    // Creating and pushing the resulting binOp between 
-                    // already generated above TAC variables
                     var tmpName = TmpNameManager.Instance.GenerateTmpVariableName();
                     TACodeContainer.PushNode(new TacAssignmentNode()
                     {
                         Label = label,
                         LeftPartIdentifier = tmpName,
-                        FirstOperand = leftPart,
-                        Operation = logicOpNode.Operation,
-                        SecondOperand = rightPart
+                        FirstOperand = null,
+                        Operation = "!",
+                        SecondOperand = unaryExp
                     });
                     return tmpName;
                 }
@@ -178,31 +188,6 @@ namespace SimpleLang.Visitors
                 Label = exitingLabel,
                 IsUtility = true
             });
-           
-            ClashUtilityLabels(lastNodeBeforeGeneration);
-        }
-        
-        /// <summary>
-        /// Merge utility labels to lead to code lines instead of empty nodes
-        /// </summary>
-        /// <param name="lastNodeBeforeGeneration">Last node present before a new construction was generated</param>
-        private void ClashUtilityLabels(LinkedListNode<TacNode> lastNodeBeforeGeneration)
-        {
-            var nodesToRemove = new List<TacNode>();
-            lastNodeBeforeGeneration = lastNodeBeforeGeneration ?? TACodeContainer.First;
-            while (lastNodeBeforeGeneration != null)
-            {
-                if (lastNodeBeforeGeneration.Value is TacEmptyNode label)
-                {
-                    if (lastNodeBeforeGeneration.Next != null)
-                    {
-                        lastNodeBeforeGeneration.Next.Value.Label = label.Label;
-                        nodesToRemove.Add(label);
-                    }
-                }
-                lastNodeBeforeGeneration = lastNodeBeforeGeneration.Next;
-            }
-            TACodeContainer.RemoveNodes(nodesToRemove);
         }
 
         public override void VisitWhileNode(WhileNode c)
@@ -261,8 +246,6 @@ namespace SimpleLang.Visitors
                 Label = endOfWhileStatementLabel,
                 IsUtility = true
             });
-            
-            ClashUtilityLabels(lastNodeBeforeGeneration);
         }
 
         public override void VisitForNode(ForNode c)
@@ -322,8 +305,6 @@ namespace SimpleLang.Visitors
                 Condition = conditionalExpressionId,
                 TargetLabel = startOfForStatementLabel
             });
-            
-            ClashUtilityLabels(lastNodeBeforeGeneration);
         }
 
         public override void VisitEmptyNode(EmptyNode w)
@@ -331,6 +312,49 @@ namespace SimpleLang.Visitors
             TACodeContainer.CreateAndPushEmptyNode(w);
         }
 
+        public override void VisitGotoNode(GotoNode gt)
+        {
+            TACodeContainer.PushNode(new TacGotoNode()
+            {
+                IsUtility = false,
+                TargetLabel = "l" + gt.L.Inum
+            });
+        }
+
+        public override void VisitLabelNode(LabelNode l)
+        {
+            TACodeContainer.PushNode(new TacEmptyNode()
+            {
+                Label = "l" + l.Inum
+            });
+        }
+
+        public void Postprocess()
+        {
+            var nodesToRemove = new List<TacNode>();
+            var currentNode = TACodeContainer.First;
+            while (currentNode != null)
+            {
+                var next = currentNode.Next;
+
+                if (next == null)
+                {
+                    currentNode = next;
+                    continue;
+                }
+                if (currentNode.Value is TacEmptyNode && !(next.Value is TacEmptyNode))
+                {
+                    if (currentNode.Value.Label != null)
+                    {
+                        next.Value.Label = currentNode.Value.Label;
+                        nodesToRemove.Add(currentNode.Value);
+                    }
+                }
+                currentNode = next;
+            }
+            TACodeContainer.RemoveNodes(nodesToRemove);
+        }
+        
         public override string ToString() => TACodeContainer.ToString();
     }
 }

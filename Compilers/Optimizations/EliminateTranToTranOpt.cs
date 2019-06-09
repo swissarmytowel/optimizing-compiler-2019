@@ -16,6 +16,7 @@ namespace SimpleLang.Optimizations
             var gotoNodes = new List<LinkedListNode<TacNode>>();
             var res = new List<LinkedListNode<TacNode>>();
             var targetLabels = new Dictionary<string, int>();
+            var previousNodes = new HashSet<TacNode>();
 
             while (currentNode != null)
             {
@@ -24,13 +25,17 @@ namespace SimpleLang.Optimizations
                 if (currentValue.GetType() == typeof(TacGotoNode))
                 {
                     var tacGoto = currentValue as TacGotoNode;
-                    if (targetLabels.ContainsKey(tacGoto.TargetLabel))
-                        targetLabels[tacGoto.TargetLabel]++;
-                    else targetLabels.Add(tacGoto.TargetLabel, 1);
 
-                    gotoNodes.Add(currentNode);
+                    if (tac[tacGoto.TargetLabel].GetType() == typeof(TacIfGotoNode) && !previousNodes.Contains(tac[tacGoto.TargetLabel]))
+                    {
+                        if (targetLabels.ContainsKey(tacGoto.TargetLabel))
+                            targetLabels[tacGoto.TargetLabel]++;
+                        else targetLabels.Add(tacGoto.TargetLabel, 1);
+
+                        gotoNodes.Add(currentNode);
+                    }
                 }
-
+                previousNodes.Add(currentValue);
                 currentNode = currentNode.Next;
             }
 
@@ -66,46 +71,43 @@ namespace SimpleLang.Optimizations
 
         public bool Optimize(ThreeAddressCode tac)
         {
-            var currentNode = tac.TACodeLines.First;
             var goToNodes = FindGotoNodes(tac);
             var isApplied = false;
             var nextLabel = FindNumberNextLabel(tac);
-
-            while(currentNode != null)
-            {
-                var line = currentNode.Value;
-
-                if (line is TacGotoNode gotoNode && tac[gotoNode.TargetLabel] is TacGotoNode tacGoto)
-                {
-                    gotoNode.TargetLabel = tacGoto.TargetLabel;
-                    isApplied = true;
-                }
-                currentNode = currentNode.Next;
-            }
 
             foreach(var gotoNode in goToNodes)
             {
                 var label = $"L{nextLabel}";
                 var gotoValue = gotoNode.Value as TacGotoNode;
-                if (tac[gotoValue.TargetLabel] == null)
-                    continue;
-
                 var targetNode = tac.TACodeLines.Find(tac[gotoValue.TargetLabel]);
-               
                 var nextNode = targetNode.Next;
-                if (nextNode == null)
-                    tac.TACodeLines.AddLast(new TacEmptyNode { Label = label });
-                else
-                {
-                    nextNode.Value.Label = label;
-                    targetNode.Value.Label = null;
-                }
+
+                if (nextNode.Value.Label != null)
+                    label = nextNode.Value.Label;
+
+                nextNode.Value.Label = label;
+                targetNode.Value.Label = null;
 
                 tac.TACodeLines.Remove(targetNode);
                 tac.TACodeLines.AddAfter(gotoNode, new TacGotoNode { TargetLabel = label });
                 tac.TACodeLines.AddAfter(gotoNode, targetNode);
                 tac.TACodeLines.Remove(gotoNode);
                 nextLabel++;
+            }
+
+            var previousNodes = new HashSet<TacNode>();
+
+            foreach (var line in tac.TACodeLines)
+            {
+                if (line is TacGotoNode gotoNode 
+                    && tac[gotoNode.TargetLabel].GetType() == typeof(TacGotoNode) 
+                    && !previousNodes.Contains(tac[gotoNode.TargetLabel]))
+                {
+                    var tacGoto = tac[gotoNode.TargetLabel] as TacGotoNode;
+                    gotoNode.TargetLabel = tacGoto.TargetLabel;
+                    isApplied = true;
+                }
+                previousNodes.Add(line);
             }
 
             return isApplied;

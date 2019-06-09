@@ -1,48 +1,84 @@
-﻿using System.IO;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using SimpleLang.Optimizations;
 using SimpleLang.TACode;
 using SimpleLang.TACode.TacNodes;
 using QuickGraph;
+using SimpleLang.TacBasicBlocks;
 
 namespace SimpleLang.CFG
 {
-    public class ControlFlowGraph : BidirectionalGraph<ThreeAddressCode, Edge<ThreeAddressCode>>
+    public class ControlFlowGraph : BidirectionalGraph
     {
-        public BasicBlocks Blocks { get; private set; }
+        public ThreeAddressCode EntryBlock => IsVerticesEmpty ? null : Vertices.First();
+        public ThreeAddressCode ExitBlock => IsVerticesEmpty ? null : Vertices.Last();
+        public ThreeAddressCode SourceCode { get; private set; }
+        public BasicBlocks SourceBasicBlocks { get; private set; }
 
-        public ControlFlowGraph() : base(false) { }
-
-        public void Construct(ThreeAddressCode tac)
+        public ControlFlowGraph(ThreeAddressCode tac)
         {
-            Blocks = new BasicBlocks();
-            Blocks.SplitTACode(tac);
-            Construct();
+            SourceCode = tac;
+
+            if (SourceCode == null || SourceCode.TACodeLines.Count == 0)
+                return;
+
+            Build();
         }
 
-        public void Construct(BasicBlocks blocks)
+        private ControlFlowGraph(ThreeAddressCode tac, BasicBlocks basicBlocks, 
+            IEnumerable<ThreeAddressCode> vertices, IEnumerable<Edge<ThreeAddressCode>> edges)
         {
-            Blocks = blocks;
-            Construct();
+            SourceCode = tac;
+            SourceBasicBlocks = basicBlocks;
+            Graph.AddVertexRange(vertices);
+            Graph.AddEdgeRange(edges);
         }
 
-        private void Construct()
+        /// <summary>
+        /// Returns a vertex at index position
+        /// </summary>
+        public ThreeAddressCode this[int index] => GetVertexAt(index);
+
+        /// <summary>
+        /// Returns a node at nodeIdx position from a vertex at nodeIdx position
+        /// </summary>
+        public TacNode this[int vertexIdx, int nodeIdx] => GetVertexAt(vertexIdx).ElementAt(nodeIdx);
+
+        public ControlFlowGraph GetCFGWithSortedVertices()
         {
-            Clear();
+            var dst = new DepthSpanningTree(this);
+            return new ControlFlowGraph(SourceCode, dst.SortedBasicBlocks, dst.Vertices, Edges);
+        }
 
-            AddVertexRange(Blocks.BasicBlockItems);
+        public void Rebuild(ThreeAddressCode tac)
+        {
+            SourceCode = tac;
+            SourceBasicBlocks = null;
+            Graph.Clear();
 
-            var blocksCount = Blocks.BasicBlockItems.Count;
+            if (SourceCode == null || SourceCode.TACodeLines.Count == 0)
+                return;
+
+            Build();
+        }
+
+        private void Build()
+        {
+            var blocks = new BasicBlocks();
+            blocks.SplitTACode(SourceCode);
+            SourceBasicBlocks = blocks;
+
+            Graph.AddVertexRange(blocks.BasicBlockItems);
+
+            var blocksCount = blocks.BasicBlockItems.Count;
             for (var i = 0; i < blocksCount; ++i)
             {
-                var currentBlock = Blocks.BasicBlockItems[i];
+                var currentBlock = blocks.BasicBlockItems[i];
 
                 if (currentBlock.Last() is TacGotoNode gotoNode)
                 {
-                    var targetBlock = Blocks.BasicBlockItems.Find(
+                    var targetBlock = blocks.BasicBlockItems.Find(
                         x => x.First().Label == gotoNode.TargetLabel);
-                    AddEdge(new Edge<ThreeAddressCode>(currentBlock, targetBlock));
+                    Graph.AddEdge(new Edge<ThreeAddressCode>(currentBlock, targetBlock));
 
                     if (!(currentBlock.Last() is TacIfGotoNode))
                         continue;
@@ -50,48 +86,44 @@ namespace SimpleLang.CFG
 
                 if (i < blocksCount - 1)
                 {
-                    var nextBlock = Blocks.BasicBlockItems[i + 1];
-                    AddEdge(new Edge<ThreeAddressCode>(currentBlock, nextBlock));
+                    var nextBlock = blocks.BasicBlockItems[i + 1];
+                    Graph.AddEdge(new Edge<ThreeAddressCode>(currentBlock, nextBlock));
                 }
             }
         }
 
-        public void SaveToFile(string fileName)
+        public int GetDepth(Dictionary<Edge<ThreeAddressCode>, EdgeType> EdgeTypes)
         {
-            if (string.IsNullOrEmpty(fileName))
-                return;
-
-            var directoryName = Path.GetDirectoryName(fileName);
-            if (!string.IsNullOrEmpty(directoryName) && !Directory.Exists(directoryName))
-                Directory.CreateDirectory(directoryName);
-            
-            File.WriteAllText(fileName, ToString());
+            var visitedEdges = new HashSet<Edge<ThreeAddressCode>>();
+            return CalcDepth(EntryBlock, visitedEdges, EdgeTypes);
         }
 
-        public override string ToString()
+        private ThreeAddressCode GetVertexAt(int index)
         {
-            if (IsVerticesEmpty)
-                return "Empty CFG.";
+            if (index < 0 || index > VertexCount - 1)
+                return null;
 
-            var currentIndex = 0;
-            var indices = Vertices.ToDictionary(vertex => vertex, _ => currentIndex++);
-            
-            var stringBuilder = new StringBuilder();
+            return SourceBasicBlocks.BasicBlockItems[index];
+        }
 
-            stringBuilder.AppendLine("VERTICES");
-            stringBuilder.Append(Vertices
-                .Select((tac, idx) => $"#{idx}:\n{tac}\n")
-                .Aggregate("", (acc, cur) => acc + cur));
+        private int CalcDepth(ThreeAddressCode currentBlock, HashSet<Edge<ThreeAddressCode>> visitedEdges, 
+                              Dictionary<Edge<ThreeAddressCode>, EdgeType> EdgeTypes)
+        {
+            var childrenDepths = new List<int>();
 
-            stringBuilder.AppendLine("EDGES");
-            foreach (var vertex in Vertices)
+            foreach (var edge in OutEdges(currentBlock))
             {
-                var targetVertices = OutEdges(vertex).Select(x => indices[x.Target]);
-                stringBuilder.AppendLine(
-                    $"{indices[vertex]} -> [{targetVertices.Aggregate(" ", (acc, cur) => acc + cur + " ")}]");
+                if (!visitedEdges.Contains(edge))
+                {
+                    visitedEdges.Add(edge);
+                    if (EdgeTypes[edge] == EdgeType.Retreating)
+                        childrenDepths.Add(1 + CalcDepth(edge.Target, visitedEdges, EdgeTypes));
+                    else childrenDepths.Add(CalcDepth(edge.Target, visitedEdges, EdgeTypes));
+                }
+                visitedEdges.Remove(edge);
             }
 
-            return stringBuilder.ToString();
+            return childrenDepths.Count > 0 ? childrenDepths.Max() : 0;
         }
     }
 }

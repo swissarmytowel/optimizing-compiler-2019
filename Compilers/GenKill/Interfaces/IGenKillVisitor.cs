@@ -4,14 +4,15 @@ using System.Collections.Generic;
 using SimpleLang.TACode;
 using SimpleLang.TACode.TacNodes;
 using SimpleLang.Optimizations;
+using SimpleLang.TacBasicBlocks;
 
 namespace SimpleLang.GenKill.Interfaces
 {
     public interface IGenKillVisitor
     {
-        Dictionary<ThreeAddressCode, IGenKillContainer> GenerateReachingDefinitionForBlocks(BasicBlocks bblocks);
-        Dictionary<TacNode, IGenKillContainer> GenerateReachingDefinitionForLine(BasicBlocks bblocks);
+        Dictionary<ThreeAddressCode, IExpressionSetsContainer> GenerateReachingDefinitionForBlocks(BasicBlocks bblocks);
+        Dictionary<TacNode, IExpressionSetsContainer> GenerateReachingDefinitionForLine(BasicBlocks bblocks);
 
-        IGenKillContainer GetGenKillContainer();
+        IExpressionSetsContainer GetGenKillContainer();
     }
 }

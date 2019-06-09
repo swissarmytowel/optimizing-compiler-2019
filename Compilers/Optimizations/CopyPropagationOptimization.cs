@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using SimpleLang.TACode.TacNodes;
 using SimpleLang.Optimizations.Interfaces;
+using SimpleLang.TacBasicBlocks;
 using SimpleLang.TACode;
 
 namespace SimpleLang.Optimizations
@@ -22,11 +23,11 @@ namespace SimpleLang.Optimizations
                 {
                     if (currentNode.Value is TacAssignmentNode assignmentNode)
                     {
+                        if (directAssignments.ContainsKey(assignmentNode.LeftPartIdentifier))
+                            directAssignments.Remove(assignmentNode.LeftPartIdentifier);
+
                         if (assignmentNode.Operation == null)
                         {
-                            if (directAssignments.ContainsKey(assignmentNode.LeftPartIdentifier))
-                                directAssignments.Remove(assignmentNode.LeftPartIdentifier);
-
                             if (!int.TryParse(assignmentNode.FirstOperand, out int firstOpValue))
                             {
                                 var id = assignmentNode.LeftPartIdentifier;
@@ -46,6 +47,7 @@ namespace SimpleLang.Optimizations
                             assignmentNode.SecondOperand = directAssignments[assignmentNode.SecondOperand];
                             isOptimized = true;
                         }
+                        
                     }
 
                     currentNode = currentNode.Next;
