@@ -11,7 +11,7 @@ namespace SimpleLang.GenKill.Implementations
         private ThreeAddressCode basicBlock;
         private Dictionary<ThreeAddressCode, IExpressionSetsContainer> lineGenKill;
 
-        public TFByComposition(Dictionary<ThreeAddressCode, IExpressionSetsContainer> LineGenKill)
+        public TFByCommonWay(Dictionary<ThreeAddressCode, IExpressionSetsContainer> LineGenKill)
         {
             lineGenKill = LineGenKill;
         }
@@ -22,10 +22,11 @@ namespace SimpleLang.GenKill.Implementations
             var func = _in;
 
             var gen = new HashSet<TacNode>();
-            gen.UnionWith(GetLineGen(line));
+            var _line = new TacAssignmentNode();
+            gen.UnionWith(GetLineGen(_line));
 
             var kill = new HashSet<TacNode>();
-            kill.UnionWith(GetLineKill(line));
+            kill.UnionWith(GetLineKill(_line));
 
             foreach (var line in GetBasicBlock())
             {
