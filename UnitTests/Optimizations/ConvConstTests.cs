@@ -10,7 +10,7 @@ namespace UnitTests.Optimizations
     {
 
         [TestMethod]
-        public void Test_PlusInts()
+        public void Optimize_PlusInts()
         {
             var threeAddressCodeVisitor = new ThreeAddressCodeVisitor();
             threeAddressCodeVisitor.TACodeContainer.PushNode(
@@ -36,7 +36,7 @@ namespace UnitTests.Optimizations
         }
 
         [TestMethod]
-        public void Test_MinusInts()
+        public void Optimize_MinusInts()
         {
             var threeAddressCodeVisitor = new ThreeAddressCodeVisitor();
             threeAddressCodeVisitor.TACodeContainer.PushNode(
@@ -62,7 +62,7 @@ namespace UnitTests.Optimizations
         }
 
         [TestMethod]
-        public void Test_MultInts()
+        public void Optimize_MultInts()
         {
             var threeAddressCodeVisitor = new ThreeAddressCodeVisitor();
             threeAddressCodeVisitor.TACodeContainer.PushNode(
@@ -88,7 +88,7 @@ namespace UnitTests.Optimizations
         }
 
         [TestMethod]
-        public void Test_DivisionInts()
+        public void Optimize_DivisionInts()
         {
             var threeAddressCodeVisitor = new ThreeAddressCodeVisitor();
             threeAddressCodeVisitor.TACodeContainer.PushNode(
@@ -114,7 +114,7 @@ namespace UnitTests.Optimizations
         }
 
         [TestMethod]
-        public void Test_GreaterInts()
+        public void Optimize_GreaterInts()
         {
             var threeAddressCodeVisitor = new ThreeAddressCodeVisitor();
             threeAddressCodeVisitor.TACodeContainer.PushNode(
@@ -140,7 +140,7 @@ namespace UnitTests.Optimizations
         }
 
         [TestMethod]
-        public void Test_LessInts()
+        public void Optimize_LessInts()
         {
             var threeAddressCodeVisitor = new ThreeAddressCodeVisitor();
             threeAddressCodeVisitor.TACodeContainer.PushNode(
@@ -166,7 +166,7 @@ namespace UnitTests.Optimizations
         }
 
         [TestMethod]
-        public void Test_GreaterOrEqualInts()
+        public void Optimize_GreaterOrEqualInts()
         {
             var threeAddressCodeVisitor = new ThreeAddressCodeVisitor();
             threeAddressCodeVisitor.TACodeContainer.PushNode(
@@ -192,7 +192,7 @@ namespace UnitTests.Optimizations
         }
 
         [TestMethod]
-        public void Test_LessOrEqualInts()
+        public void Optimize_LessOrEqualInts()
         {
             var threeAddressCodeVisitor = new ThreeAddressCodeVisitor();
             threeAddressCodeVisitor.TACodeContainer.PushNode(
@@ -218,7 +218,7 @@ namespace UnitTests.Optimizations
         }
 
         [TestMethod]
-        public void Test_EqualInts()
+        public void Optimize_EqualInts()
         {
             var threeAddressCodeVisitor = new ThreeAddressCodeVisitor();
             threeAddressCodeVisitor.TACodeContainer.PushNode(
@@ -244,7 +244,7 @@ namespace UnitTests.Optimizations
         }
 
         [TestMethod]
-        public void Test_NotEqualInts()
+        public void Optimize_NotEqualInts()
         {
             var threeAddressCodeVisitor = new ThreeAddressCodeVisitor();
             threeAddressCodeVisitor.TACodeContainer.PushNode(
@@ -270,7 +270,7 @@ namespace UnitTests.Optimizations
         }
 
         [TestMethod]
-        public void Test_IsOptimized()
+        public void Optimize_IsOptimized()
         {
             var threeAddressCodeVisitor = new ThreeAddressCodeVisitor();
             threeAddressCodeVisitor.TACodeContainer.PushNode(
@@ -287,7 +287,7 @@ namespace UnitTests.Optimizations
         }
 
         [TestMethod]
-        public void Test_IsNotOptimized()
+        public void Optimize_IsNotOptimized()
         {
             var threeAddressCodeVisitor = new ThreeAddressCodeVisitor();
             threeAddressCodeVisitor.TACodeContainer.PushNode(
