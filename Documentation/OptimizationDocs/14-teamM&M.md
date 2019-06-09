@@ -71,7 +71,16 @@ public void ReplaceStatement(StatementNode from, StatementNode to)
 }
 ```
 ## Тесты
---
+#### INPUT: 
+```csharp
+while(false)
+	x = a;
+x = b;
+```
+#### OUTPUT:
+```csharp
+x = b;
+```
 
 ## Вывод
 Используя метод, описанный выше, мы получили визитор, заменяющий выражения вида `while (false) st;` на `null`.
