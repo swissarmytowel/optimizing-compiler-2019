@@ -26,7 +26,7 @@ else
 Для решения поставленной задачи был реализован визитор "DelOfDeadConditionsVisitor", наследуемый от ChangeVisitor.
 
 ```csharp
- class DelOfDeadConditionsVisitor : ChangeVisitor
+ public class DelOfDeadConditionsVisitor : ChangeVisitor
     {
         public override void VisitIfNode(IfNode c)
         {
