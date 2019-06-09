@@ -6,15 +6,15 @@ using SimpleLang.Visitors;
 
 namespace SimpleLang.Tests
 {
-    public class ZeroMulOptVisitorTest
+    public class CompareToItselfFalseOptVisitorTest
     {
         [Test]
-        public void LeftOperatorZero()
+        public void GreaterComparasion()
         {
-            var source = "c = 9;\na = 0 * c;\n";
+            var source = "c = 9;\na = c > c;\n";
             /*
              * c = 9;
-             * a = 0 * c;
+             * a = c > c;
              */
 
             var scanner = new Scanner();
@@ -25,20 +25,20 @@ namespace SimpleLang.Tests
             var parentv = new FillParentVisitor();
             parser.root.Visit(parentv);
 
-            var zeroMulVisitor = new ZeroMulOptVisitor();
+            var zeroMulVisitor = new CompareToItselfFalseOptVisitor();
             parser.root.Visit(zeroMulVisitor);
 
-            var expected = "c = 9;\na = 0;\n";
+            var expected = "c = 9;\na = False;\n";
             Assert.AreEqual(expected, parser.root.ToString());
         }
 
         [Test]
-        public void RightOperatorZero()
+        public void NonEqualityComparasion()
         {
-            var source = "c = 9;\na = c * 0;\n";
+            var source = "c = 9;\na = c != c;\n";
             /*
              * c = 9;
-             * a = c * 0;
+             * a = c != c;
              */
 
             var scanner = new Scanner();
@@ -49,20 +49,20 @@ namespace SimpleLang.Tests
             var parentv = new FillParentVisitor();
             parser.root.Visit(parentv);
 
-            var zeroMulVisitor = new ZeroMulOptVisitor();
+            var zeroMulVisitor = new CompareToItselfFalseOptVisitor();
             parser.root.Visit(zeroMulVisitor);
 
-            var expected = "c = 9;\na = 0;\n";
+            var expected = "c = 9;\na = False;\n";
             Assert.AreEqual(expected, parser.root.ToString());
         }
 
         [Test]
-        public void NoZeroOperators()
+        public void NotCorrectOperator()
         {
-            var source = "c = 9;\na = c * 123;\n";
+            var source = "c = 9;\na = c == c;\n";
             /*
              * c = 9;
-             * a = c * 123;
+             * a = c == c;
              */
 
             var scanner = new Scanner();
@@ -73,10 +73,10 @@ namespace SimpleLang.Tests
             var parentv = new FillParentVisitor();
             parser.root.Visit(parentv);
 
-            var zeroMulVisitor = new ZeroMulOptVisitor();
+            var zeroMulVisitor = new CompareToItselfFalseOptVisitor();
             parser.root.Visit(zeroMulVisitor);
 
-            var expected = "c = 9;\na = (c*123);\n";
+            var expected = "c = 9;\na = (c==c);\n";
             Assert.AreEqual(expected, parser.root.ToString());
         }
     }
