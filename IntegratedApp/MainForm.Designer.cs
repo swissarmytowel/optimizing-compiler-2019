@@ -388,9 +388,11 @@
             // 
             // OutputTextBox
             // 
+            this.OutputTextBox.BackColor = System.Drawing.SystemColors.Window;
             this.OutputTextBox.Dock = System.Windows.Forms.DockStyle.Fill;
             this.OutputTextBox.Location = new System.Drawing.Point(3, 16);
             this.OutputTextBox.Name = "OutputTextBox";
+            this.OutputTextBox.ReadOnly = true;
             this.OutputTextBox.Size = new System.Drawing.Size(104, 348);
             this.OutputTextBox.TabIndex = 1;
             this.OutputTextBox.Text = "";
