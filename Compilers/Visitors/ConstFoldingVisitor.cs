@@ -2,7 +2,7 @@
 
 namespace SimpleLang.Visitors
 {
-    class ThirdOptimizationVisitor : ChangeVisitor
+    class ConstFoldingVisitor : ChangeVisitor
     {
         public override void VisitBinOpNode(BinOpNode binop)
         {
