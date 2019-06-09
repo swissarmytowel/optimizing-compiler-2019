@@ -41,6 +41,7 @@
             this.checkedListBox3 = new System.Windows.Forms.CheckedListBox();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
             this.panel2 = new System.Windows.Forms.Panel();
+            this.ClearOutButton = new System.Windows.Forms.Button();
             this.ResetButton = new System.Windows.Forms.Button();
             this.ClearInButton = new System.Windows.Forms.Button();
             this.RunButton = new System.Windows.Forms.Button();
@@ -57,7 +58,6 @@
             this.OutputTextBox = new System.Windows.Forms.RichTextBox();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.InputTextBox = new System.Windows.Forms.RichTextBox();
-            this.ClearOutButton = new System.Windows.Forms.Button();
             this.menuStrip1.SuspendLayout();
             this.panel1.SuspendLayout();
             this.groupBox3.SuspendLayout();
@@ -77,8 +77,7 @@
             this.toolStripMenuItem1});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
-            this.menuStrip1.Padding = new System.Windows.Forms.Padding(8, 2, 0, 2);
-            this.menuStrip1.Size = new System.Drawing.Size(1172, 28);
+            this.menuStrip1.Size = new System.Drawing.Size(879, 24);
             this.menuStrip1.TabIndex = 10;
             this.menuStrip1.Text = "menuStrip1";
             // 
@@ -89,27 +88,27 @@
             this.SaveStripMenuItem,
             this.InfoStripMenuItem});
             this.toolStripMenuItem1.Name = "toolStripMenuItem1";
-            this.toolStripMenuItem1.Size = new System.Drawing.Size(57, 24);
+            this.toolStripMenuItem1.Size = new System.Drawing.Size(48, 20);
             this.toolStripMenuItem1.Text = "Файл";
             // 
             // LoadStripMenuItem
             // 
             this.LoadStripMenuItem.Name = "LoadStripMenuItem";
-            this.LoadStripMenuItem.Size = new System.Drawing.Size(158, 26);
+            this.LoadStripMenuItem.Size = new System.Drawing.Size(132, 22);
             this.LoadStripMenuItem.Text = "Загрузить";
             this.LoadStripMenuItem.Click += new System.EventHandler(this.LoadStripMenuItem_Click);
             // 
             // SaveStripMenuItem
             // 
             this.SaveStripMenuItem.Name = "SaveStripMenuItem";
-            this.SaveStripMenuItem.Size = new System.Drawing.Size(158, 26);
+            this.SaveStripMenuItem.Size = new System.Drawing.Size(132, 22);
             this.SaveStripMenuItem.Text = "Сохранить";
             this.SaveStripMenuItem.Click += new System.EventHandler(this.SaveStripMenuItem_Click);
             // 
             // InfoStripMenuItem
             // 
             this.InfoStripMenuItem.Name = "InfoStripMenuItem";
-            this.InfoStripMenuItem.Size = new System.Drawing.Size(158, 26);
+            this.InfoStripMenuItem.Size = new System.Drawing.Size(132, 22);
             this.InfoStripMenuItem.Text = "Справка";
             this.InfoStripMenuItem.Click += new System.EventHandler(this.InfoStripMenuItem_Click);
             // 
@@ -118,21 +117,18 @@
             this.panel1.Controls.Add(this.groupBox3);
             this.panel1.Controls.Add(this.groupBox2);
             this.panel1.Dock = System.Windows.Forms.DockStyle.Left;
-            this.panel1.Location = new System.Drawing.Point(0, 28);
-            this.panel1.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.panel1.Location = new System.Drawing.Point(0, 24);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(941, 461);
+            this.panel1.Size = new System.Drawing.Size(706, 373);
             this.panel1.TabIndex = 11;
             // 
             // groupBox3
             // 
             this.groupBox3.Controls.Add(this.tableLayoutPanel1);
             this.groupBox3.Dock = System.Windows.Forms.DockStyle.Right;
-            this.groupBox3.Location = new System.Drawing.Point(249, 0);
-            this.groupBox3.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.groupBox3.Location = new System.Drawing.Point(187, 0);
             this.groupBox3.Name = "groupBox3";
-            this.groupBox3.Padding = new System.Windows.Forms.Padding(4, 4, 4, 4);
-            this.groupBox3.Size = new System.Drawing.Size(692, 461);
+            this.groupBox3.Size = new System.Drawing.Size(519, 373);
             this.groupBox3.TabIndex = 3;
             this.groupBox3.TabStop = false;
             this.groupBox3.Text = "Оптимизации";
@@ -147,14 +143,13 @@
             this.tableLayoutPanel1.Controls.Add(this.checkedListBox1, 0, 0);
             this.tableLayoutPanel1.Controls.Add(this.checkedListBox3, 1, 0);
             this.tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tableLayoutPanel1.Location = new System.Drawing.Point(4, 19);
-            this.tableLayoutPanel1.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.tableLayoutPanel1.Location = new System.Drawing.Point(3, 16);
             this.tableLayoutPanel1.Name = "tableLayoutPanel1";
             this.tableLayoutPanel1.RowCount = 2;
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 25F));
-            this.tableLayoutPanel1.Size = new System.Drawing.Size(684, 438);
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
+            this.tableLayoutPanel1.Size = new System.Drawing.Size(513, 354);
             this.tableLayoutPanel1.TabIndex = 0;
             // 
             // checkedListBox4
@@ -172,12 +167,11 @@
             "Определение всех естественных циклов в CFG с информ. об их вложенности",
             "Построение глубинного остовного дерева с соотв. нумерацией вершин",
             "Ускорение ИТА для задачи о достигающих определениях засчет перенумерации ББЛ"});
-            this.checkedListBox4.Location = new System.Drawing.Point(346, 223);
-            this.checkedListBox4.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.checkedListBox4.Location = new System.Drawing.Point(259, 180);
             this.checkedListBox4.Name = "checkedListBox4";
-            this.checkedListBox4.Size = new System.Drawing.Size(334, 211);
+            this.checkedListBox4.Size = new System.Drawing.Size(251, 171);
             this.checkedListBox4.TabIndex = 3;
-            this.checkedListBox4.ItemCheck += new System.Windows.Forms.ItemCheckEventHandler(this.checkedListBox4_ItemCheck);
+            this.checkedListBox4.ItemCheck += new System.Windows.Forms.ItemCheckEventHandler(this.OptimizationsByControlFlowGraph_ItemCheck);
             // 
             // checkedListBox2
             // 
@@ -189,14 +183,12 @@
             "Удаление мертвого кода на основе ИТА для активных переменных",
             "Протяжка const на основе ИТА для достигающих переменных",
             "Провести оптимизации на основе анализа доступных выражений",
-            "Распространение const на основе ИТА",
-            "Поиск решения м-ом MOP"});
-            this.checkedListBox2.Location = new System.Drawing.Point(4, 223);
-            this.checkedListBox2.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            "Распространение const на основе ИТА"});
+            this.checkedListBox2.Location = new System.Drawing.Point(3, 180);
             this.checkedListBox2.Name = "checkedListBox2";
-            this.checkedListBox2.Size = new System.Drawing.Size(334, 211);
+            this.checkedListBox2.Size = new System.Drawing.Size(250, 171);
             this.checkedListBox2.TabIndex = 4;
-            this.checkedListBox2.ItemCheck += new System.Windows.Forms.ItemCheckEventHandler(this.checkedListBox2_ItemCheck);
+            this.checkedListBox2.ItemCheck += new System.Windows.Forms.ItemCheckEventHandler(this.OptimizationsByIterationAlgorithm_ItemCheck);
             // 
             // checkedListBox1
             // 
@@ -217,13 +209,12 @@
             "12) if (false) st1; else st2; => st2",
             "13) if (ex) null; else null; => null",
             "14) while (false) st; => null"});
-            this.checkedListBox1.Location = new System.Drawing.Point(4, 4);
-            this.checkedListBox1.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.checkedListBox1.Location = new System.Drawing.Point(3, 3);
             this.checkedListBox1.Name = "checkedListBox1";
             this.checkedListBox1.ScrollAlwaysVisible = true;
-            this.checkedListBox1.Size = new System.Drawing.Size(334, 211);
+            this.checkedListBox1.Size = new System.Drawing.Size(250, 171);
             this.checkedListBox1.TabIndex = 3;
-            this.checkedListBox1.ItemCheck += new System.Windows.Forms.ItemCheckEventHandler(this.checkedListBox1_ItemCheck);
+            this.checkedListBox1.ItemCheck += new System.Windows.Forms.ItemCheckEventHandler(this.OptimizationsByAstTree_ItemCheck);
             // 
             // checkedListBox3
             // 
@@ -243,13 +234,12 @@
             "Устранение недостижимого кода",
             "Устранение переходов к переходам",
             "LVN - алгоритм"});
-            this.checkedListBox3.Location = new System.Drawing.Point(346, 4);
-            this.checkedListBox3.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.checkedListBox3.Location = new System.Drawing.Point(259, 3);
             this.checkedListBox3.Name = "checkedListBox3";
             this.checkedListBox3.ScrollAlwaysVisible = true;
-            this.checkedListBox3.Size = new System.Drawing.Size(334, 211);
+            this.checkedListBox3.Size = new System.Drawing.Size(251, 171);
             this.checkedListBox3.TabIndex = 3;
-            this.checkedListBox3.ItemCheck += new System.Windows.Forms.ItemCheckEventHandler(this.checkedListBox3_ItemCheck);
+            this.checkedListBox3.ItemCheck += new System.Windows.Forms.ItemCheckEventHandler(this.OptimizationsByBasicBlocks_ItemCheck);
             // 
             // groupBox2
             // 
@@ -257,10 +247,8 @@
             this.groupBox2.Controls.Add(this.menuStrip2);
             this.groupBox2.Dock = System.Windows.Forms.DockStyle.Left;
             this.groupBox2.Location = new System.Drawing.Point(0, 0);
-            this.groupBox2.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Padding = new System.Windows.Forms.Padding(4, 4, 4, 4);
-            this.groupBox2.Size = new System.Drawing.Size(245, 461);
+            this.groupBox2.Size = new System.Drawing.Size(184, 373);
             this.groupBox2.TabIndex = 2;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "Меню";
@@ -272,17 +260,28 @@
             this.panel2.Controls.Add(this.ClearInButton);
             this.panel2.Controls.Add(this.RunButton);
             this.panel2.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.panel2.Location = new System.Drawing.Point(4, 386);
-            this.panel2.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.panel2.Location = new System.Drawing.Point(3, 312);
             this.panel2.Name = "panel2";
-            this.panel2.Size = new System.Drawing.Size(237, 71);
+            this.panel2.Size = new System.Drawing.Size(178, 58);
             this.panel2.TabIndex = 3;
+            // 
+            // ClearOutButton
+            // 
+            this.ClearOutButton.Location = new System.Drawing.Point(89, 26);
+            this.ClearOutButton.Margin = new System.Windows.Forms.Padding(2);
+            this.ClearOutButton.Name = "ClearOutButton";
+            this.ClearOutButton.Size = new System.Drawing.Size(83, 23);
+            this.ClearOutButton.TabIndex = 5;
+            this.ClearOutButton.Text = "Очистить Out";
+            this.ClearOutButton.UseVisualStyleBackColor = true;
+            this.ClearOutButton.Click += new System.EventHandler(this.ClearOutButton_Click);
             // 
             // ResetButton
             // 
-            this.ResetButton.Location = new System.Drawing.Point(3, 32);
+            this.ResetButton.Location = new System.Drawing.Point(2, 26);
+            this.ResetButton.Margin = new System.Windows.Forms.Padding(2);
             this.ResetButton.Name = "ResetButton";
-            this.ResetButton.Size = new System.Drawing.Size(100, 28);
+            this.ResetButton.Size = new System.Drawing.Size(83, 23);
             this.ResetButton.TabIndex = 4;
             this.ResetButton.Text = "Сбросить";
             this.ResetButton.UseVisualStyleBackColor = true;
@@ -290,9 +289,10 @@
             // 
             // ClearInButton
             // 
-            this.ClearInButton.Location = new System.Drawing.Point(84, 3);
+            this.ClearInButton.Location = new System.Drawing.Point(89, 3);
+            this.ClearInButton.Margin = new System.Windows.Forms.Padding(2);
             this.ClearInButton.Name = "ClearInButton";
-            this.ClearInButton.Size = new System.Drawing.Size(91, 23);
+            this.ClearInButton.Size = new System.Drawing.Size(83, 23);
             this.ClearInButton.TabIndex = 2;
             this.ClearInButton.Text = "Очистить In";
             this.ClearInButton.UseVisualStyleBackColor = true;
@@ -300,10 +300,9 @@
             // 
             // RunButton
             // 
-            this.RunButton.Location = new System.Drawing.Point(4, 4);
-            this.RunButton.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.RunButton.Location = new System.Drawing.Point(3, 3);
             this.RunButton.Name = "RunButton";
-            this.RunButton.Size = new System.Drawing.Size(100, 28);
+            this.RunButton.Size = new System.Drawing.Size(83, 23);
             this.RunButton.TabIndex = 3;
             this.RunButton.Text = "Запуск";
             this.RunButton.UseVisualStyleBackColor = true;
@@ -322,55 +321,54 @@
             this.defUseToolStripMenuItem,
             this.defUseДляББлToolStripMenuItem});
             this.menuStrip2.LayoutStyle = System.Windows.Forms.ToolStripLayoutStyle.VerticalStackWithOverflow;
-            this.menuStrip2.Location = new System.Drawing.Point(4, 19);
+            this.menuStrip2.Location = new System.Drawing.Point(3, 16);
             this.menuStrip2.Name = "menuStrip2";
-            this.menuStrip2.Padding = new System.Windows.Forms.Padding(8, 2, 0, 2);
-            this.menuStrip2.Size = new System.Drawing.Size(237, 438);
+            this.menuStrip2.Size = new System.Drawing.Size(178, 354);
             this.menuStrip2.TabIndex = 2;
             this.menuStrip2.Text = "menuStrip2";
             // 
             // TacItem
             // 
             this.TacItem.Name = "TacItem";
-            this.TacItem.Size = new System.Drawing.Size(228, 24);
+            this.TacItem.Size = new System.Drawing.Size(171, 19);
             this.TacItem.Text = "Трехадресный код";
             this.TacItem.Click += new System.EventHandler(this.TacItem_Click);
             // 
             // CfgItem
             // 
             this.CfgItem.Name = "CfgItem";
-            this.CfgItem.Size = new System.Drawing.Size(228, 24);
+            this.CfgItem.Size = new System.Drawing.Size(171, 19);
             this.CfgItem.Text = "Control-flow graph";
             this.CfgItem.Click += new System.EventHandler(this.CfgItem_Click);
             // 
             // BasicBlocksItem
             // 
             this.BasicBlocksItem.Name = "BasicBlocksItem";
-            this.BasicBlocksItem.Size = new System.Drawing.Size(228, 24);
+            this.BasicBlocksItem.Size = new System.Drawing.Size(171, 19);
             this.BasicBlocksItem.Text = "Базовые блоки";
             // 
             // inoutToolStripMenuItem
             // 
             this.inoutToolStripMenuItem.Name = "inoutToolStripMenuItem";
-            this.inoutToolStripMenuItem.Size = new System.Drawing.Size(228, 24);
+            this.inoutToolStripMenuItem.Size = new System.Drawing.Size(171, 19);
             this.inoutToolStripMenuItem.Text = "In-Out";
             // 
             // genBKillBToolStripMenuItem
             // 
             this.genBKillBToolStripMenuItem.Name = "genBKillBToolStripMenuItem";
-            this.genBKillBToolStripMenuItem.Size = new System.Drawing.Size(228, 24);
+            this.genBKillBToolStripMenuItem.Size = new System.Drawing.Size(171, 19);
             this.genBKillBToolStripMenuItem.Text = "Gen_B / Kill_B";
             // 
             // defUseToolStripMenuItem
             // 
             this.defUseToolStripMenuItem.Name = "defUseToolStripMenuItem";
-            this.defUseToolStripMenuItem.Size = new System.Drawing.Size(228, 24);
+            this.defUseToolStripMenuItem.Size = new System.Drawing.Size(171, 19);
             this.defUseToolStripMenuItem.Text = "Def - Use";
             // 
             // defUseДляББлToolStripMenuItem
             // 
             this.defUseДляББлToolStripMenuItem.Name = "defUseДляББлToolStripMenuItem";
-            this.defUseДляББлToolStripMenuItem.Size = new System.Drawing.Size(228, 24);
+            this.defUseДляББлToolStripMenuItem.Size = new System.Drawing.Size(171, 19);
             this.defUseДляББлToolStripMenuItem.Text = "Def - Use для ББл";
             // 
             // tableLayoutPanel2
@@ -381,13 +379,12 @@
             this.tableLayoutPanel2.Controls.Add(this.groupBox4, 0, 0);
             this.tableLayoutPanel2.Controls.Add(this.groupBox1, 0, 0);
             this.tableLayoutPanel2.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tableLayoutPanel2.Location = new System.Drawing.Point(941, 28);
-            this.tableLayoutPanel2.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.tableLayoutPanel2.Location = new System.Drawing.Point(706, 24);
             this.tableLayoutPanel2.Name = "tableLayoutPanel2";
             this.tableLayoutPanel2.RowCount = 1;
             this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
             this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.tableLayoutPanel2.Size = new System.Drawing.Size(231, 461);
+            this.tableLayoutPanel2.Size = new System.Drawing.Size(173, 373);
             this.tableLayoutPanel2.TabIndex = 12;
             // 
             // groupBox4
@@ -395,11 +392,11 @@
             this.groupBox4.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
             this.groupBox4.Controls.Add(this.OutputTextBox);
             this.groupBox4.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.groupBox4.Location = new System.Drawing.Point(60, 3);
+            this.groupBox4.Location = new System.Drawing.Point(59, 2);
+            this.groupBox4.Margin = new System.Windows.Forms.Padding(2);
             this.groupBox4.Name = "groupBox4";
-            this.groupBox4.Padding = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.groupBox4.RightToLeft = System.Windows.Forms.RightToLeft.No;
-            this.groupBox4.Size = new System.Drawing.Size(110, 367);
+            this.groupBox4.Size = new System.Drawing.Size(112, 369);
             this.groupBox4.TabIndex = 2;
             this.groupBox4.TabStop = false;
             this.groupBox4.Text = "Вывод";
@@ -408,11 +405,10 @@
             // 
             this.OutputTextBox.BackColor = System.Drawing.SystemColors.Window;
             this.OutputTextBox.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.OutputTextBox.Location = new System.Drawing.Point(4, 19);
-            this.OutputTextBox.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.OutputTextBox.Location = new System.Drawing.Point(3, 16);
             this.OutputTextBox.Name = "OutputTextBox";
             this.OutputTextBox.ReadOnly = true;
-            this.OutputTextBox.Size = new System.Drawing.Size(104, 348);
+            this.OutputTextBox.Size = new System.Drawing.Size(106, 350);
             this.OutputTextBox.TabIndex = 1;
             this.OutputTextBox.Text = "";
             // 
@@ -421,10 +417,8 @@
             this.groupBox1.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
             this.groupBox1.Controls.Add(this.InputTextBox);
             this.groupBox1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.groupBox1.Location = new System.Drawing.Point(4, 4);
-            this.groupBox1.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.groupBox1.Location = new System.Drawing.Point(3, 3);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Padding = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.groupBox1.RightToLeft = System.Windows.Forms.RightToLeft.No;
             this.groupBox1.Size = new System.Drawing.Size(51, 367);
             this.groupBox1.TabIndex = 1;
@@ -434,34 +428,22 @@
             // InputTextBox
             // 
             this.InputTextBox.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.InputTextBox.Location = new System.Drawing.Point(4, 19);
-            this.InputTextBox.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.InputTextBox.Location = new System.Drawing.Point(3, 16);
             this.InputTextBox.Name = "InputTextBox";
             this.InputTextBox.Size = new System.Drawing.Size(45, 348);
             this.InputTextBox.TabIndex = 1;
             this.InputTextBox.Text = "";
             // 
-            // ClearOutButton
-            // 
-            this.ClearOutButton.Location = new System.Drawing.Point(84, 32);
-            this.ClearOutButton.Name = "ClearOutButton";
-            this.ClearOutButton.Size = new System.Drawing.Size(91, 23);
-            this.ClearOutButton.TabIndex = 5;
-            this.ClearOutButton.Text = "Очистить Out";
-            this.ClearOutButton.UseVisualStyleBackColor = true;
-            this.ClearOutButton.Click += new System.EventHandler(this.ClearOutButton_Click);
-            // 
             // IntegratedApp
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.ScrollBar;
-            this.ClientSize = new System.Drawing.Size(1172, 489);
+            this.ClientSize = new System.Drawing.Size(879, 397);
             this.Controls.Add(this.tableLayoutPanel2);
             this.Controls.Add(this.panel1);
             this.Controls.Add(this.menuStrip1);
             this.MainMenuStrip = this.menuStrip1;
-            this.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.Name = "IntegratedApp";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "IntegratedApp";

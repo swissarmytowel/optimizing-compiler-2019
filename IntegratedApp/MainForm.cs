@@ -29,6 +29,7 @@ namespace IntegratedApp
 {
     public partial class IntegratedApp : Form
     {
+#region Init data
         enum OptimizationsByAstTree
         {
             opt1 = 0,   //1) 1 * ex, ex * 1, ex / 1 => ex
@@ -70,7 +71,6 @@ namespace IntegratedApp
             opt5 = 2,       //Провести оптимизации на основе анализа доступных выражений
            // opt6 = 6,       //ИТА в задаче распространения const
             opt7 = 3,       //Распространение const на основе ИТА
-           //opt8 = 8,       //Поиск решения м-ом MOP
         }
 
         enum OptimizationsByControlFlowGraph
@@ -141,6 +141,7 @@ namespace IntegratedApp
         /// Выбранные оптимизации, связанные с CFG
         /// </summary>
         private List<OptimizationsByControlFlowGraph> checkedOptimizationsBlock4 = new List<OptimizationsByControlFlowGraph>();
+#endregion
 
         public IntegratedApp()
         {
@@ -177,7 +178,7 @@ namespace IntegratedApp
         }
         #endregion
 
-        #region callback Buttons
+#region callback Buttons
         private void RunButton_Click(object sender, EventArgs e)
         {
             if (InputTextBox.Text == "") {
@@ -190,6 +191,8 @@ namespace IntegratedApp
                 MessageBox.Show("Не выбрана ни одна оптимизация");
                 return;
             }
+
+            OutputTextBox.Text = "";
 
             Scanner scanner = new Scanner();
             scanner.SetSource(InputTextBox.Text, 0);
@@ -209,7 +212,9 @@ namespace IntegratedApp
                 var printv = new PrettyPrintVisitor(true);
                 parser.root.Visit(printv);
                 OutputTextBox.Text += printv.Text;
+                OutputTextBox.Text += "\n";
             }
+            
 #endregion
             var threeAddressCodeVisitor = new ThreeAddressCodeVisitor();
             parser.root.Visit(threeAddressCodeVisitor);
@@ -358,9 +363,19 @@ namespace IntegratedApp
             checkedListBox3.ClearSelected();
             checkedListBox4.ClearSelected();
         }
-        #endregion
+        
+        private void ClearInButton_Click(object sender, EventArgs e)
+        {
+            InputTextBox.Clear();
+        }
 
-        #region callback Windows
+        private void ClearOutButton_Click(object sender, EventArgs e)
+        {
+            OutputTextBox.Clear();
+        }
+#endregion
+
+#region callback Windows
         private void TacItem_Click(object sender, EventArgs e)
         {
             AdditionalWindow tacWindow = new AdditionalWindow("TAC Window");
@@ -372,9 +387,10 @@ namespace IntegratedApp
             AdditionalWindow cfgWindow = new AdditionalWindow("CFG Window");
             cfgWindow.Show();
         }
-        #endregion
+#endregion
 
-        private void checkedListBox1_ItemCheck(object sender, ItemCheckEventArgs e)
+#region Item Check
+        private void OptimizationsByAstTree_ItemCheck(object sender, ItemCheckEventArgs e)
         {
             if (e.NewValue == CheckState.Checked) {
                 checkedOptimizationsBlock1.Add((OptimizationsByAstTree)e.Index);
@@ -383,7 +399,7 @@ namespace IntegratedApp
             }
         }
 
-        private void checkedListBox3_ItemCheck(object sender, ItemCheckEventArgs e)
+        private void OptimizationsByBasicBlocks_ItemCheck(object sender, ItemCheckEventArgs e)
         {
             if (e.NewValue == CheckState.Checked) {
                 checkedOptimizationsBlock2.Add((OptimizationsByBasicBlocks)e.Index);
@@ -392,7 +408,7 @@ namespace IntegratedApp
             }
         }
 
-        private void checkedListBox2_ItemCheck(object sender, ItemCheckEventArgs e)
+        private void OptimizationsByIterationAlgorithm_ItemCheck(object sender, ItemCheckEventArgs e)
         {
             if (e.NewValue == CheckState.Checked) {
                 checkedOptimizationsBlock3.Add((OptimizationsByIterationAlgorithm)e.Index);
@@ -401,7 +417,7 @@ namespace IntegratedApp
             }
         }
 
-        private void checkedListBox4_ItemCheck(object sender, ItemCheckEventArgs e)
+        private void OptimizationsByControlFlowGraph_ItemCheck(object sender, ItemCheckEventArgs e)
         {
             if (e.NewValue == CheckState.Checked) {
                 checkedOptimizationsBlock4.Add((OptimizationsByControlFlowGraph)e.Index);
@@ -409,15 +425,7 @@ namespace IntegratedApp
                 checkedOptimizationsBlock4.Remove((OptimizationsByControlFlowGraph)e.Index);
             }
         }
+#endregion
 
-        private void ClearInButton_Click(object sender, EventArgs e)
-        {
-            InputTextBox.Clear();
-        }
-
-        private void ClearOutButton_Click(object sender, EventArgs e)
-        {
-            OutputTextBox.Clear();
-        }
     }
 }
