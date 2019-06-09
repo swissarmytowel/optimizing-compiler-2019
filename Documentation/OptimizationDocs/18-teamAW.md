@@ -294,15 +294,7 @@ public void Postprocess()
 /// <returns>Последний идентификатор, возвращенный процессом генерации</returns>
 private string GenerateThreeAddressLine(ExprNode expression)
 {
-    // Эти строки используются для слияния меток от предыдущего парсинга if/while/for
-    // Из пустого оператора к строке кода
     string label = null;
-    if (TACodeContainer.Last != null && TACodeContainer.Last.Value.IsUtility)
-    {
-        label = TACodeContainer.Last.Value.Label;
-        TACodeContainer.RemoveNode(TACodeContainer.Last.Value);
-    }
-
     switch (expression)
     {
         // Тривиальные случаи
@@ -410,12 +402,12 @@ l 120: x = 5;
 ### Output
 ```
 x = 42
-t1 = 42 - 180
+t1 = x - 180
 t2 = t1 / 55
-t3 = 42 * 2
+t3 = x * 2
 t4 = t2 + t3
 a = t4
-t5 = 42 > 50
+t5 = x > 50
 if t5 goto L1
 a = 305
 goto L2
@@ -424,11 +416,11 @@ L2: b = False
 t6 =  ! b
 if t6 goto L3
 goto L4
-t7 = x == 0
-L3: t8 = b && t7
+L3: t7 = x == 0
+t8 = b && t7
 b = t8
 L4: i = 0
-L5: x = 0
+L5: x = i
 i = i + 1
 t9 = i < 100
 if t9 goto L5
