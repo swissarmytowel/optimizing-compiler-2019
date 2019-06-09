@@ -1,0 +1,72 @@
+using System;
+using System.Collections.Generic;
+using SimpleLang.GenKill.Interfaces;
+using SimpleLang.TACode;
+using SimpleLang.TACode.TacNodes;
+
+
+namespace SimpleLang.GenKill.Implementations
+{
+    public class TFByCommonWay : ITransmissionFunction<TacNode>
+    {
+        private ThreeAddressCode basicBlock;
+        private Dictionary<ThreeAddressCode, IExpressionSetsContainer> lineGenKill;
+
+        public TFByCommonWay(Dictionary<ThreeAddressCode, IExpressionSetsContainer> LineGenKill)
+        {
+            lineGenKill = LineGenKill;
+        }
+
+        public HashSet<TacNode> Calculate(HashSet<TacNode> _in, ThreeAddressCode bblock)
+        {
+            basicBlock = bblock;
+            var genBlock = new HashSet<TacNode>();
+            var killBlock = new HashSet<TacNode>();
+
+            var lines = new List<TacNode>();
+            var n = GetBasicBlock().TACodeLines.Count - 1;
+
+            //подсчет kill по формуле killB = kill1 + kill2 + ... + killN
+            foreach (var line in GetBasicBlock())
+            {
+                lines.Add(line);
+                killBlock.UnionWith(GetLineKill(line));
+            }
+
+            //подсчет gen по формуле genB = gen(n - i) - kill(n - i + 1) - ... - kill(n)
+            genBlock.UnionWith(GetLineGen(lines[n])); //gen(n)
+
+            for (int i = n - 1;  i >= 0; i--)
+            {
+                var tGen = new HashSet<TacNode>();
+                tGen.UnionWith(GetLineGen(lines[i]));//gen(n - i)
+
+                for(int j = i + 1; j < n; j++)
+                {
+                    tGen.ExceptWith(GetLineKill(lines[j]));//kill(n - i + j)
+                }
+            }
+
+            var exceptX = _in;
+            exceptX.ExceptWith(killBlock);
+            genBlock.UnionWith(exceptX);
+
+            return genBlock;
+        }
+
+        public ThreeAddressCode GetBasicBlock()
+        {
+            return basicBlock;
+        }
+
+        public HashSet<TacNode> GetLineGen(TacNode tacNode)
+        {
+            return lineGenKill[basicBlock].GetFirstSet();
+        }
+
+        public HashSet<TacNode> GetLineKill(TacNode tacNode)
+        {
+            return lineGenKill[basicBlock].GetSecondSet();
+        }
+    }
+}
