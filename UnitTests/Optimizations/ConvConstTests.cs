@@ -1,13 +1,13 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+using SimpleLang.Optimizations;
+using SimpleLang.TACode.TacNodes;
+using SimpleLang.Visitors;
 
 namespace UnitTests.Optimizations
 {
     [TestClass]
-    public class ConstsConvolutionTests
+    public class ConvConstTests
     {
-        /*
-         
-        TODO: update methods
 
         [TestMethod]
         public void Test_PlusInts()
@@ -16,23 +16,23 @@ namespace UnitTests.Optimizations
             threeAddressCodeVisitor.TACodeContainer.PushNode(
                 new TacAssignmentNode()
                 {
-                    Label = "L1",
                     LeftPartIdentifier = "t1",
                     FirstOperand = "2",
                     Operation = "+",
                     SecondOperand = "3"
                 });
 
-            new ConvConstOptimization().Optimize(threeAddressCodeVisitor.TACodeContainer);
+            var isOptimized = new ConvConstOptimization().Optimize(threeAddressCodeVisitor.TACodeContainer);
 
             var optimizedTac = threeAddressCodeVisitor.TACodeContainer.TACodeLines.First.Value as TacAssignmentNode;
             var res = new TacAssignmentNode()
             {
-                Label = "L1",
                 LeftPartIdentifier = "t1",
                 FirstOperand = "5"
             };
-            Assert.AreEqual(optimizedTac, res);
+
+            Assert.IsTrue(isOptimized);
+            Assert.AreEqual(optimizedTac.ToString(), res.ToString());
         }
 
         [TestMethod]
@@ -42,23 +42,23 @@ namespace UnitTests.Optimizations
             threeAddressCodeVisitor.TACodeContainer.PushNode(
                 new TacAssignmentNode()
                 {
-                    Label = "L1",
                     LeftPartIdentifier = "t1",
                     FirstOperand = "2",
                     Operation = "-",
                     SecondOperand = "3"
                 });
 
-            new ConvConstOptimization().Optimize(threeAddressCodeVisitor.TACodeContainer);
+            var isOptimized = new ConvConstOptimization().Optimize(threeAddressCodeVisitor.TACodeContainer);
 
             var optimizedTac = threeAddressCodeVisitor.TACodeContainer.TACodeLines.First.Value as TacAssignmentNode;
             var res = new TacAssignmentNode()
             {
-                Label = "L1",
                 LeftPartIdentifier = "t1",
                 FirstOperand = "-1"
             };
-            Assert.AreEqual(optimizedTac, res);
+
+            Assert.IsTrue(isOptimized);
+            Assert.AreEqual(optimizedTac.ToString(), res.ToString());
         }
 
         [TestMethod]
@@ -68,23 +68,23 @@ namespace UnitTests.Optimizations
             threeAddressCodeVisitor.TACodeContainer.PushNode(
                 new TacAssignmentNode()
                 {
-                    Label = "L1",
                     LeftPartIdentifier = "t1",
                     FirstOperand = "2",
                     Operation = "*",
                     SecondOperand = "3"
                 });
 
-            new ConvConstOptimization().Optimize(threeAddressCodeVisitor.TACodeContainer);
+            var isOptimized = new ConvConstOptimization().Optimize(threeAddressCodeVisitor.TACodeContainer);
 
             var optimizedTac = threeAddressCodeVisitor.TACodeContainer.TACodeLines.First.Value as TacAssignmentNode;
             var res = new TacAssignmentNode()
             {
-                Label = "L1",
                 LeftPartIdentifier = "t1",
                 FirstOperand = "6"
             };
-            Assert.AreEqual(optimizedTac, res);
+
+            Assert.IsTrue(isOptimized);
+            Assert.AreEqual(optimizedTac.ToString(), res.ToString());
         }
 
         [TestMethod]
@@ -94,23 +94,23 @@ namespace UnitTests.Optimizations
             threeAddressCodeVisitor.TACodeContainer.PushNode(
                 new TacAssignmentNode()
                 {
-                    Label = "L1",
                     LeftPartIdentifier = "t1",
                     FirstOperand = "4",
                     Operation = "/",
                     SecondOperand = "2"
                 });
 
-            new ConvConstOptimization().Optimize(threeAddressCodeVisitor.TACodeContainer);
+            var isOptimized = new ConvConstOptimization().Optimize(threeAddressCodeVisitor.TACodeContainer);
 
             var optimizedTac = threeAddressCodeVisitor.TACodeContainer.TACodeLines.First.Value as TacAssignmentNode;
             var res = new TacAssignmentNode()
             {
-                Label = "L1",
                 LeftPartIdentifier = "t1",
                 FirstOperand = "2"
             };
-            Assert.AreEqual(optimizedTac, res);
+
+            Assert.IsTrue(isOptimized);
+            Assert.AreEqual(optimizedTac.ToString(), res.ToString());
         }
 
         [TestMethod]
@@ -120,23 +120,23 @@ namespace UnitTests.Optimizations
             threeAddressCodeVisitor.TACodeContainer.PushNode(
                 new TacAssignmentNode()
                 {
-                    Label = "L1",
                     LeftPartIdentifier = "t1",
                     FirstOperand = "4",
                     Operation = ">",
                     SecondOperand = "2"
                 });
 
-            new ConvConstOptimization().Optimize(threeAddressCodeVisitor.TACodeContainer);
+            var isOptimized = new ConvConstOptimization().Optimize(threeAddressCodeVisitor.TACodeContainer);
 
             var optimizedTac = threeAddressCodeVisitor.TACodeContainer.TACodeLines.First.Value as TacAssignmentNode;
             var res = new TacAssignmentNode()
             {
-                Label = "L1",
                 LeftPartIdentifier = "t1",
                 FirstOperand = "True"
             };
-            Assert.AreEqual(optimizedTac, res);
+
+            Assert.IsTrue(isOptimized);
+            Assert.AreEqual(optimizedTac.ToString(), res.ToString());
         }
 
         [TestMethod]
@@ -146,23 +146,23 @@ namespace UnitTests.Optimizations
             threeAddressCodeVisitor.TACodeContainer.PushNode(
                 new TacAssignmentNode()
                 {
-                    Label = "L1",
                     LeftPartIdentifier = "t1",
                     FirstOperand = "4",
                     Operation = "<",
                     SecondOperand = "2"
                 });
 
-            new ConvConstOptimization().Optimize(threeAddressCodeVisitor.TACodeContainer);
+            var isOptimized = new ConvConstOptimization().Optimize(threeAddressCodeVisitor.TACodeContainer);
 
             var optimizedTac = threeAddressCodeVisitor.TACodeContainer.TACodeLines.First.Value as TacAssignmentNode;
             var res = new TacAssignmentNode()
             {
-                Label = "L1",
                 LeftPartIdentifier = "t1",
                 FirstOperand = "False"
             };
-            Assert.AreEqual(optimizedTac, res);
+
+            Assert.IsTrue(isOptimized);
+            Assert.AreEqual(optimizedTac.ToString(), res.ToString());
         }
 
         [TestMethod]
@@ -172,23 +172,23 @@ namespace UnitTests.Optimizations
             threeAddressCodeVisitor.TACodeContainer.PushNode(
                 new TacAssignmentNode()
                 {
-                    Label = "L1",
                     LeftPartIdentifier = "t1",
                     FirstOperand = "4",
                     Operation = ">=",
                     SecondOperand = "4"
                 });
 
-            new ConvConstOptimization().Optimize(threeAddressCodeVisitor.TACodeContainer);
+            var isOptimized = new ConvConstOptimization().Optimize(threeAddressCodeVisitor.TACodeContainer);
 
             var optimizedTac = threeAddressCodeVisitor.TACodeContainer.TACodeLines.First.Value as TacAssignmentNode;
             var res = new TacAssignmentNode()
             {
-                Label = "L1",
                 LeftPartIdentifier = "t1",
                 FirstOperand = "True"
             };
-            Assert.AreEqual(optimizedTac, res);
+
+            Assert.IsTrue(isOptimized);
+            Assert.AreEqual(optimizedTac.ToString(), res.ToString());
         }
 
         [TestMethod]
@@ -198,23 +198,23 @@ namespace UnitTests.Optimizations
             threeAddressCodeVisitor.TACodeContainer.PushNode(
                 new TacAssignmentNode()
                 {
-                    Label = "L1",
                     LeftPartIdentifier = "t1",
                     FirstOperand = "4",
                     Operation = "<=",
                     SecondOperand = "4"
                 });
 
-            new ConvConstOptimization().Optimize(threeAddressCodeVisitor.TACodeContainer);
+            var isOptimized = new ConvConstOptimization().Optimize(threeAddressCodeVisitor.TACodeContainer);
 
             var optimizedTac = threeAddressCodeVisitor.TACodeContainer.TACodeLines.First.Value as TacAssignmentNode;
             var res = new TacAssignmentNode()
             {
-                Label = "L1",
                 LeftPartIdentifier = "t1",
                 FirstOperand = "True"
             };
-            Assert.AreEqual(optimizedTac, res);
+
+            Assert.IsTrue(isOptimized);
+            Assert.AreEqual(optimizedTac.ToString(), res.ToString());
         }
 
         [TestMethod]
@@ -224,23 +224,23 @@ namespace UnitTests.Optimizations
             threeAddressCodeVisitor.TACodeContainer.PushNode(
                 new TacAssignmentNode()
                 {
-                    Label = "L1",
                     LeftPartIdentifier = "t1",
                     FirstOperand = "4",
                     Operation = "==",
                     SecondOperand = "4"
                 });
 
-            new ConvConstOptimization().Optimize(threeAddressCodeVisitor.TACodeContainer);
+            var isOptimized = new ConvConstOptimization().Optimize(threeAddressCodeVisitor.TACodeContainer);
 
             var optimizedTac = threeAddressCodeVisitor.TACodeContainer.TACodeLines.First.Value as TacAssignmentNode;
             var res = new TacAssignmentNode()
             {
-                Label = "L1",
                 LeftPartIdentifier = "t1",
                 FirstOperand = "True"
             };
-            Assert.AreEqual(optimizedTac, res);
+
+            Assert.IsTrue(isOptimized);
+            Assert.AreEqual(optimizedTac.ToString(), res.ToString());
         }
 
         [TestMethod]
@@ -250,23 +250,23 @@ namespace UnitTests.Optimizations
             threeAddressCodeVisitor.TACodeContainer.PushNode(
                 new TacAssignmentNode()
                 {
-                    Label = "L1",
                     LeftPartIdentifier = "t1",
                     FirstOperand = "4",
                     Operation = "!=",
                     SecondOperand = "4"
                 });
 
-            new ConvConstOptimization().Optimize(threeAddressCodeVisitor.TACodeContainer);
+            var isOptimized = new ConvConstOptimization().Optimize(threeAddressCodeVisitor.TACodeContainer);
 
             var optimizedTac = threeAddressCodeVisitor.TACodeContainer.TACodeLines.First.Value as TacAssignmentNode;
             var res = new TacAssignmentNode()
             {
-                Label = "L1",
                 LeftPartIdentifier = "t1",
                 FirstOperand = "False"
             };
-            Assert.AreEqual(optimizedTac, res);
+
+            Assert.IsTrue(isOptimized);
+            Assert.AreEqual(optimizedTac.ToString(), res.ToString());
         }
 
         [TestMethod]
@@ -276,7 +276,6 @@ namespace UnitTests.Optimizations
             threeAddressCodeVisitor.TACodeContainer.PushNode(
                 new TacAssignmentNode()
                 {
-                    Label = "L1",
                     LeftPartIdentifier = "t1",
                     FirstOperand = "4",
                     Operation = "!=",
@@ -294,7 +293,6 @@ namespace UnitTests.Optimizations
             threeAddressCodeVisitor.TACodeContainer.PushNode(
                 new TacAssignmentNode()
                 {
-                    Label = "L1",
                     LeftPartIdentifier = "t1",
                     FirstOperand = "4",
                     Operation = "!=",
@@ -304,6 +302,6 @@ namespace UnitTests.Optimizations
             var isOptimized = new ConvConstOptimization().Optimize(threeAddressCodeVisitor.TACodeContainer);
             Assert.IsFalse(isOptimized);
         }
-        */
+        
     }
 }
