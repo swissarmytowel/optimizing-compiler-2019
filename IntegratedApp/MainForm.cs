@@ -17,6 +17,8 @@ using SimpleLang.Optimizations.BooleanOptimization;
 using SimpleLang.TACode.TacNodes;
 using SimpleLang.ConstDistrib;
 using SimpleLang.TacBasicBlocks;
+using SimpleLang.CFG;
+using SimpleLang.CFG.DominatorsTree;
 
 namespace IntegratedApp
 {
@@ -133,7 +135,7 @@ namespace IntegratedApp
         /// <summary>
         /// Выбранные оптимизации, связанные с CFG
         /// </summary>
-        private List<OptimizationsByIterationAlgorithm> checkedOptimizationsBlock4 = new List<OptimizationsByIterationAlgorithm>();
+        private List<OptimizationsByControlFlowGraph> checkedOptimizationsBlock4 = new List<OptimizationsByControlFlowGraph>();
 
         public IntegratedApp()
         {
@@ -209,6 +211,7 @@ namespace IntegratedApp
             threeAddressCodeVisitor.Postprocess();
             var bBlocks = new BasicBlocks();
             bBlocks.SplitTACode(threeAddressCodeVisitor.TACodeContainer);
+            var cfg = new ControlFlowGraph(threeAddressCodeVisitor.TACodeContainer);
 
 #region Optimizations by Basic blocks
             if (checkedOptimizationsBlock2.Count != 0) {
@@ -235,6 +238,8 @@ namespace IntegratedApp
             }
             #endregion
 
+            cfg.Rebuild(threeAddressCodeVisitor.TACodeContainer);
+
 #region Optimizations by Iteration Algorithm
 
             if (checkedOptimizationsBlock3.Count != 0) {
@@ -243,21 +248,44 @@ namespace IntegratedApp
 
 #endregion
 
+            cfg.Rebuild(threeAddressCodeVisitor.TACodeContainer);
+
 #region Optimizations by CFG
 
             if (checkedOptimizationsBlock4.Count != 0) {
-                // TO DO FOR GLEB
+                foreach(var item in checkedOptimizationsBlock4) {
+                    switch (item) {
+                        case OptimizationsByControlFlowGraph.opt0:
+                            OutputTextBox.Text += string.Format("===== Three address code =====\n");
+                            OutputTextBox.Text += threeAddressCodeVisitor.TACodeContainer;
+                            OutputTextBox.Text += "\n";
+                            OutputTextBox.Text += cfg;
+
+                            var dominatorService = new DominatorsService(cfg);
+                            OutputTextBox.Text += dominatorService;
+                            OutputTextBox.Text += "\n";
+                            break;
+                        case OptimizationsByControlFlowGraph.opt1:
+                            break;
+                        case OptimizationsByControlFlowGraph.opt2:
+                            break;
+                        case OptimizationsByControlFlowGraph.opt3:
+                            break;
+                        case OptimizationsByControlFlowGraph.opt4:
+                            break;
+                        case OptimizationsByControlFlowGraph.opt5:
+                            break;
+                        case OptimizationsByControlFlowGraph.opt6:
+                            break;
+                        case OptimizationsByControlFlowGraph.opt7:
+                            break;
+                    }
+                }
             }
 
 #endregion
         }
-
-        private void ClearButton_Click(object sender, EventArgs e)
-        {
-            InputTextBox.Clear();
-            OutputTextBox.Clear();
-        }
-
+        
         private void ResetButton_Click(object sender, EventArgs e)
         {
             foreach (int elem in checkedListBox1.CheckedIndices) {
@@ -309,6 +337,34 @@ namespace IntegratedApp
             } else if (e.NewValue == CheckState.Unchecked) {
                 checkedOptimizationsBlock2.Remove((OptimizationsByBasicBlocks)e.Index);
             }
+        }
+
+        private void checkedListBox2_ItemCheck(object sender, ItemCheckEventArgs e)
+        {
+            if (e.NewValue == CheckState.Checked) {
+                checkedOptimizationsBlock3.Add((OptimizationsByIterationAlgorithm)e.Index);
+            } else if (e.NewValue == CheckState.Unchecked) {
+                checkedOptimizationsBlock3.Remove((OptimizationsByIterationAlgorithm)e.Index);
+            }
+        }
+
+        private void checkedListBox4_ItemCheck(object sender, ItemCheckEventArgs e)
+        {
+            if (e.NewValue == CheckState.Checked) {
+                checkedOptimizationsBlock4.Add((OptimizationsByControlFlowGraph)e.Index);
+            } else if (e.NewValue == CheckState.Unchecked) {
+                checkedOptimizationsBlock4.Remove((OptimizationsByControlFlowGraph)e.Index);
+            }
+        }
+
+        private void ClearInButton_Click(object sender, EventArgs e)
+        {
+            InputTextBox.Clear();
+        }
+
+        private void ClearOutButton_Click(object sender, EventArgs e)
+        {
+            OutputTextBox.Clear();
         }
     }
 }

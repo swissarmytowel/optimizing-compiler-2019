@@ -42,7 +42,7 @@
             this.groupBox2 = new System.Windows.Forms.GroupBox();
             this.panel2 = new System.Windows.Forms.Panel();
             this.ResetButton = new System.Windows.Forms.Button();
-            this.ClearButton = new System.Windows.Forms.Button();
+            this.ClearInButton = new System.Windows.Forms.Button();
             this.RunButton = new System.Windows.Forms.Button();
             this.menuStrip2 = new System.Windows.Forms.MenuStrip();
             this.TacItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -57,6 +57,7 @@
             this.OutputTextBox = new System.Windows.Forms.RichTextBox();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.InputTextBox = new System.Windows.Forms.RichTextBox();
+            this.ClearOutButton = new System.Windows.Forms.Button();
             this.menuStrip1.SuspendLayout();
             this.panel1.SuspendLayout();
             this.groupBox3.SuspendLayout();
@@ -169,6 +170,7 @@
             this.checkedListBox4.Name = "checkedListBox4";
             this.checkedListBox4.Size = new System.Drawing.Size(251, 171);
             this.checkedListBox4.TabIndex = 3;
+            this.checkedListBox4.ItemCheck += new System.Windows.Forms.ItemCheckEventHandler(this.checkedListBox4_ItemCheck);
             // 
             // checkedListBox2
             // 
@@ -186,6 +188,7 @@
             this.checkedListBox2.Name = "checkedListBox2";
             this.checkedListBox2.Size = new System.Drawing.Size(250, 171);
             this.checkedListBox2.TabIndex = 4;
+            this.checkedListBox2.ItemCheck += new System.Windows.Forms.ItemCheckEventHandler(this.checkedListBox2_ItemCheck);
             // 
             // checkedListBox1
             // 
@@ -252,8 +255,9 @@
             // 
             // panel2
             // 
+            this.panel2.Controls.Add(this.ClearOutButton);
             this.panel2.Controls.Add(this.ResetButton);
-            this.panel2.Controls.Add(this.ClearButton);
+            this.panel2.Controls.Add(this.ClearInButton);
             this.panel2.Controls.Add(this.RunButton);
             this.panel2.Dock = System.Windows.Forms.DockStyle.Bottom;
             this.panel2.Location = new System.Drawing.Point(3, 312);
@@ -263,7 +267,7 @@
             // 
             // ResetButton
             // 
-            this.ResetButton.Location = new System.Drawing.Point(100, 32);
+            this.ResetButton.Location = new System.Drawing.Point(3, 32);
             this.ResetButton.Name = "ResetButton";
             this.ResetButton.Size = new System.Drawing.Size(75, 23);
             this.ResetButton.TabIndex = 4;
@@ -271,15 +275,15 @@
             this.ResetButton.UseVisualStyleBackColor = true;
             this.ResetButton.Click += new System.EventHandler(this.ResetButton_Click);
             // 
-            // ClearButton
+            // ClearInButton
             // 
-            this.ClearButton.Location = new System.Drawing.Point(3, 32);
-            this.ClearButton.Name = "ClearButton";
-            this.ClearButton.Size = new System.Drawing.Size(75, 23);
-            this.ClearButton.TabIndex = 2;
-            this.ClearButton.Text = "Очистить";
-            this.ClearButton.UseVisualStyleBackColor = true;
-            this.ClearButton.Click += new System.EventHandler(this.ClearButton_Click);
+            this.ClearInButton.Location = new System.Drawing.Point(84, 3);
+            this.ClearInButton.Name = "ClearInButton";
+            this.ClearInButton.Size = new System.Drawing.Size(91, 23);
+            this.ClearInButton.TabIndex = 2;
+            this.ClearInButton.Text = "Очистить In";
+            this.ClearInButton.UseVisualStyleBackColor = true;
+            this.ClearInButton.Click += new System.EventHandler(this.ClearInButton_Click);
             // 
             // RunButton
             // 
@@ -374,10 +378,10 @@
             this.groupBox4.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
             this.groupBox4.Controls.Add(this.OutputTextBox);
             this.groupBox4.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.groupBox4.Location = new System.Drawing.Point(59, 3);
+            this.groupBox4.Location = new System.Drawing.Point(60, 3);
             this.groupBox4.Name = "groupBox4";
             this.groupBox4.RightToLeft = System.Windows.Forms.RightToLeft.No;
-            this.groupBox4.Size = new System.Drawing.Size(111, 367);
+            this.groupBox4.Size = new System.Drawing.Size(110, 367);
             this.groupBox4.TabIndex = 2;
             this.groupBox4.TabStop = false;
             this.groupBox4.Text = "Вывод";
@@ -387,7 +391,7 @@
             this.OutputTextBox.Dock = System.Windows.Forms.DockStyle.Fill;
             this.OutputTextBox.Location = new System.Drawing.Point(3, 16);
             this.OutputTextBox.Name = "OutputTextBox";
-            this.OutputTextBox.Size = new System.Drawing.Size(105, 348);
+            this.OutputTextBox.Size = new System.Drawing.Size(104, 348);
             this.OutputTextBox.TabIndex = 1;
             this.OutputTextBox.Text = "";
             // 
@@ -399,7 +403,7 @@
             this.groupBox1.Location = new System.Drawing.Point(3, 3);
             this.groupBox1.Name = "groupBox1";
             this.groupBox1.RightToLeft = System.Windows.Forms.RightToLeft.No;
-            this.groupBox1.Size = new System.Drawing.Size(50, 367);
+            this.groupBox1.Size = new System.Drawing.Size(51, 367);
             this.groupBox1.TabIndex = 1;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Ввод";
@@ -409,9 +413,19 @@
             this.InputTextBox.Dock = System.Windows.Forms.DockStyle.Fill;
             this.InputTextBox.Location = new System.Drawing.Point(3, 16);
             this.InputTextBox.Name = "InputTextBox";
-            this.InputTextBox.Size = new System.Drawing.Size(44, 348);
+            this.InputTextBox.Size = new System.Drawing.Size(45, 348);
             this.InputTextBox.TabIndex = 1;
             this.InputTextBox.Text = "";
+            // 
+            // ClearOutButton
+            // 
+            this.ClearOutButton.Location = new System.Drawing.Point(84, 32);
+            this.ClearOutButton.Name = "ClearOutButton";
+            this.ClearOutButton.Size = new System.Drawing.Size(91, 23);
+            this.ClearOutButton.TabIndex = 5;
+            this.ClearOutButton.Text = "Очистить Out";
+            this.ClearOutButton.UseVisualStyleBackColor = true;
+            this.ClearOutButton.Click += new System.EventHandler(this.ClearOutButton_Click);
             // 
             // IntegratedApp
             // 
@@ -464,7 +478,7 @@
         private System.Windows.Forms.CheckedListBox checkedListBox2;
         private System.Windows.Forms.CheckedListBox checkedListBox1;
         private System.Windows.Forms.CheckedListBox checkedListBox3;
-        private System.Windows.Forms.Button ClearButton;
+        private System.Windows.Forms.Button ClearInButton;
         private System.Windows.Forms.Button ResetButton;
         private System.Windows.Forms.ToolStripMenuItem BasicBlocksItem;
         private System.Windows.Forms.ToolStripMenuItem inoutToolStripMenuItem;
@@ -476,6 +490,7 @@
         private System.Windows.Forms.RichTextBox OutputTextBox;
         private System.Windows.Forms.GroupBox groupBox1;
         private System.Windows.Forms.RichTextBox InputTextBox;
+        private System.Windows.Forms.Button ClearOutButton;
     }
 }
 
