@@ -102,5 +102,85 @@ namespace UnitTests.Visitors
 
             Assert.AreEqual(printer1.Text, printer2.Text);
         }
+
+        /// <summary>
+        /// Test №3
+        /// </summary>
+        [TestMethod]
+        public void Visit_ConstFoldingTests()
+        {
+            var source = "x = 50 * 10;";
+
+            var trueSource = "x = 500;";
+
+            var scanner1 = new Scanner();
+            scanner1.SetSource(source, 0);
+
+            var sourceParser = new Parser(scanner1);
+            sourceParser.Parse();
+
+            var fillParent = new FillParentVisitor();
+            sourceParser.root.Visit(fillParent);
+
+            var scanner2 = new Scanner();
+            scanner2.SetSource(trueSource, 0);
+            var trueSourceParser = new Parser(scanner2);
+            trueSourceParser.Parse();
+
+            var cfv = new ConstFoldingVisitor();
+
+            sourceParser.root.Visit(cfv);
+
+            var printer1 = new PrettyPrintVisitor(true);
+            var printer2 = new PrettyPrintVisitor(true);
+
+            sourceParser.root.Visit(printer1);
+            trueSourceParser.root.Visit(printer2);
+
+            Console.WriteLine(printer1.Text);
+            Console.WriteLine(printer2.Text);
+
+            Assert.AreEqual(printer1.Text, printer2.Text);
+        }
+
+        /// <summary>
+        /// Test №13
+        /// </summary>
+        [TestMethod]
+        public void Visit_DelOfDeadConditionsTests()
+        {
+            var source = "if(a == b){;}else{;}";
+
+            var trueSource = ";";
+
+            var scanner1 = new Scanner();
+            scanner1.SetSource(source, 0);
+
+            var sourceParser = new Parser(scanner1);
+            sourceParser.Parse();
+
+            var fillParent = new FillParentVisitor();
+            sourceParser.root.Visit(fillParent);
+
+            var scanner2 = new Scanner();
+            scanner2.SetSource(trueSource, 0);
+            var trueSourceParser = new Parser(scanner2);
+            trueSourceParser.Parse();
+
+            var dodcv = new DelOfDeadConditionsVisitor();
+
+            sourceParser.root.Visit(dodcv);
+
+            var printer1 = new PrettyPrintVisitor(true);
+            var printer2 = new PrettyPrintVisitor(true);
+
+            sourceParser.root.Visit(printer1);
+            trueSourceParser.root.Visit(printer2);
+
+            Console.WriteLine(printer1.Text);
+            Console.WriteLine(printer2.Text);
+
+            Assert.AreEqual(printer1.Text, printer2.Text);
+        }
     }
 }
