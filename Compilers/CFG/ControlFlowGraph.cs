@@ -24,6 +24,15 @@ namespace SimpleLang.CFG
             Build();
         }
 
+        private ControlFlowGraph(ThreeAddressCode tac, BasicBlocks basicBlocks, 
+            IEnumerable<ThreeAddressCode> vertices, IEnumerable<Edge<ThreeAddressCode>> edges)
+        {
+            SourceCode = tac;
+            SourceBasicBlocks = basicBlocks;
+            Graph.AddVertexRange(vertices);
+            Graph.AddEdgeRange(edges);
+        }
+
         /// <summary>
         /// Returns a vertex at index position
         /// </summary>
@@ -34,8 +43,11 @@ namespace SimpleLang.CFG
         /// </summary>
         public TacNode this[int vertexIdx, int nodeIdx] => GetVertexAt(vertexIdx).ElementAt(nodeIdx);
 
-        public DepthSpanningTree GetDepthSpanningTree()
-            => new DepthSpanningTree(this);
+        public ControlFlowGraph GetCFGWithSortedVertices()
+        {
+            var dst = new DepthSpanningTree(this);
+            return new ControlFlowGraph(SourceCode, dst.SortedBasicBlocks, dst.Vertices, Edges);
+        }
 
         public void Rebuild(ThreeAddressCode tac)
         {

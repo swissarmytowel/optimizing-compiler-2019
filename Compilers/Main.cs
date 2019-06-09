@@ -19,6 +19,7 @@ using SimpleLang.TacBasicBlocks;
 using SimpleLang.TacBasicBlocks.DefUse;
 using SimpleLang.E_GenKill.Implementations;
 using SimpleLang.ConstDistrib;
+using SimpleLang.CFG.DominatorsTree;
 
 namespace SimpleCompiler
 {
@@ -292,6 +293,31 @@ namespace SimpleCompiler
                     {
                         Console.Write(bblock);
                     }
+
+                    Console.WriteLine("============ Dominators ============");
+                    var dominators = new DominatorsFinder(cfg);
+                    for(var i = 0; i < dominators.Dominators.Count; ++i)
+                    {
+                        Console.WriteLine(i + ": ");
+                        foreach (var tacNode in dominators.Dominators.ElementAt(i).Value)
+                        {
+                            Console.WriteLine(tacNode);
+                        }
+                    }
+                    Console.WriteLine("============ Immediate Dominators ============");
+                    for (var i = 0; i < dominators.ImmediateDominators.Count; ++i) {
+                        Console.WriteLine(i + ": ");
+                        if (dominators.ImmediateDominators.ElementAt(i).Value == null) {
+                            Console.WriteLine("null");
+                        } else {
+                            foreach (var tacNode in dominators.ImmediateDominators.ElementAt(i).Value) {
+                                Console.WriteLine(tacNode);
+                            }
+                        }
+                        Console.WriteLine();
+                    }
+
+
 //                    var activeVariablesITA = new ActiveVariablesITA(cfg, defUseContainers);
 //                    Console.WriteLine("=== InOut после итерационного алгоритма для активных переменных ===");
 //                    Console.WriteLine(activeVariablesITA.InOut);
@@ -329,6 +355,19 @@ namespace SimpleCompiler
                     ConstDistribTest.TestForOperator();
                     ConstDistribTest.TestForFunction();
                     Console.WriteLine("ConstDistribTests done success");
+                    /* -----------------------ConstDistrib END---------------------------------*/
+
+                    /* -----------------------ConstDistribOptimization START---------------------------------*/
+                    Console.WriteLine("ConstDistributionOptimization: Before");
+                    Console.WriteLine(cfg.SourceBasicBlocks
+                        .BasicBlockItems.Select((bl, ind) => $"BLOCK{ind}:\n" + bl.ToString()).Aggregate((b1, b2) => b1 + b2));
+
+                    var constDistITA = new ConstDistributionITA(cfg);
+                    var constDistOpt = new ConstDistributionOptimization();
+                    var isConstDistApplied = constDistOpt.Optimize(constDistITA);
+                    Console.WriteLine("ConstDistributionOptimization isUsed: " + isConstDistApplied);
+                    Console.WriteLine(cfg.SourceBasicBlocks
+                        .BasicBlockItems.Select((bl, ind) => $"BLOCK{ind}:\n" + bl.ToString()).Aggregate((b1, b2) => b1 + b2));
                     /* -----------------------ConstDistrib END---------------------------------*/
                 }
             }

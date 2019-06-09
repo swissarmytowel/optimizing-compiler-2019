@@ -59,10 +59,12 @@
     <Reference Include="nunit.framework" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CFG\DominatorsTree\DominatorsFinder.cs" />
     <Compile Include="CFG\DSTEdgeClassifier.cs" />
     <Compile Include="ConstDistrib\ConstDistribFunction.cs" />
     <Compile Include="ConstDistrib\ConstDistribOperator.cs" />
     <Compile Include="ConstDistrib\ConstDistribTest.cs" />
+    <Compile Include="Optimizations\ConstDistributionOptimization.cs" />
     <Compile Include="ConstDistrib\DataStreamTable.cs" />
     <Compile Include="ConstDistrib\DataStreamValue.cs" />
     <Compile Include="ConstDistrib\SemilatticeTest.cs" />
@@ -80,9 +82,11 @@
     <Compile Include="DefUse\DefUseForBlocksGenerator.cs" />
     <Compile Include="IterationAlgorithms\ActiveVariablesITA.cs" />
     <Compile Include="IterationAlgorithms\AvailableExpressionsITA.cs" />
+    <Compile Include="IterationAlgorithms\ConstDistributionITA.cs" />
     <Compile Include="IterationAlgorithms\Interfaces\IIterationAlgorithm.cs" />
     <Compile Include="IterationAlgorithms\IterationAlgorithm.cs" />
     <Compile Include="IterationAlgorithms\ReachingDefinitionsITA.cs" />
+    <Compile Include="IterationAlgorithms\ReachingDefinitionsSortedITA.cs" />
     <Compile Include="Optimizations\AvailableExprOptimization.cs" />
     <Compile Include="Optimizations\CommonSubexprOptimization.cs" />
     <Compile Include="Optimizations\DefUseConstPropagation.cs" />
