@@ -7,7 +7,7 @@ using SimpleLang.TACode.TacNodes;
 
 namespace SimpleLang.DefUse
 {
-    static class DefUseForBlocksPrinter
+    public static class DefUseForBlocksPrinter
     {
         static public void Execute(Dictionary<ThreeAddressCode, IExpressionSetsContainer> defUseForBlocks)
         {
