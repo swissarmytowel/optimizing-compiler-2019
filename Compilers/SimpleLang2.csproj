@@ -61,6 +61,9 @@
     <Compile Include="ConstDistrib\SemilatticeValue.cs" />
     <Compile Include="DefUse\DefUseForBlocksPrinter.cs" />
     <Compile Include="DefUse\TacNodeVarDecorator.cs" />
+    <Compile Include="E_GenKill\Implementations\E_GenKillContatiner.cs" />
+    <Compile Include="E_GenKill\Implementations\E_GenKillVisitor.cs" />
+    <Compile Include="E_GenKill\Interfaces\IEGenKillVisitor.cs" />
     <Compile Include="InOut\InOutContainer.cs" />
     <Compile Include="InOut\InOutContainerWithFilling.cs" />
     <Compile Include="CFG\BidirectionalGraph.cs" />
