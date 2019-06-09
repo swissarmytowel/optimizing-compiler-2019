@@ -149,6 +149,7 @@
     <Compile Include="IterationAlgorithms\CollectionOperators\IntersectCollectionOperator.cs" />
     <Compile Include="Tests\ZeroMulOptVisitorTest.cs" />
     <Compile Include="Tests\CompareToItselfFalseOptVisitorTest.cs" />
+    <Compile Include="Tests\BasicBlocksTest.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
