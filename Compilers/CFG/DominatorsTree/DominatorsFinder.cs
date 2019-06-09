@@ -38,12 +38,6 @@ namespace SimpleLang.CFG.DominatorsTree
         public Dictionary<ThreeAddressCode, ThreeAddressCode> ImmediateDominators =
             new Dictionary<ThreeAddressCode, ThreeAddressCode>();
 
-        /// <summary>
-        /// Оператор сбора
-        /// </summary>
-        private ICollectionOperator<ThreeAddressCode> _collectionOperator =
-            new IntersectCollectionOperator<ThreeAddressCode>();
-
         public DominatorsFinder(ControlFlowGraph cfg)
         {
             // Входной узел программы
@@ -94,7 +88,9 @@ namespace SimpleLang.CFG.DominatorsTree
                     if (ancestors.Count > 1) { 
                         for (int ind = 1; ind < ancestors.Count; ++ind) {
                             if (curBlock == ancestors[ind]) continue;
-                            InOut.In[curBlock] = _collectionOperator.Collect(InOut.In[curBlock], InOut.Out[ancestors[ind]]);
+                            var tmpIntersection = new HashSet<ThreeAddressCode>(InOut.In[curBlock]);
+                            tmpIntersection.IntersectWith(InOut.Out[ancestors[ind]]);
+                            InOut.In[curBlock] = tmpIntersection;
                         }
                     }
 
