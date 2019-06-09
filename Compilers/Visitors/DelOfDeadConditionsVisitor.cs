@@ -2,7 +2,7 @@
 
 namespace SimpleLang.Visitors
 {
-    class DelOfDeadConditionsVisitor : ChangeVisitor
+    public class DelOfDeadConditionsVisitor : ChangeVisitor
     {
         public override void VisitIfNode(IfNode c)
         {
