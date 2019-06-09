@@ -163,7 +163,7 @@ c = 0;
 a = 11;
 ```
 
-#### Three adress code:
+#### Three address code:
 ```csharp
 t1 = 2 > 3
 c = t1
