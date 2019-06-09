@@ -269,9 +269,9 @@ namespace SimpleCompiler
                     //elimintaion.Optimize(threeAddressCodeVisitor.TACodeContainer);
                     //Console.WriteLine("Удаление переходов к переходам завершилось");
 
-//                    var unreachableCode = new UnreachableCodeOpt();
-//                    var res = unreachableCode.Optimize(threeAddressCodeVisitor.TACodeContainer);
-//                    Console.WriteLine("Оптимизация для недостижимых блоков");
+//                   var unreachableCode = new UnreachableCodeOpt();
+//                   var res = unreachableCode.Optimize(threeAddressCodeVisitor.TACodeContainer);
+//                   Console.WriteLine("Оптимизация для недостижимых блоков");
 
                     var algOpt = new AlgebraicIdentityOptimization();
                     algOpt.Optimize(threeAddressCodeVisitor.TACodeContainer);

@@ -1,7 +1,6 @@
 a = 123  
-goto L8
+goto l8
 v = 345  
-L7: 
-goto L8
+l7: goto l8
 g = 55  
-L8: 
+l8: 
