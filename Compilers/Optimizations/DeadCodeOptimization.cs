@@ -17,6 +17,10 @@ namespace SimpleLang.Optimizations
         {
             variables = new Dictionary<string, bool>();
         }
+        public DeadCodeOptimization(Dictionary<string, bool> variablesInfo)
+        {
+            variables = new Dictionary<string, bool>(variablesInfo);
+        }
         public bool IsVariable(string val)
         {
             if (val != null)
