@@ -6,7 +6,7 @@ using ProgramTree;
 
 namespace SimpleLang.Visitors
 {
-    class IfNodeWithBoolExprVisitor : ChangeVisitor
+    public class IfNodeWithBoolExprVisitor : ChangeVisitor
     {
         public override void VisitIfNode(IfNode inode)
         {
