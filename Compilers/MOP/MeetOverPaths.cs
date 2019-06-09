@@ -81,7 +81,7 @@ namespace SimpleLang.MOP
             Dictionary<ThreeAddressCode, bool> visited,
             Stack<ThreeAddressCode> predecessors,
             Func<ThreeAddressCode, bool> checkForNext,
-            Func<ThreeAddressCode ,IEnumerable<Edge<ThreeAddressCode>>> getNextEdges
+            Func<ThreeAddressCode, IEnumerable<Edge<ThreeAddressCode>>> getNextEdges
             )
         {
             visited[currentBlock] = true;
