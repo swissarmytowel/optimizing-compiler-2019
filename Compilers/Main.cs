@@ -20,6 +20,7 @@ using SimpleLang.TacBasicBlocks.DefUse;
 using SimpleLang.E_GenKill.Implementations;
 using SimpleLang.ConstDistrib;
 using SimpleLang.CFG.DominatorsTree;
+using SimpleLang.CFG.NaturalCycles;
 
 namespace SimpleCompiler
 {
@@ -56,10 +57,10 @@ namespace SimpleCompiler
 
                     // TODO: add loop through all tree optimizations
 
-                    //var avis = new AssignCountVisitor();
-                    //parser.root.Visit(avis);
-                    //Console.WriteLine("Количество присваиваний = {0}", avis.Count);
-                    //Console.WriteLine("-------------------------------");
+                    var avis = new AssignCountVisitor();
+                    parser.root.Visit(avis);
+                    Console.WriteLine("Количество присваиваний = {0}", avis.Count);
+                    Console.WriteLine("-------------------------------");
 
 //                    var operv = new OperatorCountVisitor();
 //                    parser.root.Visit(operv);
@@ -178,6 +179,20 @@ namespace SimpleCompiler
                     var depth = cfg.GetDepth(dstClassifier.EdgeTypes);
                     Console.WriteLine($"Depth CFG = {depth}");
 
+
+                    /* -----------------------CFG TASKS START---------------------------------*/
+                    Console.WriteLine("\nCFG TASKS START");
+                    Console.WriteLine(cfg);
+                    var edgeClassifierService = new EdgeClassifierService(cfg);
+                    Console.WriteLine("EdgeClassifierService: \n" + edgeClassifierService);
+                    bool isReducibility = DSTReducibility.IsReducibility(cfg);
+                    Console.WriteLine("IsReducibility: " + isReducibility);
+                    var naturalCycles = new CFGNaturalCycles(cfg);
+                    Console.WriteLine("\nNaturalCycles: \n" + naturalCycles);
+                    //Console.WriteLine("\nNestedCycles: \n" + naturalCycles.NestedLoopsText());
+                    Console.WriteLine("\nCFG TASKS END");
+                    /* -----------------------CFG TASKS END---------------------------------*/
+
                     //Console.WriteLine(threeAddressCodeVisitor.TACodeContainer);
                     //var availExprOpt = new AvailableExprOptimization();
                     //availExprOpt.Optimize(cfg);
@@ -185,10 +200,10 @@ namespace SimpleCompiler
                     //Console.WriteLine(cfg);
 
 
-//                    Console.WriteLine("======= DV =======");
-//                    Console.WriteLine(threeAddressCodeVisitor);
-//                    var detector = new DefUseDetector();
-//                    detector.DetectAndFillDefUse(threeAddressCodeVisitor.TACodeContainer);
+                    //                    Console.WriteLine("======= DV =======");
+                    //                    Console.WriteLine(threeAddressCodeVisitor);
+                    //                    var detector = new DefUseDetector();
+                    //                    detector.DetectAndFillDefUse(threeAddressCodeVisitor.TACodeContainer);
 
                     Console.WriteLine();
                     Console.WriteLine("Before optimization");
@@ -254,9 +269,9 @@ namespace SimpleCompiler
                     //elimintaion.Optimize(threeAddressCodeVisitor.TACodeContainer);
                     //Console.WriteLine("Удаление переходов к переходам завершилось");
 
-                    var unreachableCode = new UnreachableCodeOpt();
-                    var res = unreachableCode.Optimize(threeAddressCodeVisitor.TACodeContainer);
-                    Console.WriteLine("Оптимизация для недостижимых блоков");
+//                   var unreachableCode = new UnreachableCodeOpt();
+//                   var res = unreachableCode.Optimize(threeAddressCodeVisitor.TACodeContainer);
+//                   Console.WriteLine("Оптимизация для недостижимых блоков");
 
                     var algOpt = new AlgebraicIdentityOptimization();
                     algOpt.Optimize(threeAddressCodeVisitor.TACodeContainer);
@@ -270,6 +285,18 @@ namespace SimpleCompiler
 
                     GenKillVisitor genKillVisitor = new GenKillVisitor();
                     var genKillContainers = genKillVisitor.GenerateReachingDefinitionForBlocks(cfg.SourceBasicBlocks);
+
+                    //start 
+                    var commonTf = new TFByCommonWay(genKillContainers);
+                    var composTf = new TFByComposition(genKillContainers);
+
+                    Console.WriteLine("=== Compos ===");
+                    Console.WriteLine(composTf.Calculate(new HashSet<TacNode>(), cfg.SourceBasicBlocks.BasicBlockItems.First()));
+                   
+                    Console.WriteLine("=== Common ===");
+                    Console.WriteLine(commonTf.Calculate(new HashSet<TacNode>(), cfg.SourceBasicBlocks.BasicBlockItems.First()));
+
+                    //end
 //                    InOutContainerWithFilling inOutContainers =
 //                        new InOutContainerWithFilling(cfg.SourceBasicBlocks, genKillContainers);
 //                    Console.WriteLine("=== InOut для базовых блоков ===");

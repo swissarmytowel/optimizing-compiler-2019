@@ -161,7 +161,56 @@ private void FillUsagesWithoutDefinitions(Dictionary<string, List<LinkedListTacN
 ```
 
 ## Тесты
-Узнать как должны выглядить тесты в докуметации.
+#### INPUT: 
+```csharp
+i = 2;
+a1 = (4 * i);
+i = 3;
+if (b)
+{
+  a3 = (4 * i);
+}
+a2 = (4 * i);
+```
+
+#### Three adress code:
+```csharp
+i = 2
+t1 = 4 * i
+a1 = t1
+i = 3
+t2 = b
+if t2 goto L1
+goto L2
+L1: t3 = 4 * i
+a3 = t3
+L2: t4 = 4 * i
+a2 = t4
+```
+
+#### OUTPUT:
+```csharp
+DEF:
+[a2, a2 = t4  ]: no usages
+[t4, L2: t4 = 4 * i]: a2 = t4  
+[a3, a3 = t3  ]: no usages
+[t3, L1: t3 = 4 * i]: a3 = t3  
+[t2, t2 = b  ]: if t2 goto L1
+[i, i = 3  ]: L2: t4 = 4 * i, L1: t3 = 4 * i
+[a1, a1 = t1  ]: no usages
+[t1, t1 = 4 * i]: a1 = t1  
+[i, i = 2  ]: t1 = 4 * i
+
+USE:
+[t4, a2 = t4  ]: L2: t4 = 4 * i
+[t3, a3 = t3  ]: L1: t3 = 4 * i
+[t2, if t2 goto L1]: t2 = b
+[i, L2: t4 = 4 * i]: i = 3
+[i, L1: t3 = 4 * i]: i = 3
+[t1, a1 = t1  ]: t1 = 4 * i
+[i, t1 = 4 * i]: i = 2
+[b, t2 = b  ]: no definitions
+```
 
 ## Вывод
 Используя методы, описанные выше, мы получили Def-Use для каждой переменной в пределах базового блока. Если для какой-либо переменной нет определения, все её использования имеют определение null. Если для какой-либо переменной нет использования, то её определение имеет пустой список использований (Count == 0).
