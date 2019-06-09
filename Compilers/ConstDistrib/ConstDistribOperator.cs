@@ -8,6 +8,9 @@ namespace SimpleLang.ConstDistrib
 {
     public class ConstDistribOperator : ICollectionOperator<SemilatticeStreamValue>
     {
+        // Использует итерационный алгоритм для задачи распространения констант IN[B] = ^P-предшB OUT[P]
+        // Принимает два потока firstSet и secondSet, создаёт на их основе DataStreamValue - Поток данных(реализация на множествах для ITA)
+        // Далее применяет оператор сбора ^ для Потока данных и возвращает его поток
         public HashSet<SemilatticeStreamValue> Collect(HashSet<SemilatticeStreamValue> firstSet, HashSet<SemilatticeStreamValue> secondSet)
         {
             var dataStreamValue1 = new DataStreamValue(firstSet);

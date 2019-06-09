@@ -5,6 +5,8 @@ using System.Text;
 
 namespace SimpleLang.ConstDistrib
 {
+    // Поток данных(реализация на словаре для реализации алгоритма и более удобной работы)
+    // Использует DataStreamValue(Поток данных на множествах) в процессе своей работы
     public class DataStreamTable
     {
         private Dictionary<string, SemilatticeValue> Table;
@@ -14,6 +16,7 @@ namespace SimpleLang.ConstDistrib
             Table = new Dictionary<string, SemilatticeValue>();
         }
 
+        // Инициализация потоком
         public DataStreamTable(HashSet<SemilatticeStreamValue> stream)
         {
             if (stream == null) Table = new Dictionary<string, SemilatticeValue>();
@@ -33,6 +36,7 @@ namespace SimpleLang.ConstDistrib
             }
         }
 
+        // Метод получения значение из полурешетки констант по имени переменной
         public SemilatticeValue GetValue(string varName)
         {
             bool IsVariable = Utility.Utility.IsVariable(varName);
@@ -45,6 +49,7 @@ namespace SimpleLang.ConstDistrib
             else return new SemilatticeValue(varName);
         }
 
+        // Оператор сбора для Потока данных
         public static DataStreamTable operator ^(DataStreamTable t1, DataStreamTable t2)
         {
             var stream1 = new DataStreamValue(DataStreamValue.CreateStreamByTable(t1.Table));

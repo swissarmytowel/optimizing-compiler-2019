@@ -17,6 +17,11 @@ namespace SimpleLang.ConstDistrib
             return assign.Operation == null && assign.SecondOperand == null;
         }
 
+        // Использует итерационный алгоритм для задачи распространения констант OUT[B] = fB(IN[B])
+        // На вход получает _in Stream из которого создается DataStreamValue - Поток данных(реализация на множествах для ITA)
+        // Выход новый Stream после изменения значений для присваиваний из tACodeLines
+        // где SemilatticeStreamValue - обёртка над именем переменной и её значением из полурешётки констант SemilatticeValue
+        // где DataStreamTable - Поток данных(реализация на словаре для реализации алгоритма и более удобной работы)
         public HashSet<SemilatticeStreamValue> Calculate(HashSet<SemilatticeStreamValue> _in, ThreeAddressCode tACodeLines)
         {
             basicBlock = tACodeLines;
