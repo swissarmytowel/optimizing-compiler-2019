@@ -142,7 +142,283 @@ public DominatorsFinder(ControlFlowGraph cfg)
 ```
 
 ## Тесты
-Узнать как должны выглядить тесты в докуметации.
+#### INPUT: 
+```csharp
+c = 2 > 3;
+a = 120;
+tmp1 = a;
+tmp = 101;
+if (c) { 
+  b = 3; 
+}
+i = 0;
+for ( i = 0 to 3) { 
+  c = c + 1;
+  b = c + tmp;
+  d = a + 1; 
+}
+b = a + c;
+a = 2;
+c = 0; 
+a = 11;
+```
+
+#### Three address code:
+```csharp
+t1 = 2 > 3
+c = t1
+a = 120
+tmp1 = a
+tmp = 101
+t2 = c
+if t2 goto L1
+goto L2
+L1: b = 3
+L2: i = 0
+i = 0
+L3: t3 = c + 1
+c = t3
+t4 = c + tmp
+b = t4
+t5 = a + 1
+d = t5
+i = i + 1
+t6 = i < 3
+if t6 goto L3
+t7 = a + c
+b = t7
+a = 2
+c = 0
+a = 11
+```
+
+### Control-flow graph
+Вершины Control-flow graph являются базовыми блоками программы. 
+```csharp
+VERTICES
+#0:
+t1 = 2 > 3
+c = t1
+a = 120
+tmp1 = a
+tmp = 101
+t2 = c
+if t2 goto L1
+
+#1:
+goto L2
+
+#2:
+L1: b = 3
+
+#3:
+L2: i = 0
+i = 0
+
+#4:
+L3: t3 = c + 1
+c = t3
+t4 = c + tmp
+b = t4
+t5 = a + 1
+d = t5
+i = i + 1
+t6 = i < 3
+if t6 goto L3
+
+#5:
+t7 = a + c
+b = t7
+a = 2
+c = 0
+a = 11
+
+EDGES
+0 -> [ 1 2 ]
+1 -> [ 3 ]
+2 -> [ 3 ]
+3 -> [ 4 ]
+4 -> [ 5 4 ]
+5 -> [ ]
+```
+
+#### OUTPUT:
+
+Все доминаторы для каждого базового блока:
+```csharp
+Block 0:
+Dominators:
+t1 = 2 > 3
+c = t1
+a = 120
+tmp1 = 120
+tmp = 101
+t2 = c
+if t2 goto L1
+```
+```csharp
+Block 1:
+Dominators:
+t1 = 2 > 3
+c = t1
+a = 120
+tmp1 = 120
+tmp = 101
+t2 = c
+if t2 goto L1
+
+goto L2
+```
+```csharp
+Block 2:
+Dominators:
+t1 = 2 > 3
+c = t1
+a = 120
+tmp1 = 120
+tmp = 101
+t2 = c
+if t2 goto L1
+
+L1: b = 3
+```
+```csharp
+Block 3:
+Dominators:
+t1 = 2 > 3
+c = t1
+a = 120
+tmp1 = 120
+tmp = 101
+t2 = c
+if t2 goto L1
+
+L2: i = 0
+i = 0
+```
+```csharp
+Block 4:
+Dominators:
+t1 = 2 > 3
+c = t1
+a = 120
+tmp1 = 120
+tmp = 101
+t2 = c
+if t2 goto L1
+
+L2: i = 0
+i = 0
+
+L3: t3 = c + 1
+c = t3
+t4 = c + 101
+b = t4
+t5 = 120 + 1
+d = t5
+i = i + 1
+t6 = i < 3
+if t6 goto L3
+```
+```csharp
+Block 5:
+Dominators:
+t1 = 2 > 3
+c = t1
+a = 120
+tmp1 = 120
+tmp = 101
+t2 = c
+if t2 goto L1
+
+L2: i = 0
+i = 0
+
+L3: t3 = c + 1
+c = t3
+t4 = c + 101
+b = t4
+t5 = 120 + 1
+d = t5
+i = i + 1
+t6 = i < 3
+if t6 goto L3
+
+t7 = 120 + c
+b = t7
+a = 2
+c = 0
+a = 11
+```
+---
+Непосредственные доминаторы для каждого базового блока:
+```csharp
+Block 0:
+Immediate dominator:
+null
+```
+```csharp
+Block 1:
+Immediate dominator:
+t1 = 2 > 3
+c = t1
+a = 120
+tmp1 = 120
+tmp = 101
+t2 = c
+if t2 goto L1
+```
+```csharp
+Block 2:
+Immediate dominator:
+t1 = 2 > 3
+c = t1
+a = 120
+tmp1 = 120
+tmp = 101
+t2 = c
+if t2 goto L1
+```
+```csharp
+Block 3:
+Immediate dominator:
+t1 = 2 > 3
+c = t1
+a = 120
+tmp1 = 120
+tmp = 101
+t2 = c
+if t2 goto L1
+```
+```csharp
+Block 4:
+Immediate dominator:
+L2: i = 0
+i = 0
+```
+```csharp
+Block 5:
+Immediate dominator:
+L3: t3 = c + 1
+c = t3
+t4 = c + 101
+b = t4
+t5 = 120 + 1
+d = t5
+i = i + 1
+t6 = i < 3
+if t6 goto L3
+```
+
+#### Упрощенный вывод доминаторов:
+```csharp
+blockInd0:  Dominators: 0        ImmediateDominator: null
+blockInd1:  Dominators: 0 1      ImmediateDominator: 0
+blockInd2:  Dominators: 0 2      ImmediateDominator: 0
+blockInd3:  Dominators: 0 3      ImmediateDominator: 0
+blockInd4:  Dominators: 0 3 4    ImmediateDominator: 3
+blockInd5:  Dominators: 0 3 4 5  ImmediateDominator: 4
+```
 
 ## Вывод
 Используя метод, описанные выше, было выполнено построение дерева доминаторов (всех и непосредственных) для Control-flow graph.

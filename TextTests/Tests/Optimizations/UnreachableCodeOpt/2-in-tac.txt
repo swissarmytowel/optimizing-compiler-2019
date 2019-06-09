@@ -1,0 +1,7 @@
+a = 0  
+t10 = True  
+if t10 goto L5
+goto L6
+L5: goto l2
+L6: 
+l2: a = 15  

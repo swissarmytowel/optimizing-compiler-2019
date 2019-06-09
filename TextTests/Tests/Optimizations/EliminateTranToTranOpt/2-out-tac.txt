@@ -1,0 +1,7 @@
+a = 123  
+v = 345  
+t8 = a > 233
+if t8 goto L3
+goto L4
+L3: g = 44  
+L4: c = 425  

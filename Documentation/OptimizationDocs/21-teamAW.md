@@ -114,7 +114,7 @@ a3 = 4 * i * d;
 a2 = 4 * i; 
 ```
 
-#### Three adress code:
+#### Three address code:
 ```csharp
 i = 2
 t1 = 4 * i
