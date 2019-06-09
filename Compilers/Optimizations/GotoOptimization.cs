@@ -4,7 +4,7 @@ using SimpleLang.TACode;
 
 namespace SimpleLang.Optimizations
 {
-    class GotoOptimization : IOptimizer
+    public class GotoOptimization : IOptimizer
     {
         public bool Optimize(ThreeAddressCode tac)
         {
