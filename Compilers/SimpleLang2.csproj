@@ -59,6 +59,7 @@
     <Reference Include="nunit.framework" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CFG\DominatorsTree\DominatorsFinder.cs" />
     <Compile Include="CFG\DSTEdgeClassifier.cs" />
     <Compile Include="ConstDistrib\ConstDistribFunction.cs" />
     <Compile Include="ConstDistrib\ConstDistribOperator.cs" />
