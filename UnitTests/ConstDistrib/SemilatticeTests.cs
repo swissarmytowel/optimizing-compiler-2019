@@ -1,9 +1,9 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Collections.Generic;
 using System.Diagnostics;
+using SimpleLang.ConstDistrib;
 
-
-namespace SimpleLang.ConstDistrib
+namespace UnitTests.ConstDistrib
 {
     [TestClass]
     public class SemilatticeTests
