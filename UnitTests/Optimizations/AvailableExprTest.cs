@@ -3,6 +3,10 @@ using SimpleLang.Optimizations;
 using SimpleLang.TACode;
 using SimpleLang.Visitors;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using SimpleLang.CFG;
+using SimpleLang.E_GenKill.Implementations;
+using SimpleLang.IterationAlgorithms;
+using System.Linq;
 
 namespace UnitTests.Optimizations
 {
@@ -33,11 +37,21 @@ namespace UnitTests.Optimizations
             Utils.AddAssignmentNode(tacContainer, "L2", "t3", "t5");
             Utils.AddAssignmentNode(tacContainer, null, "a2", "t3");
 
-            //var optimization = new AvailableExprOptimization();
-            //var isOptimized = optimization.Optimize(tacContainer);
+            var cfg = new ControlFlowGraph(tacContainer);
 
-            //Assert.IsFalse(isOptimized);
-            //Assert.AreEqual(tacContainer.ToString(), expectedResult.ToString());
+            E_GenKillVisitor availExprVisitor = new E_GenKillVisitor();
+            var availExprContainers = availExprVisitor.GenerateAvailableExpressionForBlocks(cfg.SourceBasicBlocks);
+
+            var availableExpressionsITA = new AvailableExpressionsITA(cfg, availExprContainers);
+
+            var availableExprOptimization = new AvailableExprOptimization();
+            bool isOptimized = availableExprOptimization.Optimize(availableExpressionsITA);
+            var basicBlockItems = cfg.SourceBasicBlocks.BasicBlockItems;
+            var codeText = cfg.SourceBasicBlocks.BasicBlockItems
+                .Select(bl => bl.ToString()).Aggregate((b1, b2) => b1 + b2);
+
+            Assert.IsFalse(isOptimized);
+            Assert.AreEqual(tacContainer.ToString(), expectedResult.ToString());
         }
     }
 }

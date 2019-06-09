@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 using SimpleLang.TACode.TacNodes;
 using SimpleLang.TACode;
 using SimpleLang.CFG;
@@ -9,7 +8,7 @@ using SimpleLang.IterationAlgorithms.CollectionOperators;
 
 namespace SimpleLang.IterationAlgorithms
 {
-    class ReachingDefinitionsITA : IterationAlgorithm<TacNode>
+    public class ReachingDefinitionsITA : IterationAlgorithm<TacNode>
     {
         public ReachingDefinitionsITA(
             ControlFlowGraph cfg,
