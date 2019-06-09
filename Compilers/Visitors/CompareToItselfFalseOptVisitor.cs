@@ -15,6 +15,5 @@ namespace SimpleLang.Visitors
                 else base.VisitBinOpNode(binop);
             }
         }
-
     }
 }

@@ -21,7 +21,7 @@ namespace SimpleLang.Tests
     public class MOPTest
     {
         [Test]
-        public void Compute_CheckLastBlockReachingDefinitions()
+        public void Compute_CheckLastBlockReachingDefinitions() // Работает только если запускать первым
         {
             var source = "c = 123;\nm = 1 + c + y;\nif (m > 2) {\n    c = 3;\n} else {\n    c = 456;\n}\na = 11;";
             /*
@@ -96,7 +96,7 @@ namespace SimpleLang.Tests
         }
 
         [Test]
-        public void Compute_CheckFirstBlockActiveVariables()
+        public void Compute_CheckFirstBlockActiveVariables() // Проверь проходит ли он 
         {
             var source = "c = 123;\nm = 1 + c + y;\nif (m > 2) {\n    c = 3;\n} else {\n    c = 456;\n}\na = 11;";
             /*
