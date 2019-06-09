@@ -23,10 +23,10 @@ else
 на выражение *null* так как при любом *expression* в условном операторе будет получен *null*.
 
 ## Реализация
-Для решения поставленной задачи был реализован визитор "ThirteenthOptimizationVisitor", наследуемый от ChangeVisitor.
+Для решения поставленной задачи был реализован визитор "DelOfDeadConditionsVisitor", наследуемый от ChangeVisitor.
 
 ```csharp
- class ThirteenthOptimizationVisitor : ChangeVisitor
+ class DelOfDeadConditionsVisitor : ChangeVisitor
     {
         public override void VisitIfNode(IfNode c)
         {

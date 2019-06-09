@@ -19,10 +19,10 @@
 x = 2 * 3; ==> x = 6;
 ```
 ## Реализация
-Для решения поставленной задачи был реализован визитор "ThirdOptimizationVisitor", наследуемый от ChangeVisitor.
+Для решения поставленной задачи был реализован визитор "ConstFoldingVisitor", наследуемый от ChangeVisitor.
 
 ```csharp
-class ThirdOptimizationVisitor : ChangeVisitor
+class ConstFoldingVisitor : ChangeVisitor
     {
         public override void VisitBinOpNode(BinOpNode binop)
         {
