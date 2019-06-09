@@ -11,6 +11,9 @@ using System.Windows.Forms;
 using SimpleLang.Visitors;
 using SimpleScanner;
 using SimpleParser;
+using SimpleLang.Optimizations.Interfaces;
+using SimpleLang.Optimizations;
+using SimpleLang.Optimizations.BooleanOptimization;
 
 namespace IntegratedApp
 {
@@ -32,6 +35,21 @@ namespace IntegratedApp
             opt14 = 11, //14) while (false) st; => null
         }
 
+        enum OptimizationsByBasicBlocks
+        {
+            opt0 = 0,       //Протяжка const в пределах ББл на основе Def-Use
+            opt1 = 1,       //Протяжка копий в пределах ББл на основе Def-Use
+            opt2 = 2,       //Свертка const
+            opt3 = 3,       //Алгебраические тождества
+            opt4 = 4,       //Логические тождества
+            opt5 = 5,       //Оптимизация общих подвыражений
+            opt6 = 6,       //Очистка от пустых опр-ов
+            opt7 = 7,       //Устранение переходов через переходы
+            opt8 = 8,       //Устранение недостижимого кода
+            opt9 = 9,       //Устранение переходов к переходам
+            opt10 = 10,     //LVN - алгоритм
+        }
+
         /// <summary>
         /// Выбранные оптимизации по AST - дереву
         /// </summary>
@@ -49,6 +67,24 @@ namespace IntegratedApp
             { OptimizationsByAstTree.opt12, new AlwaysElseVisitor() },
             { OptimizationsByAstTree.opt13, new DelOfDeadConditionsVisitor() },
             { OptimizationsByAstTree.opt14, new WhileFalseOptVisitor() },
+        };
+
+        /// <summary>
+        /// Выбранные оптимизации по ББл
+        /// </summary>
+        private List<OptimizationsByBasicBlocks> checkedOptimizationsBlock2 = new List<OptimizationsByBasicBlocks>();
+        private Dictionary<OptimizationsByBasicBlocks, IOptimizer> optimizationsBlock2 = new Dictionary<OptimizationsByBasicBlocks, IOptimizer>() {
+            //{ OptimizationsByBasicBlocks.opt0, new DefUseConstPropagation() },
+            //{ OptimizationsByBasicBlocks.opt1, new DefUseCopyPropagation() },
+            { OptimizationsByBasicBlocks.opt2, new ConvConstOptimization() },
+            { OptimizationsByBasicBlocks.opt3, new AlgebraicIdentityOptimization() },
+            { OptimizationsByBasicBlocks.opt4, new BooleanOptimizer() },
+            { OptimizationsByBasicBlocks.opt5, new CommonSubexprOptimization() },
+            { OptimizationsByBasicBlocks.opt6, new EmptyNodeOptimization() },
+            { OptimizationsByBasicBlocks.opt7, new GotoOptimization() },
+            { OptimizationsByBasicBlocks.opt8, new UnreachableCodeOpt() },
+            { OptimizationsByBasicBlocks.opt9, new EliminateTranToTranOpt() },
+            { OptimizationsByBasicBlocks.opt10, new LocalValueNumberingOptimization() },
         };
 
         public IntegratedApp()
@@ -94,10 +130,10 @@ namespace IntegratedApp
                 return;
             }
 
-            if (checkedOptimizationsBlock1.Count == 0) {
-                MessageBox.Show("Не выбрана ни одна оптимизация");
-                return;
-            }
+            //if (checkedOptimizationsBlock1.Count == 0 && checkedOptimizationsBlock2.Count == 0 && checkedOptimizationsBlock3.Count == 0 && checkedOptimizationsBlock4.Count == 0) {
+            //    MessageBox.Show("Не выбрана ни одна оптимизация");
+            //    return;
+            //}
 
             Scanner scanner = new Scanner();
             scanner.SetSource(InputTextBox.Text, 0);
@@ -107,14 +143,30 @@ namespace IntegratedApp
             var parentv = new FillParentVisitor();
             parser.root.Visit(parentv);
 
-            foreach (var opt in checkedOptimizationsBlock1) {
-                parser.root.Visit(optimizationsBlock1[opt]);
-            }
+#region Optimizations by AST
+            if (checkedOptimizationsBlock1.Count != 0) {
+                foreach (var opt in checkedOptimizationsBlock1) {
+                    parser.root.Visit(optimizationsBlock1[opt]);
+                }
 
-            var printv = new PrettyPrintVisitor(true);
-            parser.root.Visit(printv);
-            OutputTextBox.Text = printv.Text;
-        }
+                var printv = new PrettyPrintVisitor(true);
+                parser.root.Visit(printv);
+                OutputTextBox.Text = printv.Text;
+            }
+            #endregion
+
+#region Optimizations by Basic blocks
+            if (checkedOptimizationsBlock2.Count != 0) {
+                foreach (var opt in checkedOptimizationsBlock2) {
+                    //optimizationsBlock2[opt].Optimize();
+                }
+
+                
+                OutputTextBox.Text = "";
+            }
+#endregion
+
+            }
 
         private void ClearButton_Click(object sender, EventArgs e)
         {

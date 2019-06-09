@@ -7,7 +7,7 @@ using SimpleLang.TACode.TacNodes;
 
 namespace SimpleLang.Optimizations
 {
-    class UnreachableCodeOpt : IOptimizer
+    public class UnreachableCodeOpt : IOptimizer
     {
         private HashSet<string> FindAllLabels(ThreeAddressCode tac)
         {

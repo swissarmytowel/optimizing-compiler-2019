@@ -41,22 +41,22 @@
             this.checkedListBox3 = new System.Windows.Forms.CheckedListBox();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
             this.panel2 = new System.Windows.Forms.Panel();
+            this.ResetButton = new System.Windows.Forms.Button();
             this.ClearButton = new System.Windows.Forms.Button();
             this.RunButton = new System.Windows.Forms.Button();
             this.menuStrip2 = new System.Windows.Forms.MenuStrip();
             this.TacItem = new System.Windows.Forms.ToolStripMenuItem();
             this.CfgItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.ResetButton = new System.Windows.Forms.Button();
             this.BasicBlocksItem = new System.Windows.Forms.ToolStripMenuItem();
             this.inoutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.genBKillBToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.defUseToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.defUseДляББлToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.tableLayoutPanel2 = new System.Windows.Forms.TableLayoutPanel();
-            this.groupBox1 = new System.Windows.Forms.GroupBox();
-            this.InputTextBox = new System.Windows.Forms.RichTextBox();
             this.groupBox4 = new System.Windows.Forms.GroupBox();
             this.OutputTextBox = new System.Windows.Forms.RichTextBox();
+            this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.InputTextBox = new System.Windows.Forms.RichTextBox();
             this.menuStrip1.SuspendLayout();
             this.panel1.SuspendLayout();
             this.groupBox3.SuspendLayout();
@@ -65,8 +65,8 @@
             this.panel2.SuspendLayout();
             this.menuStrip2.SuspendLayout();
             this.tableLayoutPanel2.SuspendLayout();
-            this.groupBox1.SuspendLayout();
             this.groupBox4.SuspendLayout();
+            this.groupBox1.SuspendLayout();
             this.SuspendLayout();
             // 
             // menuStrip1
@@ -226,7 +226,6 @@
             this.checkedListBox3.Items.AddRange(new object[] {
             "Протяжка const в пределах ББл на основе Def-Use",
             "Протяжка копий в пределах ББл на основе Def-Use",
-            "Живые и мертвые перем. в пределах ББл",
             "Свертка const",
             "Алгебраические тождества",
             "Логические тождества",
@@ -264,6 +263,16 @@
             this.panel2.Name = "panel2";
             this.panel2.Size = new System.Drawing.Size(178, 58);
             this.panel2.TabIndex = 3;
+            // 
+            // ResetButton
+            // 
+            this.ResetButton.Location = new System.Drawing.Point(100, 32);
+            this.ResetButton.Name = "ResetButton";
+            this.ResetButton.Size = new System.Drawing.Size(75, 23);
+            this.ResetButton.TabIndex = 4;
+            this.ResetButton.Text = "Сбросить";
+            this.ResetButton.UseVisualStyleBackColor = true;
+            this.ResetButton.Click += new System.EventHandler(this.ResetButton_Click);
             // 
             // ClearButton
             // 
@@ -317,16 +326,6 @@
             this.CfgItem.Text = "Control-flow graph";
             this.CfgItem.Click += new System.EventHandler(this.CfgItem_Click);
             // 
-            // ResetButton
-            // 
-            this.ResetButton.Location = new System.Drawing.Point(100, 32);
-            this.ResetButton.Name = "ResetButton";
-            this.ResetButton.Size = new System.Drawing.Size(75, 23);
-            this.ResetButton.TabIndex = 4;
-            this.ResetButton.Text = "Сбросить";
-            this.ResetButton.UseVisualStyleBackColor = true;
-            this.ResetButton.Click += new System.EventHandler(this.ResetButton_Click);
-            // 
             // BasicBlocksItem
             // 
             this.BasicBlocksItem.Name = "BasicBlocksItem";
@@ -373,28 +372,6 @@
             this.tableLayoutPanel2.Size = new System.Drawing.Size(173, 373);
             this.tableLayoutPanel2.TabIndex = 12;
             // 
-            // groupBox1
-            // 
-            this.groupBox1.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.groupBox1.Controls.Add(this.InputTextBox);
-            this.groupBox1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.groupBox1.Location = new System.Drawing.Point(3, 3);
-            this.groupBox1.Name = "groupBox1";
-            this.groupBox1.RightToLeft = System.Windows.Forms.RightToLeft.No;
-            this.groupBox1.Size = new System.Drawing.Size(80, 367);
-            this.groupBox1.TabIndex = 1;
-            this.groupBox1.TabStop = false;
-            this.groupBox1.Text = "Ввод";
-            // 
-            // InputTextBox
-            // 
-            this.InputTextBox.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.InputTextBox.Location = new System.Drawing.Point(3, 16);
-            this.InputTextBox.Name = "InputTextBox";
-            this.InputTextBox.Size = new System.Drawing.Size(74, 348);
-            this.InputTextBox.TabIndex = 1;
-            this.InputTextBox.Text = "";
-            // 
             // groupBox4
             // 
             this.groupBox4.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
@@ -416,6 +393,28 @@
             this.OutputTextBox.Size = new System.Drawing.Size(75, 348);
             this.OutputTextBox.TabIndex = 1;
             this.OutputTextBox.Text = "";
+            // 
+            // groupBox1
+            // 
+            this.groupBox1.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.groupBox1.Controls.Add(this.InputTextBox);
+            this.groupBox1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.groupBox1.Location = new System.Drawing.Point(3, 3);
+            this.groupBox1.Name = "groupBox1";
+            this.groupBox1.RightToLeft = System.Windows.Forms.RightToLeft.No;
+            this.groupBox1.Size = new System.Drawing.Size(80, 367);
+            this.groupBox1.TabIndex = 1;
+            this.groupBox1.TabStop = false;
+            this.groupBox1.Text = "Ввод";
+            // 
+            // InputTextBox
+            // 
+            this.InputTextBox.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.InputTextBox.Location = new System.Drawing.Point(3, 16);
+            this.InputTextBox.Name = "InputTextBox";
+            this.InputTextBox.Size = new System.Drawing.Size(74, 348);
+            this.InputTextBox.TabIndex = 1;
+            this.InputTextBox.Text = "";
             // 
             // IntegratedApp
             // 
@@ -442,8 +441,8 @@
             this.menuStrip2.ResumeLayout(false);
             this.menuStrip2.PerformLayout();
             this.tableLayoutPanel2.ResumeLayout(false);
-            this.groupBox1.ResumeLayout(false);
             this.groupBox4.ResumeLayout(false);
+            this.groupBox1.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 

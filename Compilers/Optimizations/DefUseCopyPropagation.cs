@@ -6,7 +6,7 @@ using VarNodePair = System.Tuple<string, System.Collections.Generic.LinkedListNo
 
 namespace SimpleLang.Optimizations
 {
-    class DefUseCopyPropagation : IOptimizer
+    public class DefUseCopyPropagation : IOptimizer
     {
         private readonly DefUseDetector _detector;
 
