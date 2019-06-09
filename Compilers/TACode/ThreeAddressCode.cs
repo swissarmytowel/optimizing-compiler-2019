@@ -226,5 +226,16 @@ namespace SimpleLang.TACode
 
             return builder.ToString();
         }
+        
+        public string ToString1()
+        {
+            var builder = new StringBuilder();
+            foreach (var tacNode in TACodeLines)
+            {
+                builder.Append(tacNode?.ToString() + "\\n");
+            }
+
+            return builder.ToString();
+        }
     }
 }
