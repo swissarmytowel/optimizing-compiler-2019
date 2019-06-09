@@ -74,8 +74,8 @@ namespace IntegratedApp
         /// </summary>
         private List<OptimizationsByBasicBlocks> checkedOptimizationsBlock2 = new List<OptimizationsByBasicBlocks>();
         private Dictionary<OptimizationsByBasicBlocks, IOptimizer> optimizationsBlock2 = new Dictionary<OptimizationsByBasicBlocks, IOptimizer>() {
-            //{ OptimizationsByBasicBlocks.opt0, new DefUseConstPropagation() },
-            //{ OptimizationsByBasicBlocks.opt1, new DefUseCopyPropagation() },
+            { OptimizationsByBasicBlocks.opt0, new DefUseConstPropagation() },
+            { OptimizationsByBasicBlocks.opt1, new DefUseCopyPropagation() },
             { OptimizationsByBasicBlocks.opt2, new ConvConstOptimization() },
             { OptimizationsByBasicBlocks.opt3, new AlgebraicIdentityOptimization() },
             { OptimizationsByBasicBlocks.opt4, new BooleanOptimizer() },
@@ -151,18 +151,32 @@ namespace IntegratedApp
 
                 var printv = new PrettyPrintVisitor(true);
                 parser.root.Visit(printv);
-                OutputTextBox.Text = printv.Text;
+                OutputTextBox.Text += printv.Text;
             }
             #endregion
 
 #region Optimizations by Basic blocks
             if (checkedOptimizationsBlock2.Count != 0) {
-                foreach (var opt in checkedOptimizationsBlock2) {
-                    //optimizationsBlock2[opt].Optimize();
-                }
+                var threeAddressCodeVisitor = new ThreeAddressCodeVisitor();
+                parser.root.Visit(threeAddressCodeVisitor);
+                threeAddressCodeVisitor.Postprocess();
+                OutputTextBox.Text += threeAddressCodeVisitor.TACodeContainer.ToString();
+                OutputTextBox.Text += "\n";
 
-                
-                OutputTextBox.Text = "";
+                int ind, iteration = 0;
+                for (ind = 0; ind < checkedOptimizationsBlock2.Count; ind++) {
+                    var opt = checkedOptimizationsBlock2[ind];
+                    var result = optimizationsBlock2[opt].Optimize(threeAddressCodeVisitor.TACodeContainer);
+
+                    if (result) {
+                        ind = -1;
+                        continue;
+                    }
+
+                    OutputTextBox.Text += string.Format("===== Optimization {0} iteration {1} =====\n\n", optimizationsBlock2[opt].GetType(), iteration++);
+                    OutputTextBox.Text += threeAddressCodeVisitor.TACodeContainer.ToString();
+                    OutputTextBox.Text += "\n";
+                }
             }
 #endregion
 
@@ -215,6 +229,15 @@ namespace IntegratedApp
                 checkedOptimizationsBlock1.Add((OptimizationsByAstTree)e.Index);
             } else if (e.NewValue == CheckState.Unchecked) {
                 checkedOptimizationsBlock1.Remove((OptimizationsByAstTree)e.Index);
+            }
+        }
+
+        private void checkedListBox3_ItemCheck(object sender, ItemCheckEventArgs e)
+        {
+            if (e.NewValue == CheckState.Checked) {
+                checkedOptimizationsBlock2.Add((OptimizationsByBasicBlocks)e.Index);
+            } else if (e.NewValue == CheckState.Unchecked) {
+                checkedOptimizationsBlock2.Remove((OptimizationsByBasicBlocks)e.Index);
             }
         }
     }

@@ -240,6 +240,7 @@
             this.checkedListBox3.ScrollAlwaysVisible = true;
             this.checkedListBox3.Size = new System.Drawing.Size(251, 171);
             this.checkedListBox3.TabIndex = 3;
+            this.checkedListBox3.ItemCheck += new System.Windows.Forms.ItemCheckEventHandler(this.checkedListBox3_ItemCheck);
             // 
             // groupBox2
             // 
