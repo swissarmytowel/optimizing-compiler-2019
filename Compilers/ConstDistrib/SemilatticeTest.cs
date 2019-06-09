@@ -1,4 +1,5 @@
-﻿using System.Diagnostics;
+﻿using System.Collections.Generic;
+using System.Diagnostics;
 
 
 namespace SimpleLang.ConstDistrib
@@ -41,6 +42,49 @@ namespace SimpleLang.ConstDistrib
             t = nac ^ c2;
             Debug.Assert(t.TypeValue == SemilatticeValueEnum.NAC && t.ConstValue == null);
         }
-        
+
+        static public void TestForStreamValueOperator()
+        {
+            var set1 = new HashSet<SemilatticeStreamValue>()
+            {
+                new SemilatticeStreamValue("a", new SemilatticeValue(SemilatticeValueEnum.CONST, "12")),
+                new SemilatticeStreamValue("b", new SemilatticeValue(SemilatticeValueEnum.CONST, "13")),
+                new SemilatticeStreamValue("c", new SemilatticeValue(SemilatticeValueEnum.CONST, "14"))
+            };
+            var dataStreamValue1 = new DataStreamValue(set1);
+            var set2 = new HashSet<SemilatticeStreamValue>()
+            {
+                new SemilatticeStreamValue("a", new SemilatticeValue(SemilatticeValueEnum.CONST, "12")),
+                new SemilatticeStreamValue("b", new SemilatticeValue(SemilatticeValueEnum.CONST, "13")),
+                new SemilatticeStreamValue("c", new SemilatticeValue(SemilatticeValueEnum.CONST, "14"))
+            };
+            var dataStreamValue2 = new DataStreamValue(set2);
+            var dataStreamValue3 = dataStreamValue1 ^ dataStreamValue2;
+            var table3 = DataStreamValue.CreateTableByStream(dataStreamValue3.Stream);
+            Debug.Assert(table3["a"] == new SemilatticeValue(SemilatticeValueEnum.CONST, "12"));
+            Debug.Assert(table3["b"] == new SemilatticeValue(SemilatticeValueEnum.CONST, "13"));
+            Debug.Assert(table3["c"] == new SemilatticeValue(SemilatticeValueEnum.CONST, "14"));
+
+            set1 = new HashSet<SemilatticeStreamValue>()
+            {
+                new SemilatticeStreamValue("a", new SemilatticeValue(SemilatticeValueEnum.CONST, "12")),
+                new SemilatticeStreamValue("b", new SemilatticeValue(SemilatticeValueEnum.CONST, "13")),
+                new SemilatticeStreamValue("c", new SemilatticeValue(SemilatticeValueEnum.CONST, "14"))
+            };
+            dataStreamValue1 = new DataStreamValue(set1);
+            set2 = new HashSet<SemilatticeStreamValue>()
+            {
+                new SemilatticeStreamValue("a", new SemilatticeValue(SemilatticeValueEnum.CONST, "14")),
+                new SemilatticeStreamValue("b", new SemilatticeValue(SemilatticeValueEnum.CONST, "13")),
+                new SemilatticeStreamValue("c", new SemilatticeValue(SemilatticeValueEnum.UNDEF))
+            };
+            dataStreamValue2 = new DataStreamValue(set2);
+            dataStreamValue3 = dataStreamValue1 ^ dataStreamValue2;
+            table3 = DataStreamValue.CreateTableByStream(dataStreamValue3.Stream);
+            Debug.Assert(table3["a"] == new SemilatticeValue(SemilatticeValueEnum.NAC));
+            Debug.Assert(table3["b"] == new SemilatticeValue(SemilatticeValueEnum.CONST, "13"));
+            Debug.Assert(table3["c"] == new SemilatticeValue(SemilatticeValueEnum.CONST, "14"));
+        }
+
     }
 }
