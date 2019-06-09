@@ -59,6 +59,7 @@ class DefUseContainer : IExpressionSetsContainer
 ## Тесты
 
 ```csharp
+[TestMethod]
 public void DefUse_Test1()
 {
     var tacContainer = new ThreeAddressCode();
