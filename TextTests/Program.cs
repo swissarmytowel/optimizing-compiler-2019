@@ -7,9 +7,15 @@ namespace TextTests
     {
         static void Main(string[] args)
         {
-            var path = GetFullPath("Tests\\Optimizations\\CommonSubexprOptimization\\");
+            var pathToTestsDirectory = Path.Combine(new string[] { "Tests", "Optimizations", "CommonSubexprOptimization" });
+            var path = GetFullPath(pathToTestsDirectory);
             var handler = new CommonSubexprTestsHandler(path);
             handler.ProcessAllFilesInDirectory();
+
+            var directoryToEliminationTranToTran = Path.Combine(new string[] { "Tests", "Optimizations", "EliminateTranToTranOpt" });
+            var pathToEliminationTranToTran = GetFullPath(directoryToEliminationTranToTran);
+            var handlerElimination = new EliminateTranToTranTestsHandler(pathToEliminationTranToTran);
+            handlerElimination.ProcessAllFilesInDirectory();
         }
 
         private static string GetFullPath(string directory)
