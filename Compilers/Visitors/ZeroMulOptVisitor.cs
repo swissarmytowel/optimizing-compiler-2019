@@ -3,9 +3,8 @@ using ProgramTree;
 
 namespace SimpleLang.Visitors
 {
-    class ZeroMulOptVisitor : ChangeVisitor
+    public class ZeroMulOptVisitor : ChangeVisitor
     {
-
         public override void VisitBinOpNode(BinOpNode binop)
         {
             var isZeroLeft = binop.Left is IntNumNode && (binop.Left as IntNumNode).Num == 0;

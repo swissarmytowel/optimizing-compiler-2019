@@ -6,7 +6,7 @@ using ProgramTree;
 
 namespace SimpleLang.Visitors
 {
-    class AlwaysElseVisitor: ChangeVisitor
+    public class AlwaysElseVisitor: ChangeVisitor
     {
         public override void VisitIfNode(IfNode inode)
         {

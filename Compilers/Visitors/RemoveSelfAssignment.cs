@@ -6,7 +6,7 @@ using ProgramTree;
 
 namespace SimpleLang.Visitors
 {
-    class RemoveSelfAssignment : ChangeVisitor
+    public class RemoveSelfAssignment : ChangeVisitor
     {
         public override void VisitAssignNode(AssignNode a)
         {

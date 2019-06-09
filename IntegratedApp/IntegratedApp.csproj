@@ -87,5 +87,11 @@
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Compilers\SimpleLang2.csproj">
+      <Project>{12b9d996-7b4a-4ee4-9ad8-2e24eaf3f574}</Project>
+      <Name>SimpleLang2</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

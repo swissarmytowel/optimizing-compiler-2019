@@ -6,7 +6,7 @@ using ProgramTree;
 
 namespace SimpleLang.Visitors
 {
-    class SimplifyMultDivisionByOneVisitor : ChangeVisitor
+    public class SimplifyMultDivisionByOneVisitor : ChangeVisitor
     {
         public override void VisitBinOpNode(BinOpNode binop)
         {

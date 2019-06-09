@@ -6,7 +6,7 @@ using ProgramTree;
 
 namespace SimpleLang.Visitors
 {
-    class WhileFalseOptVisitor: ChangeVisitor
+    public class WhileFalseOptVisitor: ChangeVisitor
     {
         public override void VisitWhileNode(WhileNode c)
         {

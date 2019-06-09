@@ -6,9 +6,8 @@ using ProgramTree;
 
 namespace SimpleLang.Visitors
 {
-    class CheckTruthVisitor: ChangeVisitor
+    public class CheckTruthVisitor: ChangeVisitor
     {
-
         public override void VisitBinOpNode(BinOpNode binop)
         {
             base.VisitBinOpNode(binop);

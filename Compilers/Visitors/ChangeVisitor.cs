@@ -6,7 +6,7 @@ using ProgramTree;
 
 namespace SimpleLang.Visitors
 {
-    class ChangeVisitor : AutoVisitor
+    public class ChangeVisitor : AutoVisitor
     {
         public void ReplaceExpr(ExprNode from, ExprNode to)
         {

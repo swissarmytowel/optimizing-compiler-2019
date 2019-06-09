@@ -120,6 +120,8 @@
     <Compile Include="Visitors\AutoVisitor.cs" />
     <Compile Include="Visitors\ChangeVisitor.cs" />
     <Compile Include="Visitors\CheckTruthVisitor.cs" />
+    <Compile Include="Visitors\ConstFoldingVisitor.cs" />
+    <Compile Include="Visitors\DelOfDeadConditionsVisitor.cs" />
     <Compile Include="Visitors\FillParentVisitor.cs" />
     <Compile Include="Visitors\IfNodeWithBoolExprVisitor.cs" />
     <Compile Include="Visitors\IsInnerCycleVisitor.cs" />
@@ -129,7 +131,9 @@
     <Compile Include="Visitors\OperatorCountVisitor.cs" />
     <Compile Include="Visitors\PlusZeroExprVisitor.cs" />
     <Compile Include="Visitors\PrettyPrintVisitor.cs" />
+    <Compile Include="Visitors\RemoveSelfAssignment.cs" />
     <Compile Include="Visitors\SameMinusOptVisitor.cs" />
+    <Compile Include="Visitors\SimplifyMultDivisionByOneVisitor.cs" />
     <Compile Include="Visitors\ThreeAddressCodeVisitor.cs" />
     <Compile Include="Visitors\Visitor.cs" />
     <Compile Include="Main.cs" />
@@ -174,9 +178,7 @@
   <ItemGroup />
   <ItemGroup />
   <ItemGroup />
-  <ItemGroup>
-    <Folder Include="Optimizations\BooleanOptimization\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>
