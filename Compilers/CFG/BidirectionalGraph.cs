@@ -3,7 +3,9 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using QuickGraph;
+using SimpleLang.TacBasicBlocks;
 using SimpleLang.TACode;
+using SimpleLang.TACode.TacNodes;
 
 namespace SimpleLang.CFG
 {
@@ -11,15 +13,27 @@ namespace SimpleLang.CFG
     {
         public IEnumerable<ThreeAddressCode> Vertices => Graph.Vertices;
         public IEnumerable<Edge<ThreeAddressCode>> Edges => Graph.Edges;
+        public BasicBlocks SourceBasicBlocks { get; protected set; }
         public int VertexCount => Graph.VertexCount;
         public int EdgeCount => Graph.EdgeCount;
         public bool IsVerticesEmpty => Graph.IsVerticesEmpty;
         public bool IsEdgesEmpty => Graph.IsEdgesEmpty;
 
+        /// <summary>
+        /// Returns a vertex at index position
+        /// </summary>
+        public ThreeAddressCode this[int index] => GetVertexAt(index);
+
+        /// <summary>
+        /// Returns a node at nodeIdx position from a vertex at nodeIdx position
+        /// </summary>
+        public TacNode this[int vertexIdx, int nodeIdx] => GetVertexAt(vertexIdx).ElementAt(nodeIdx);
+
         protected BidirectionalGraph<ThreeAddressCode, Edge<ThreeAddressCode>> Graph;
 
         protected BidirectionalGraph()
         {
+            SourceBasicBlocks = new BasicBlocks();
             Graph = new BidirectionalGraph<ThreeAddressCode, Edge<ThreeAddressCode>>(false);
 
         }
@@ -60,6 +74,14 @@ namespace SimpleLang.CFG
             }
 
             return stringBuilder.ToString();
+        }
+
+        private ThreeAddressCode GetVertexAt(int index)
+        {
+            if (index < 0 || index > VertexCount - 1)
+                return null;
+
+            return SourceBasicBlocks.BasicBlockItems[index];
         }
 
         #region Methods from QuickGraph

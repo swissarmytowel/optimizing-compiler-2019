@@ -9,7 +9,7 @@ using SimpleLang.TACode.TacNodes;
 
 namespace SimpleLang.DefUse
 {
-    static class DefUseForBlocksGenerator
+    public static class DefUseForBlocksGenerator
     {
         static private bool IsVariable(string val)
         {
