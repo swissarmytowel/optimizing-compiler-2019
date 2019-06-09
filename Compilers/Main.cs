@@ -375,15 +375,6 @@ namespace SimpleCompiler
                         .BasicBlockItems.Select((bl, ind) => $"BLOCK{ind}:\n" + bl.ToString()).Aggregate((b1, b2) => b1 + b2));
                     /* -----------------------AvailableExpressions END---------------------------------*/
 
-                    /* -----------------------ConstDistrib START---------------------------------*/
-                    SemilatticeTest.TestForValueOperator();
-                    SemilatticeTest.TestForStreamValueOperator();
-                    Console.WriteLine("SemilatticeTests done success");
-                    ConstDistribTest.TestForOperator();
-                    ConstDistribTest.TestForFunction();
-                    Console.WriteLine("ConstDistribTests done success");
-                    /* -----------------------ConstDistrib END---------------------------------*/
-
                     /* -----------------------ConstDistribOptimization START---------------------------------*/
                     Console.WriteLine("ConstDistributionOptimization: Before");
                     Console.WriteLine(cfg.SourceBasicBlocks

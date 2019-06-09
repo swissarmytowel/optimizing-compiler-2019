@@ -1,12 +1,15 @@
-﻿using System.Collections.Generic;
+﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System.Collections.Generic;
 using System.Diagnostics;
 
 
 namespace SimpleLang.ConstDistrib
 {
-    static class SemilatticeTest
+    [TestClass]
+    public class SemilatticeTests
     {
-        static public void TestForValueOperator ()
+        [TestMethod]
+        public void TestForValueOperator ()
         {
             var undef = new SemilatticeValue("");
             Debug.Assert(undef.TypeValue == SemilatticeValueEnum.UNDEF && undef.ConstValue == null);
@@ -43,7 +46,8 @@ namespace SimpleLang.ConstDistrib
             Debug.Assert(t.TypeValue == SemilatticeValueEnum.NAC && t.ConstValue == null);
         }
 
-        static public void TestForStreamValueOperator()
+        [TestMethod]
+        public void TestForStreamValueOperator()
         {
             var set1 = new HashSet<SemilatticeStreamValue>()
             {

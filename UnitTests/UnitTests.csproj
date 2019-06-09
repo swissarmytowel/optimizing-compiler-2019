@@ -64,6 +64,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CFG\ControlFlowGraphTests.cs" />
+    <Compile Include="ConstDistrib\ConstDistribTests.cs" />
+    <Compile Include="ConstDistrib\SemilatticeTests.cs" />
     <Compile Include="IterationAlgorithms\ReachingDefinitionsSortedTests.cs" />
     <Compile Include="IterationAlgorithms\ReachingDefinitionsTests.cs" />
     <Compile Include="Optimizations\CommonSubexprTests.cs" />

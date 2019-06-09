@@ -68,11 +68,9 @@
     <Compile Include="CFG\Services\EdgeClassifierService.cs" />
     <Compile Include="ConstDistrib\ConstDistribFunction.cs" />
     <Compile Include="ConstDistrib\ConstDistribOperator.cs" />
-    <Compile Include="ConstDistrib\ConstDistribTest.cs" />
     <Compile Include="Optimizations\ConstDistributionOptimization.cs" />
     <Compile Include="ConstDistrib\DataStreamTable.cs" />
     <Compile Include="ConstDistrib\DataStreamValue.cs" />
-    <Compile Include="ConstDistrib\SemilatticeTest.cs" />
     <Compile Include="ConstDistrib\SemilatticeValue.cs" />
     <Compile Include="DefUse\DefUseForBlocksPrinter.cs" />
     <Compile Include="DefUse\TacNodeVarDecorator.cs" />

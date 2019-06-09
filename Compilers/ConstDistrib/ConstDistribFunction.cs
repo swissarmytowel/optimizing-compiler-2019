@@ -8,7 +8,7 @@ using System.Text;
 
 namespace SimpleLang.ConstDistrib
 {
-    class ConstDistribFunction : ITransmissionFunction<SemilatticeStreamValue>
+    public class ConstDistribFunction : ITransmissionFunction<SemilatticeStreamValue>
     {
         private ThreeAddressCode basicBlock;
 

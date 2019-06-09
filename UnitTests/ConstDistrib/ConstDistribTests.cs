@@ -1,4 +1,6 @@
-﻿using SimpleLang.TACode;
+﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+using SimpleLang.ConstDistrib;
+using SimpleLang.TACode;
 using SimpleLang.Visitors;
 using SimpleParser;
 using SimpleScanner;
@@ -8,10 +10,12 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text;
 
-namespace SimpleLang.ConstDistrib
+namespace UnitTests.Optimizations
 {
-    public static class ConstDistribTest
+    [TestClass]
+    public class ConstDistribTests
     {
+        [TestMethod]
         static public void TestForOperator()
         {
             var constDistribOperator = new ConstDistribOperator();
@@ -34,7 +38,7 @@ namespace SimpleLang.ConstDistrib
             Debug.Assert(table3["c"] == new SemilatticeValue(SemilatticeValueEnum.CONST, "14"));
         }
 
-        static private ThreeAddressCode GetCodeLinesByText(string text)
+        private ThreeAddressCode GetCodeLinesByText(string text)
         {
             Scanner scanner = new Scanner();
             scanner.SetSource(text, 0);
@@ -46,7 +50,8 @@ namespace SimpleLang.ConstDistrib
             return threeAddressCodeVisitor.TACodeContainer;
         }
 
-        static public void TestForFunction()
+        [TestMethod]
+        public void TestForFunction()
         {
             var constDistribFun = new ConstDistribFunction();
             var emptySet = new HashSet<SemilatticeStreamValue>();
