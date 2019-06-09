@@ -163,6 +163,7 @@
     <Compile Include="Optimizations\BooleanOptimization\IRule.cs" />
     <Compile Include="Optimizations\BooleanOptimization\OrRuleOptimization.cs" />
     <Compile Include="Optimizations\BooleanOptimization\BooleanOptimizer.cs" />
+    <Compile Include="Tests\TransmissionFunctionTest.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
