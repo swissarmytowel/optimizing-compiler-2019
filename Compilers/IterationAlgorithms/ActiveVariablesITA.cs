@@ -10,7 +10,7 @@ using SimpleLang.IterationAlgorithms.CollectionOperators;
 
 namespace SimpleLang.IterationAlgorithms
 {
-    class ActiveVariablesITA : IterationAlgorithm<TacNode>
+    public class ActiveVariablesITA : IterationAlgorithm<TacNode>
     {  
         public ActiveVariablesITA(
             ControlFlowGraph cfg,
