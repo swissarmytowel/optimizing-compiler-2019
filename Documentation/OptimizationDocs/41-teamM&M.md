@@ -92,43 +92,44 @@ for (int blockInd = 0; blockInd < bb.BasicBlockItems.Count(); blockInd++)
 [TestMethod]
 public void Optimize_RightOptimized1()
 {
-    var tacContainer = new ThreeAddressCode();
-    Utils.AddAssignmentNode(tacContainer, null, "t1", "4", "*", "i");
-    Utils.AddAssignmentNode(tacContainer, null, "a1", "t1");
-    Utils.AddAssignmentNode(tacContainer, null, "t2", "b");
-    Utils.AddIfGotoNode(tacContainer, null, "L1", "t2");
-    Utils.AddGotoNode(tacContainer, null, "L2");
-    Utils.AddAssignmentNode(tacContainer, "L1", "t3", "4", "*", "i");
-    Utils.AddAssignmentNode(tacContainer, null, "a3", "t3");
-    Utils.AddAssignmentNode(tacContainer, "L2", "t4", "4", "*", "i");
-    Utils.AddAssignmentNode(tacContainer, null, "a2", "t4");
+var tacContainer = new ThreeAddressCode();
+            Utils.AddAssignmentNode(tacContainer, null, "t1", "4", "*", "i");
+            Utils.AddAssignmentNode(tacContainer, null, "a1", "t1");
+            Utils.AddAssignmentNode(tacContainer, null, "t2", "b");
+            Utils.AddIfGotoNode(tacContainer, null, "L1", "t2");
+            Utils.AddGotoNode(tacContainer, null, "L2");
+            Utils.AddAssignmentNode(tacContainer, "L1", "t3", "4", "*", "i");
+            Utils.AddAssignmentNode(tacContainer, null, "a3", "t3");
+            Utils.AddAssignmentNode(tacContainer, "L2", "t4", "4", "*", "i");
+            Utils.AddAssignmentNode(tacContainer, null, "a2", "t4");
 
-    var expectedResult = new ThreeAddressCodeVisitor();
-    Utils.AddAssignmentNode(expectedResult, null, "t5", "4", "*", "i");
-    Utils.AddAssignmentNode(expectedResult, null, "t1", "t5");
-    Utils.AddAssignmentNode(expectedResult, null, "a1", "t1");
-    Utils.AddAssignmentNode(expectedResult, null, "t2", "b");
-    Utils.AddIfGotoNode(expectedResult, null, "L1", "t2");
-    Utils.AddGotoNode(expectedResult, null, "L2");
-    Utils.AddAssignmentNode(expectedResult, "L1", "t3", "t5");
-    Utils.AddAssignmentNode(expectedResult, null, "a3", "t3");
-    Utils.AddAssignmentNode(expectedResult, "L2", "t4", "t5");
-    Utils.AddAssignmentNode(expectedResult, null, "a2", "t4");
+            var expectedResult = new ThreeAddressCode();
+            Utils.AddAssignmentNode(expectedResult, null, "t2", "4", "*", "i");
+            Utils.AddAssignmentNode(expectedResult, null, "t1", "t2");
+            Utils.AddAssignmentNode(expectedResult, null, "a1", "t1");
+            Utils.AddAssignmentNode(expectedResult, null, "t2", "b");
+            Utils.AddIfGotoNode(expectedResult, null, "L1", "t2");
+            Utils.AddGotoNode(expectedResult, null, "L2");
+            Utils.AddAssignmentNode(expectedResult, "L1", "t3", "t2");
+            Utils.AddAssignmentNode(expectedResult, null, "a3", "t3");
+            Utils.AddAssignmentNode(expectedResult, "L2", "t4", "t2");
+            Utils.AddAssignmentNode(expectedResult, null, "a2", "t4");
 
-    var cfg = new ControlFlowGraph(tacContainer);
+            var cfg = new ControlFlowGraph(tacContainer);
+            var expectedResultcfg = new ControlFlowGraph(expectedResult);
+            E_GenKillVisitor availExprVisitor = new E_GenKillVisitor();
+            var availExprContainers = availExprVisitor.GenerateAvailableExpressionForBlocks(cfg.SourceBasicBlocks);
 
-    E_GenKillVisitor availExprVisitor = new E_GenKillVisitor();
-    var availExprContainers = availExprVisitor.GenerateAvailableExpressionForBlocks(cfg.SourceBasicBlocks);
+            var availableExpressionsITA = new AvailableExpressionsITA(cfg, availExprContainers);
 
-    var availableExpressionsITA = new AvailableExpressionsITA(cfg, availExprContainers);
+            var availableExprOptimization = new AvailableExprOptimization();
+            bool isOptimized = availableExprOptimization.Optimize(availableExpressionsITA);
+            var basicBlockItems = cfg.SourceBasicBlocks.BasicBlockItems;
+            var codeText = cfg.SourceBasicBlocks.BasicBlockItems
+                .Select(bl => bl.ToString()).Aggregate((b1, b2) => b1 + b2);
 
-    var availableExprOptimization = new AvailableExprOptimization();
-    bool isOptimized = availableExprOptimization.Optimize(availableExpressionsITA);
-    var basicBlockItems = cfg.SourceBasicBlocks.BasicBlockItems;
-    var codeText = cfg.SourceBasicBlocks.BasicBlockItems
-    .Select(bl => bl.ToString()).Aggregate((b1, b2) => b1 + b2);
-
-    Assert.IsTrue(isOptimized);
+            Assert.IsTrue(isOptimized);
+            Assert.AreEqual(cfg.ToString(), expectedResultcfg.ToString());
 }
 ```
 ## Вывод
