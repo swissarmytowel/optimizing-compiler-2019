@@ -16,6 +16,7 @@ using SimpleLang.Optimizations;
 using SimpleLang.Optimizations.BooleanOptimization;
 using SimpleLang.TACode.TacNodes;
 using SimpleLang.ConstDistrib;
+using SimpleLang.TacBasicBlocks;
 
 namespace IntegratedApp
 {
@@ -63,6 +64,18 @@ namespace IntegratedApp
            // opt6 = 6,       //ИТА в задаче распространения const
             opt7 = 3,       //Распространение const на основе ИТА
            //opt8 = 8,       //Поиск решения м-ом MOP
+        }
+
+        enum OptimizationsByControlFlowGraph
+        {
+            opt0 = 0,   //Дерево доминаторов
+            opt1 = 1,   //Классификация ребер в CFG
+            opt2 = 2,   //Определение глубины в CFG
+            opt3 = 3,   //Определение того, явл. ли ребро обратимым
+            opt4 = 4,   //Определение того, явл. ли CFG приводимым
+            opt5 = 5,   //Определение всех естественных циклов в CFG с информ. об их вложенности
+            opt6 = 6,   //Построение глубинного остовного дерева с соотв. нумерацией вершин
+            opt7 = 7,   //Ускорение ИТА для задачи о достигающих определениях засчет перенумерации ББЛ
         }
 
         /// <summary>
@@ -117,6 +130,11 @@ namespace IntegratedApp
             { OptimizationsByIterationAlgorithm.opt7, new ConstDistributionOptimization() },
         };
 
+        /// <summary>
+        /// Выбранные оптимизации, связанные с CFG
+        /// </summary>
+        private List<OptimizationsByIterationAlgorithm> checkedOptimizationsBlock4 = new List<OptimizationsByIterationAlgorithm>();
+
         public IntegratedApp()
         {
             InitializeComponent();
@@ -160,10 +178,11 @@ namespace IntegratedApp
                 return;
             }
 
-            //if (checkedOptimizationsBlock1.Count == 0 && checkedOptimizationsBlock2.Count == 0 && checkedOptimizationsBlock3.Count == 0 && checkedOptimizationsBlock4.Count == 0) {
-            //    MessageBox.Show("Не выбрана ни одна оптимизация");
-            //    return;
-            //}
+            if (checkedOptimizationsBlock1.Count == 0 && checkedOptimizationsBlock2.Count == 0 
+                && checkedOptimizationsBlock3.Count == 0 && checkedOptimizationsBlock4.Count == 0) {
+                MessageBox.Show("Не выбрана ни одна оптимизация");
+                return;
+            }
 
             Scanner scanner = new Scanner();
             scanner.SetSource(InputTextBox.Text, 0);
@@ -172,6 +191,7 @@ namespace IntegratedApp
 
             var parentv = new FillParentVisitor();
             parser.root.Visit(parentv);
+            
 
 #region Optimizations by AST
             if (checkedOptimizationsBlock1.Count != 0) {
@@ -183,29 +203,34 @@ namespace IntegratedApp
                 parser.root.Visit(printv);
                 OutputTextBox.Text += printv.Text;
             }
-            #endregion
+#endregion
+            var threeAddressCodeVisitor = new ThreeAddressCodeVisitor();
+            parser.root.Visit(threeAddressCodeVisitor);
+            threeAddressCodeVisitor.Postprocess();
+            var bBlocks = new BasicBlocks();
+            bBlocks.SplitTACode(threeAddressCodeVisitor.TACodeContainer);
 
 #region Optimizations by Basic blocks
             if (checkedOptimizationsBlock2.Count != 0) {
-                var threeAddressCodeVisitor = new ThreeAddressCodeVisitor();
-                parser.root.Visit(threeAddressCodeVisitor);
-                threeAddressCodeVisitor.Postprocess();
-                OutputTextBox.Text += threeAddressCodeVisitor.TACodeContainer.ToString();
-                OutputTextBox.Text += "\n";
-
-                int ind, iteration = 0;
-                for (ind = 0; ind < checkedOptimizationsBlock2.Count; ind++) {
-                    var opt = checkedOptimizationsBlock2[ind];
-                    var result = optimizationsBlock2[opt].Optimize(threeAddressCodeVisitor.TACodeContainer);
-
-                    if (result) {
-                        ind = -1;
-                        continue;
-                    }
-
-                    OutputTextBox.Text += string.Format("===== Optimization {0} iteration {1} =====\n\n", optimizationsBlock2[opt].GetType(), iteration++);
-                    OutputTextBox.Text += threeAddressCodeVisitor.TACodeContainer.ToString();
+                for (int i = 0; i < bBlocks.BasicBlockItems.Count; ++i) {
+                    OutputTextBox.Text += string.Format("===== Three address code for Block #{0} =====\n", i);
+                    OutputTextBox.Text += bBlocks.BasicBlockItems[i].ToString();
                     OutputTextBox.Text += "\n";
+
+                    int ind, iteration = 0;
+                    for (ind = 0; ind < checkedOptimizationsBlock2.Count; ind++) {
+                        var opt = checkedOptimizationsBlock2[ind];
+                        var result = optimizationsBlock2[opt].Optimize(bBlocks.BasicBlockItems[i]);
+
+                        if (result) {
+                            ind = -1;
+                            continue;
+                        }
+
+                        OutputTextBox.Text += string.Format("===== Block #{0} Optimization {1} iteration #{2} =====\n\n", i, optimizationsBlock2[opt].GetType(), iteration++);
+                        OutputTextBox.Text += bBlocks.BasicBlockItems[i].ToString();
+                        OutputTextBox.Text += "\n";
+                    }
                 }
             }
             #endregion
@@ -218,6 +243,13 @@ namespace IntegratedApp
 
 #endregion
 
+#region Optimizations by CFG
+
+            if (checkedOptimizationsBlock4.Count != 0) {
+                // TO DO FOR GLEB
+            }
+
+#endregion
         }
 
         private void ClearButton_Click(object sender, EventArgs e)
