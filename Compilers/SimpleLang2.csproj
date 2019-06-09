@@ -83,6 +83,7 @@
     <Compile Include="IterationAlgorithms\Interfaces\IIterationAlgorithm.cs" />
     <Compile Include="IterationAlgorithms\IterationAlgorithm.cs" />
     <Compile Include="IterationAlgorithms\ReachingDefinitionsITA.cs" />
+    <Compile Include="IterationAlgorithms\ReachingDefinitionsSortedITA.cs" />
     <Compile Include="Optimizations\AvailableExprOptimization.cs" />
     <Compile Include="Optimizations\CommonSubexprOptimization.cs" />
     <Compile Include="Optimizations\DefUseConstPropagation.cs" />
