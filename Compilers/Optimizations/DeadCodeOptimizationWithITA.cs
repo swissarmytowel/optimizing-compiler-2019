@@ -12,7 +12,7 @@ using System.Text.RegularExpressions;
 
 namespace SimpleLang.Optimizations
 {
-    class DeadCodeOptimizationWithITA : IIterativeAlgorithmOptimizer<TacNode>
+    public class DeadCodeOptimizationWithITA : IIterativeAlgorithmOptimizer<TacNode>
     {
         public bool IsVariable(string val)
         {

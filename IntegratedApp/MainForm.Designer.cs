@@ -177,13 +177,9 @@
             this.checkedListBox2.FormattingEnabled = true;
             this.checkedListBox2.HorizontalScrollbar = true;
             this.checkedListBox2.Items.AddRange(new object[] {
-            "ИТА для активных переменных",
             "Удаление мертвого кода на основе ИТА для активных переменных",
-            "ИТА для достигающих переменных",
-            "Простяжка const на основе ИТА для достигающих переменных",
-            "ИТА для доступных выражений",
+            "Протяжка const на основе ИТА для достигающих переменных",
             "Провести оптимизации на основе анализа доступных выражений",
-            "ИТА в задаче распространения const",
             "Распространение const на основе ИТА",
             "Поиск решения м-ом MOP"});
             this.checkedListBox2.Location = new System.Drawing.Point(3, 180);

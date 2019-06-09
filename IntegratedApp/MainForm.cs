@@ -14,6 +14,8 @@ using SimpleParser;
 using SimpleLang.Optimizations.Interfaces;
 using SimpleLang.Optimizations;
 using SimpleLang.Optimizations.BooleanOptimization;
+using SimpleLang.TACode.TacNodes;
+using SimpleLang.ConstDistrib;
 
 namespace IntegratedApp
 {
@@ -48,6 +50,19 @@ namespace IntegratedApp
             opt8 = 8,       //Устранение недостижимого кода
             opt9 = 9,       //Устранение переходов к переходам
             opt10 = 10,     //LVN - алгоритм
+        }
+
+        enum OptimizationsByIterationAlgorithm
+        {
+            //opt0 = 0,       //ИТА для активных переменных
+            opt1 = 0,       //Удаление мертвого кода на основе ИТА для активных переменных
+            //opt2 = 2,       //ИТА для достигающих переменных
+            opt3 = 1,       //Протяжка const на основе ИТА для достигающих переменных
+           // opt4 = 4,       //ИТА для доступных выражений
+            opt5 = 2,       //Провести оптимизации на основе анализа доступных выражений
+           // opt6 = 6,       //ИТА в задаче распространения const
+            opt7 = 3,       //Распространение const на основе ИТА
+           //opt8 = 8,       //Поиск решения м-ом MOP
         }
 
         /// <summary>
@@ -85,6 +100,21 @@ namespace IntegratedApp
             { OptimizationsByBasicBlocks.opt8, new UnreachableCodeOpt() },
             { OptimizationsByBasicBlocks.opt9, new EliminateTranToTranOpt() },
             { OptimizationsByBasicBlocks.opt10, new LocalValueNumberingOptimization() },
+        };
+
+        /// <summary>
+        /// Выбранные оптимизации, связанные с ИТА
+        /// </summary>
+        private List<OptimizationsByIterationAlgorithm> checkedOptimizationsBlock3 = new List<OptimizationsByIterationAlgorithm>();
+        private Dictionary<OptimizationsByIterationAlgorithm, IIterativeAlgorithmOptimizer<TacNode>> optimizationsBlock3TacNode = new Dictionary<OptimizationsByIterationAlgorithm, IIterativeAlgorithmOptimizer<TacNode>>() {
+           
+            { OptimizationsByIterationAlgorithm.opt1, new DeadCodeOptimizationWithITA() },
+            { OptimizationsByIterationAlgorithm.opt3, new ReachingDefinitionsConstPropagation() },
+            { OptimizationsByIterationAlgorithm.opt5, new AvailableExprOptimization() },
+        };
+
+        private Dictionary<OptimizationsByIterationAlgorithm, IIterativeAlgorithmOptimizer<SemilatticeStreamValue>> optimizationsBlock3SemilatticeStreamValue = new Dictionary<OptimizationsByIterationAlgorithm, IIterativeAlgorithmOptimizer<SemilatticeStreamValue>>() {
+            { OptimizationsByIterationAlgorithm.opt7, new ConstDistributionOptimization() },
         };
 
         public IntegratedApp()
@@ -178,9 +208,17 @@ namespace IntegratedApp
                     OutputTextBox.Text += "\n";
                 }
             }
+            #endregion
+
+#region Optimizations by Iteration Algorithm
+
+            if (checkedOptimizationsBlock3.Count != 0) {
+                // TO DO FOR GLEB
+            }
+
 #endregion
 
-            }
+        }
 
         private void ClearButton_Click(object sender, EventArgs e)
         {

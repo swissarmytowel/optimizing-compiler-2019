@@ -12,7 +12,7 @@ using SimpleLang.Utility;
 
 namespace SimpleLang.ConstDistrib
 {
-    class ConstDistributionOptimization : IIterativeAlgorithmOptimizer<SemilatticeStreamValue>
+    public class ConstDistributionOptimization : IIterativeAlgorithmOptimizer<SemilatticeStreamValue>
     {
         public ConstDistributionOptimization(){}
 
