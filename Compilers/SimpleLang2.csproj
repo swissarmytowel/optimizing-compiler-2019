@@ -60,7 +60,10 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CFG\DominatorsTree\DominatorsFinder.cs" />
+    <Compile Include="CFG\Services\DominatorsService.cs" />
     <Compile Include="CFG\DSTEdgeClassifier.cs" />
+    <Compile Include="CFG\DSTReducibility.cs" />
+    <Compile Include="CFG\Services\EdgeClassifierService.cs" />
     <Compile Include="ConstDistrib\ConstDistribFunction.cs" />
     <Compile Include="ConstDistrib\ConstDistribOperator.cs" />
     <Compile Include="ConstDistrib\ConstDistribTest.cs" />

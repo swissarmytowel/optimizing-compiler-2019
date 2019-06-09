@@ -178,6 +178,17 @@ namespace SimpleCompiler
                     var depth = cfg.GetDepth(dstClassifier.EdgeTypes);
                     Console.WriteLine($"Depth CFG = {depth}");
 
+
+                    /* -----------------------CFG TASKS START---------------------------------*/
+                    Console.WriteLine("\nCFG TASKS START");
+                    Console.WriteLine(cfg);
+                    var edgeClassifierService = new EdgeClassifierService(cfg);
+                    Console.WriteLine("EdgeClassifierService: \n" + edgeClassifierService);
+                    bool isReducibility = DSTReducibility.IsReducibility(cfg);
+                    Console.WriteLine("IsReducibility: " + isReducibility);
+                    Console.WriteLine("\nCFG TASKS END");
+                    /* -----------------------CFG TASKS END---------------------------------*/
+
                     //Console.WriteLine(threeAddressCodeVisitor.TACodeContainer);
                     //var availExprOpt = new AvailableExprOptimization();
                     //availExprOpt.Optimize(cfg);
@@ -185,10 +196,10 @@ namespace SimpleCompiler
                     //Console.WriteLine(cfg);
 
 
-//                    Console.WriteLine("======= DV =======");
-//                    Console.WriteLine(threeAddressCodeVisitor);
-//                    var detector = new DefUseDetector();
-//                    detector.DetectAndFillDefUse(threeAddressCodeVisitor.TACodeContainer);
+                    //                    Console.WriteLine("======= DV =======");
+                    //                    Console.WriteLine(threeAddressCodeVisitor);
+                    //                    var detector = new DefUseDetector();
+                    //                    detector.DetectAndFillDefUse(threeAddressCodeVisitor.TACodeContainer);
 
                     Console.WriteLine();
                     Console.WriteLine("Before optimization");
