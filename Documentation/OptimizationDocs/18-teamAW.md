@@ -251,7 +251,40 @@ TAC для
   операций)
 - Циклов for и while
 - Уловного опретора if-else
+- Оператора безусловного перехода goto;
 
+А так же метод постообработки полученной программы для удаления лишних пустых операторов с метками, автоматическая генерация которых является недостатком рекурсивного подхода.
+```csharp
+public void Postprocess()
+{
+    var nodesToRemove = new List<TacNode>();
+    // Обход всех строк сверху вниз
+    var currentNode = TACodeContainer.First;
+    while (currentNode != null)
+    {
+        var next = currentNode.Next;
+
+        if (next == null)
+        {
+            currentNode = next;
+            continue;
+        }
+        if (currentNode.Value is TacEmptyNode && !(next.Value is TacEmptyNode))
+        {
+            // Если встретили пустой оператор
+            if (currentNode.Value.Label != null)
+            {
+                // Если у него есть метка -- "сливаем" его со следующим за ним оператором  
+                next.Value.Label = currentNode.Value.Label;
+                nodesToRemove.Add(currentNode.Value);
+            }
+        }
+        currentNode = next;
+    }
+    // Удаляем все встреченные пустые операторы, так как их метки теперь указывают на строки кода 
+    TACodeContainer.RemoveNodes(nodesToRemove);
+}
+```
 Пример рекурсивной функции, генерирующей строки трехадресного кода по выражению.
 ```csharp
  /// <summary>
@@ -344,8 +377,73 @@ private string GenerateThreeAddressLine(ExprNode expression)
 ```
 
 ## Тесты
+### Input
+```csharp
+x = 42;
+a = (x - 180) / 55 + x * 2;
 
-Узнать как должны выглядить тесты в докуметации.
+if(x > 50){
+    a = func2();
+} else{
+    a = 305;
+}
+
+b = false;
+if(!b){
+    b = b && (x == 0);
+}
+
+for(i = 0 to 100){
+    x = i;
+}    
+
+goto l 120:
+
+while(x < 50){
+    x = x - 1;
+    a = a + func();
+}
+
+l 120: x = 5;
+
+```
+### Output
+```
+x = 42
+t1 = 42 - 180
+t2 = t1 / 55
+t3 = 42 * 2
+t4 = t2 + t3
+a = t4
+t5 = 42 > 50
+if t5 goto L1
+a = 305
+goto L2
+L1: a = func2()
+L2: b = False
+t6 =  ! b
+if t6 goto L3
+goto L4
+t7 = x == 0
+L3: t8 = b && t7
+b = t8
+L4: i = 0
+L5: x = 0
+i = i + 1
+t9 = i < 100
+if t9 goto L5
+goto l120
+L6: t10 = x < 50
+if t10 goto L8
+goto L7
+L8: t11 = x - 1
+x = t11
+t12 = a + func()
+a = t12
+goto L6
+L7:
+l120: x = 5
+```
 
 ## Вывод
 

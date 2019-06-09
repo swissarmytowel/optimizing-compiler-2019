@@ -71,7 +71,7 @@ public void ReplaceStatement(StatementNode from, StatementNode to)
 }
 ```
 ## Тесты
-Узнать как должны выглядить тесты в докуметации.
+--
 
 ## Вывод
 Используя метод, описанный выше, мы получили визитор, заменяющий выражения вида `while (false) st;` на `null`.

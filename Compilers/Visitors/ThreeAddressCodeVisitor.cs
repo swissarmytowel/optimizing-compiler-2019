@@ -353,7 +353,7 @@ namespace SimpleLang.Visitors
             TACodeContainer.PushNode(new TacGotoNode()
             {
                 IsUtility = false,
-                TargetLabel = "L" + gt.L.Inum
+                TargetLabel = "l" + gt.L.Inum
             });
         }
 
@@ -361,7 +361,7 @@ namespace SimpleLang.Visitors
         {
             TACodeContainer.PushNode(new TacEmptyNode()
             {
-                Label = "L" + l.Inum
+                Label = "l" + l.Inum
             });
         }
 
