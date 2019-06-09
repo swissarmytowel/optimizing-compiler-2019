@@ -8,7 +8,7 @@ using SimpleLang.TACode;
 
 namespace SimpleLang.Optimizations
 {
-    class EmptyNodeOptimization : IOptimizer
+    public class EmptyNodeOptimization : IOptimizer
     {
         public bool Optimize(ThreeAddressCode tac)
         {
