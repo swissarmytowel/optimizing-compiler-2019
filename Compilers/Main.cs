@@ -285,6 +285,18 @@ namespace SimpleCompiler
 
                     GenKillVisitor genKillVisitor = new GenKillVisitor();
                     var genKillContainers = genKillVisitor.GenerateReachingDefinitionForBlocks(cfg.SourceBasicBlocks);
+
+                    //start 
+                    var commonTf = new TFByCommonWay(genKillContainers);
+                    var composTf = new TFByComposition(genKillContainers);
+
+                    Console.WriteLine("=== Compos ===");
+                    Console.WriteLine(composTf.Calculate(new HashSet<TacNode>(), cfg.SourceBasicBlocks.BasicBlockItems.First()));
+                   
+                    Console.WriteLine("=== Common ===");
+                    Console.WriteLine(commonTf.Calculate(new HashSet<TacNode>(), cfg.SourceBasicBlocks.BasicBlockItems.First()));
+
+                    //end
 //                    InOutContainerWithFilling inOutContainers =
 //                        new InOutContainerWithFilling(cfg.SourceBasicBlocks, genKillContainers);
 //                    Console.WriteLine("=== InOut для базовых блоков ===");
