@@ -269,9 +269,9 @@ namespace SimpleCompiler
                     //elimintaion.Optimize(threeAddressCodeVisitor.TACodeContainer);
                     //Console.WriteLine("Удаление переходов к переходам завершилось");
 
-//                    var unreachableCode = new UnreachableCodeOpt();
-//                    var res = unreachableCode.Optimize(threeAddressCodeVisitor.TACodeContainer);
-//                    Console.WriteLine("Оптимизация для недостижимых блоков");
+//                   var unreachableCode = new UnreachableCodeOpt();
+//                   var res = unreachableCode.Optimize(threeAddressCodeVisitor.TACodeContainer);
+//                   Console.WriteLine("Оптимизация для недостижимых блоков");
 
                     var algOpt = new AlgebraicIdentityOptimization();
                     algOpt.Optimize(threeAddressCodeVisitor.TACodeContainer);
@@ -374,15 +374,6 @@ namespace SimpleCompiler
                     Console.WriteLine(cfg.SourceBasicBlocks
                         .BasicBlockItems.Select((bl, ind) => $"BLOCK{ind}:\n" + bl.ToString()).Aggregate((b1, b2) => b1 + b2));
                     /* -----------------------AvailableExpressions END---------------------------------*/
-
-                    /* -----------------------ConstDistrib START---------------------------------*/
-                    SemilatticeTest.TestForValueOperator();
-                    SemilatticeTest.TestForStreamValueOperator();
-                    Console.WriteLine("SemilatticeTests done success");
-                    ConstDistribTest.TestForOperator();
-                    ConstDistribTest.TestForFunction();
-                    Console.WriteLine("ConstDistribTests done success");
-                    /* -----------------------ConstDistrib END---------------------------------*/
 
                     /* -----------------------ConstDistribOptimization START---------------------------------*/
                     Console.WriteLine("ConstDistributionOptimization: Before");

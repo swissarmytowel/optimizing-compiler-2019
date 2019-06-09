@@ -48,6 +48,7 @@ namespace TextTests.Handlers
             var root = parser.root;
             var tacVisitor = new ThreeAddressCodeVisitor();
             root.Visit(tacVisitor);
+            tacVisitor.Postprocess();
 
             return tacVisitor.TACodeContainer;
         }

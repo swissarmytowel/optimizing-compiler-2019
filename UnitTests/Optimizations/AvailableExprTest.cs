@@ -27,20 +27,20 @@ namespace UnitTests.Optimizations
             Utils.AddAssignmentNode(tacContainer, "L2", "t4", "4", "*", "i");
             Utils.AddAssignmentNode(tacContainer, null, "a2", "t4");
 
-            var expectedResult = new ThreeAddressCodeVisitor();
-            Utils.AddAssignmentNode(expectedResult, null, "t5", "4", "*", "i");
-            Utils.AddAssignmentNode(expectedResult, null, "t1", "t5");
+            var expectedResult = new ThreeAddressCode();
+            Utils.AddAssignmentNode(expectedResult, null, "t2", "4", "*", "i");
+            Utils.AddAssignmentNode(expectedResult, null, "t1", "t2");
             Utils.AddAssignmentNode(expectedResult, null, "a1", "t1");
             Utils.AddAssignmentNode(expectedResult, null, "t2", "b");
             Utils.AddIfGotoNode(expectedResult, null, "L1", "t2");
             Utils.AddGotoNode(expectedResult, null, "L2");
-            Utils.AddAssignmentNode(expectedResult, "L1", "t3", "t5");
+            Utils.AddAssignmentNode(expectedResult, "L1", "t3", "t2");
             Utils.AddAssignmentNode(expectedResult, null, "a3", "t3");
-            Utils.AddAssignmentNode(expectedResult, "L2", "t4", "t5");
+            Utils.AddAssignmentNode(expectedResult, "L2", "t4", "t2");
             Utils.AddAssignmentNode(expectedResult, null, "a2", "t4");
 
             var cfg = new ControlFlowGraph(tacContainer);
-
+            var expectedResultcfg = new ControlFlowGraph(expectedResult);
             E_GenKillVisitor availExprVisitor = new E_GenKillVisitor();
             var availExprContainers = availExprVisitor.GenerateAvailableExpressionForBlocks(cfg.SourceBasicBlocks);
 
@@ -53,6 +53,7 @@ namespace UnitTests.Optimizations
                 .Select(bl => bl.ToString()).Aggregate((b1, b2) => b1 + b2);
 
             Assert.IsTrue(isOptimized);
+            Assert.AreEqual(cfg.ToString(), expectedResultcfg.ToString());
         }
 
         [TestMethod]
@@ -66,25 +67,26 @@ namespace UnitTests.Optimizations
             Utils.AddIfGotoNode(tacContainer, null, "L1", "t2");
             Utils.AddGotoNode(tacContainer, null, "L2");
             Utils.AddAssignmentNode(tacContainer, "L1", "t3", "4", "*", "i");
-            Utils.AddAssignmentNode(tacContainer, null, "a3", "t3");
-            Utils.AddAssignmentNode(tacContainer, "L2", "t4", "4", "*", "i");
+            Utils.AddAssignmentNode(tacContainer, "L2", "a3", "t3");
+            Utils.AddAssignmentNode(tacContainer, null, "t4", "4", "*", "i");
             Utils.AddAssignmentNode(tacContainer, null, "a2", "t4");
 
-            var expectedResult = new ThreeAddressCodeVisitor();
-            Utils.AddAssignmentNode(expectedResult, null, "t1", "4", "*", "i");
+            var expectedResult = new ThreeAddressCode();
+            Utils.AddAssignmentNode(expectedResult, null, "t3", "4", "*", "i");
+            Utils.AddAssignmentNode(expectedResult, null, "t1", "t3");
             Utils.AddAssignmentNode(expectedResult, null, "a1", "t1");
-            Utils.AddAssignmentNode(expectedResult, null, "i", "1");
             Utils.AddAssignmentNode(expectedResult, null, "t2", "b");
+            Utils.AddAssignmentNode(expectedResult, null, "i", "1");
             Utils.AddIfGotoNode(expectedResult, null, "L1", "t2");
             Utils.AddGotoNode(expectedResult, null, "L2");
-            Utils.AddAssignmentNode(expectedResult, null, "t5", "4", "*", "1");
-            Utils.AddAssignmentNode(expectedResult, "L1", "t3", "t5");
-            Utils.AddAssignmentNode(expectedResult, null, "a3", "t3");
-            Utils.AddAssignmentNode(expectedResult, null, "t5", "4", "*", "1");
-            Utils.AddAssignmentNode(expectedResult, "L2", "t4", "t5");
+            Utils.AddAssignmentNode(expectedResult, "L1", "t3", "4", "*", "i");
+            Utils.AddAssignmentNode(expectedResult, "L2", "a3", "t3");
+            Utils.AddAssignmentNode(expectedResult, null, "t3", "4", "*", "i");
+            Utils.AddAssignmentNode(expectedResult, null, "t4", "t3");
             Utils.AddAssignmentNode(expectedResult, null, "a2", "t4");
 
             var cfg = new ControlFlowGraph(tacContainer);
+            var expectedResultcfg = new ControlFlowGraph(expectedResult);
 
             E_GenKillVisitor availExprVisitor = new E_GenKillVisitor();
             var availExprContainers = availExprVisitor.GenerateAvailableExpressionForBlocks(cfg.SourceBasicBlocks);
@@ -93,13 +95,12 @@ namespace UnitTests.Optimizations
 
             var availableExprOptimization = new AvailableExprOptimization();
             bool isOptimized = availableExprOptimization.Optimize(availableExpressionsITA);
-            var basicBlockItems = availableExprOptimization.Blocks.BasicBlockItems;
-            var beforeText = expectedResult.ToString();
-            var afterText = basicBlockItems
+            var basicBlockItems = cfg.SourceBasicBlocks.BasicBlockItems;
+            var codeText = cfg.SourceBasicBlocks.BasicBlockItems
                 .Select(bl => bl.ToString()).Aggregate((b1, b2) => b1 + b2);
+
             Assert.IsTrue(isOptimized);
-            var needText = expectedResult.ToString();
-            //Assert.AreEqual(afterText, needText);
+            Assert.AreEqual(cfg.ToString(), expectedResultcfg.ToString());
         }
 
         [TestMethod]
@@ -115,7 +116,7 @@ namespace UnitTests.Optimizations
             Utils.AddAssignmentNode(tacContainer, null, "a3", "t3");
             Utils.AddAssignmentNode(tacContainer, "L2", null, null);
 
-            var expectedResult = new ThreeAddressCodeVisitor();
+            var expectedResult = new ThreeAddressCode();
             Utils.AddAssignmentNode(expectedResult, null, "t4", "4", "*", "i");
             Utils.AddAssignmentNode(expectedResult, null, "t1", "t4");
             Utils.AddAssignmentNode(expectedResult, null, "a1", "t1");
@@ -127,6 +128,8 @@ namespace UnitTests.Optimizations
             Utils.AddAssignmentNode(expectedResult, "L2", null , null);
 
             var cfg = new ControlFlowGraph(tacContainer);
+
+            var expectedResultcfg = new ControlFlowGraph(expectedResult);
 
             E_GenKillVisitor availExprVisitor = new E_GenKillVisitor();
             var availExprContainers = availExprVisitor.GenerateAvailableExpressionForBlocks(cfg.SourceBasicBlocks);
@@ -140,6 +143,7 @@ namespace UnitTests.Optimizations
                 .Select(bl => bl.ToString()).Aggregate((b1, b2) => b1 + b2);
 
             Assert.IsTrue(isOptimized);
+            Assert.AreEqual(cfg.ToString(), expectedResultcfg.ToString());
         }
     }
 }

@@ -15,7 +15,7 @@ namespace SimpleLang.ConstDistrib
         }
     }
 
-    class DataStreamValue
+    public class DataStreamValue
     {
         public HashSet<SemilatticeStreamValue> Stream;
 

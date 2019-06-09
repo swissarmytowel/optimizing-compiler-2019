@@ -36,17 +36,20 @@ namespace UnitTests
         /// <summary>
         /// Creates and pushes empty node to the end of the visitor's tac container 
         /// </summary>
-        public static void AddEmptyNode(ThreeAddressCodeVisitor tacVisitor)
+        public static void AddEmptyNode(ThreeAddressCodeVisitor tacVisitor, string label=null)
         {
-            AddEmptyNode(tacVisitor.TACodeContainer);
+            AddEmptyNode(tacVisitor.TACodeContainer, label);
         }
 
         /// <summary>
         /// Creates and pushes empty node to the end of the tac container 
         /// </summary>
-        public static void AddEmptyNode(ThreeAddressCode tacContainer)
+        public static void AddEmptyNode(ThreeAddressCode tacContainer, string label=null)
         {
-            tacContainer.PushNode(new TacEmptyNode());
+            tacContainer.PushNode(new TacEmptyNode()
+            {
+                Label = label
+            });
         }
 
         /// <summary>

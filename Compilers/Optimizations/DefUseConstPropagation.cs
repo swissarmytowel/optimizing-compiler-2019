@@ -8,15 +8,13 @@ namespace SimpleLang.Optimizations
 {
     public class DefUseConstPropagation : IOptimizer
     {
-        private readonly DefUseDetector _detector;
-
-        public DefUseConstPropagation(DefUseDetector detector)
-        {
-            _detector = detector;
-        }
+        private DefUseDetector _detector;
 
         public bool Optimize(ThreeAddressCode tac)
         {
+            _detector = new DefUseDetector();
+            _detector.DetectAndFillDefUse(tac);
+            
             var initialTac = tac.ToString();
 
             var node = tac.Last;

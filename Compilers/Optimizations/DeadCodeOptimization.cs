@@ -6,16 +6,20 @@ using SimpleLang.TACode;
 using SimpleLang.TACode.TacNodes;
 using SimpleLang.Optimizations;
 using System.Text.RegularExpressions;
-
+using SimpleLang.Optimizations.Interfaces;
 
 namespace SimpleLang.Optimizations
 {
-    public class DeadCodeOptimization
+    public class DeadCodeOptimization : IOptimizer
     {
         public Dictionary<string, bool> variables; // Tkey = varName, Tvalue = isAlive
         public DeadCodeOptimization()
         {
             variables = new Dictionary<string, bool>();
+        }
+        public DeadCodeOptimization(Dictionary<string, bool> variablesInfo)
+        {
+            variables = new Dictionary<string, bool>(variablesInfo);
         }
         public bool IsVariable(string val)
         {
@@ -39,33 +43,41 @@ namespace SimpleLang.Optimizations
         }
         public void InitializeVariables(ThreeAddressCode block)
         {
-            foreach(var line in block)
+            foreach (var line in block)
             {
-                if(line.GetType() == typeof(TacAssignmentNode))
+                if (line.GetType() == typeof(TacAssignmentNode))
                 {
                     string leftIdent = ((TacAssignmentNode)line).LeftPartIdentifier;
                     if (IsVariable(leftIdent) && !this.variables.ContainsKey(leftIdent))
                         this.variables.Add(leftIdent, true);
                     else
                         if (IsTempVariable(leftIdent) && !this.variables.ContainsKey(leftIdent))
-                            this.variables.Add(leftIdent, false);
+                        this.variables.Add(leftIdent, false);
 
                 }
             }
         }
-        public void AnalyzeVariables(ThreeAddressCode block)
+        public void ClearVariables()
+        {
+            variables = new Dictionary<string, bool>();
+        }
+        public LinkedList<TacNode> GetDeadCode(ThreeAddressCode block)
         {
             InitializeVariables(block);
-            string tempRes = "";
+            LinkedList<TacNode> toDeleteList = new LinkedList<TacNode>();
+
             for (int i = block.TACodeLines.Count - 1; i >= 0; --i)
             {
                 if (block.TACodeLines.ElementAt(i).GetType() == typeof(TacAssignmentNode))
                 {
                     string leftIdent = ((TacAssignmentNode)block.TACodeLines.ElementAt(i)).LeftPartIdentifier;
-                    if (IsVariable(leftIdent) || IsTempVariable(leftIdent))
+
+
+                    if (!this.variables[leftIdent])
                     {
-                        this.variables[leftIdent] = false;
+                        toDeleteList.AddLast(block.TACodeLines.ElementAt(i));
                     }
+                    this.variables[leftIdent] = false;
 
                     string firstOp = ((TacAssignmentNode)block.TACodeLines.ElementAt(i)).FirstOperand;
                     if (IsVariable(firstOp) || IsTempVariable(firstOp))
@@ -75,7 +87,26 @@ namespace SimpleLang.Optimizations
                     if (IsVariable(secondOp) || IsTempVariable(secondOp))
                         this.variables[secondOp] = true;
                 }
+                if (block.TACodeLines.ElementAt(i).GetType() == typeof(TacIfGotoNode))
+                {
+                    string cond = ((TacIfGotoNode)block.TACodeLines.ElementAt(i)).Condition;
+                    this.variables[cond] = true;
+                }
             }
+            ClearVariables();
+            return toDeleteList;
+        }
+
+        public bool Optimize(ThreeAddressCode block)
+        {
+            while (true)
+            {
+                LinkedList<TacNode> deadCodeList = GetDeadCode(block);
+                if (deadCodeList.Count == 0)
+                    break;
+                block.RemoveNodes(deadCodeList);
+            }
+            return true;
         }
     }
 }
