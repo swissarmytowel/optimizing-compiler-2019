@@ -63,10 +63,31 @@ for (i = 1 to 10)
 #### OUTPUT:
 
 ```
+VERTICES
+#0:
+a = 1  
+i = 1  
+
+#1:
+L1: j = 1  
+
+#2:
+L2: t1 = a + 1
+a = t1  
+j = j + 1
+t2 = j < 10
+if t2 goto L2
+
+#3:
+i = i + 1
+t3 = i < 10
+if t3 goto L1
+
+EDGES
 0 -> [ 1 ]
 1 -> [ 2 ]
 2 -> [ 3 2 ]
-3 -> [ 1 ] 
+3 -> [ 1 ]
 ```
 
 ![](../images/31-teamNull-2.png)
