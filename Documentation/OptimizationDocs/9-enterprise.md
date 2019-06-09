@@ -13,14 +13,22 @@ Enterprise
 При возникновении логического выражения вида `a > a` или `a != a` его необходимо заменить на `a`.
 
 ## Реализация
-Тут должно быть куски кода с объяснением. Самый большой раздел
+Для решения поставленной задачи был реализован визитор, наследуемый от ChangeVisitor.
 
-Пример куска кода:
 ```csharp
-using System;
-
-foreach (var i in list)
-    Console.WriteLine(i);
+class CompareToItselfFalseOptVisitor : ChangeVisitor
+    {
+        public override void VisitBinOpNode(BinOpNode binop)
+        {
+            if (binop.Left is IdNode left && binop.Right is IdNode right)
+            {
+                var isNamesEqual = string.Equals(left.Name, right.Name);
+                if (string.Equals(binop.Op, ">") || string.Equals(binop.Op, "!=") && isNamesEqual)
+                    ReplaceExpr(binop, new BoolNode(false));
+                else base.VisitBinOpNode(binop);
+            }
+        }
+    }
 ```
 
 ## Тесты

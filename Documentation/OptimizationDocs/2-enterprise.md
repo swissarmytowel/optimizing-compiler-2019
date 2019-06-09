@@ -7,24 +7,39 @@
 Enterprise
 
 ## Зависимости
-Данная задача не зависит от других задач и не порождает новых зависимостей.
-
+Зависит от:
+- Базовые визиторы
 ## Теория
 При возникновении присвоения, в процессе которого переменной присваивается выражение вида `0 * expr` или `0 * expr` необходимо заменить выражение на ноль. 
 
 ## Реализация
-Тут должно быть куски кода с объяснением. Самый большой раздел
+Для решения поставленной задачи был реализован визитор, наследуемый от ChangeVisitor.
 
-Пример куска кода:
 ```csharp
-using System;
+class ZeroMulOptVisitor : ChangeVisitor
+    {
 
-foreach (var i in list)
-    Console.WriteLine(i);
+        public override void VisitBinOpNode(BinOpNode binop)
+        {
+            var isZeroLeft = binop.Left is IntNumNode && (binop.Left as IntNumNode).Num == 0;
+            var isZeroRight = binop.Right is IntNumNode && (binop.Right as IntNumNode).Num == 0;
+
+            if (string.Equals(binop.Op, "*") && (isZeroRight || isZeroLeft))
+                ReplaceExpr(binop, new IntNumNode(0));
+            else base.VisitBinOpNode(binop);
+        }
+    }
 ```
 
 ## Тесты
-Узнать как должны выглядить тесты в докуметации.
+#### INPUT: 
+```
+x = 50 * 10;
+```
+#### OUTPUT:
+```
+x = 500;
+```
 
 ## Вывод
 В результате работы был написан визитор, который посещает все узлы AST-дерева и применяет оптимизацию вида `0 * expr`.
