@@ -85,7 +85,22 @@ public void ReplaceStatement(StatementNode from, StatementNode to)
 ```
 
 ## Тесты
-Узнать как должны выглядить тесты в докуметации.
-
+#### INPUT: 
+```csharp
+if (true)
+{
+  s = 11;
+}
+else
+{
+  s = 42;
+}
+```
+#### OUTPUT:
+```csharp
+{
+  s = 11;
+}
+```
 ## Вывод
 Используя метод, описанный выше, мы получили визитор, заменяющий выражения вида `if (true) st1; else st2;` на `st1`.
