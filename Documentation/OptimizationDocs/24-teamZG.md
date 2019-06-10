@@ -128,6 +128,7 @@ switch (assign.Operation)
 ```
 
 ## Тесты
+INPUT:
 ```
 a = 2 * 3;
 b = a / a;
