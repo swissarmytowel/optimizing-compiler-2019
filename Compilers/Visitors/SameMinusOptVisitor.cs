@@ -6,7 +6,7 @@ using ProgramTree;
 
 namespace SimpleLang.Visitors
 {
-    class SameMinusOptVisitor : ChangeVisitor
+    public class SameMinusOptVisitor : ChangeVisitor
     {
         public override void VisitBinOpNode(BinOpNode binop)
         {

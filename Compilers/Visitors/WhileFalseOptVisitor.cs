@@ -6,13 +6,13 @@ using ProgramTree;
 
 namespace SimpleLang.Visitors
 {
-    class WhileFalseOptVisitor: ChangeVisitor
+    public class WhileFalseOptVisitor: ChangeVisitor
     {
         public override void VisitWhileNode(WhileNode c)
         {
             if (c.Expr is BoolNode bn && bn.Value == false)
             {
-                ReplaceStatement(c, new EmptyNode());
+                ReplaceStatement(c, new EmptyNode() );
             }
         }
     }
