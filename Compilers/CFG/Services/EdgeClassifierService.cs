@@ -8,7 +8,7 @@ using System.Text;
 
 namespace SimpleLang.CFG
 {
-    class EdgeClassifierService
+    public class EdgeClassifierService
     {
         private ControlFlowGraph _cfg;
         private DstEdgeClassifier edgeClassifier;
@@ -79,7 +79,7 @@ namespace SimpleLang.CFG
         public override string ToString()
         {
             string text = "\nBasicBlocks: \n" + BlocksToString();
-            text += "\nDominatorService:" + dominatorService + "\n";
+            //text += "\nDominatorService:" + dominatorService + "\n";
             text += "\nBackEdges:" + EdgesToString(BackEdges) + "\n";
             text += "\nComingEdges:" + EdgesToString(ComingEdges) + "\n";
             text += "\nRetreatingEdges:" + EdgesToString(RetreatingEdges) + "\n";

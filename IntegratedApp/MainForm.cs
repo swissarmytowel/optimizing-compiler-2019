@@ -24,7 +24,7 @@ using SimpleLang.CFG;
 using SimpleLang.IterationAlgorithms;
 using SimpleLang.GenKill.Implementations;
 using SimpleLang.E_GenKill.Implementations;
-
+using SimpleLang.CFG.NaturalCycles;
 
 namespace IntegratedApp
 {
@@ -79,11 +79,9 @@ namespace IntegratedApp
             opt0 = 0,   //Дерево доминаторов
             opt1 = 1,   //Классификация ребер в CFG
             opt2 = 2,   //Определение глубины в CFG
-            opt3 = 3,   //Определение того, явл. ли ребро обратимым
-            opt4 = 4,   //Определение того, явл. ли CFG приводимым
-            opt5 = 5,   //Определение всех естественных циклов в CFG с информ. об их вложенности
-            opt6 = 6,   //Построение глубинного остовного дерева с соотв. нумерацией вершин
-            opt7 = 7,   //Ускорение ИТА для задачи о достигающих определениях засчет перенумерации ББЛ
+            opt3 = 3,   //Определение того, явл. ли CFG приводимым
+            opt4 = 4,   //Определение всех естественных циклов в CFG с информ. об их вложенности
+            opt5 = 5,   //Построение глубинного остовного дерева с соотв. нумерацией вершин
         }
 
         /// <summary>
@@ -340,31 +338,51 @@ namespace IntegratedApp
             #region Optimizations by CFG
 
             if (checkedOptimizationsBlock4.Count != 0) {
-                foreach(var item in checkedOptimizationsBlock4) {
+
+                OutputTextBox.Text += string.Format("===== Three address code =====\n");
+                OutputTextBox.Text += threeAddressCodeVisitor.TACodeContainer;
+                OutputTextBox.Text += "\n";
+                OutputTextBox.Text += cfg;
+
+                var edgeClassifierService = new EdgeClassifierService(cfg);
+
+                foreach (var item in checkedOptimizationsBlock4) {
                     switch (item) {
                         case OptimizationsByControlFlowGraph.opt0:
-                            OutputTextBox.Text += string.Format("===== Three address code =====\n");
-                            OutputTextBox.Text += threeAddressCodeVisitor.TACodeContainer;
-                            OutputTextBox.Text += "\n";
-                            OutputTextBox.Text += cfg;
-
+                            OutputTextBox.Text += $"===== Дерево доминаторов =====\n";
                             var dominatorService = new DominatorsService(cfg);
                             OutputTextBox.Text += dominatorService;
-                            OutputTextBox.Text += "\n";
+                            OutputTextBox.Text += "\n\n";
                             break;
                         case OptimizationsByControlFlowGraph.opt1:
+                            OutputTextBox.Text += $"===== Классификация ребер в CFG =====\n";
+                            OutputTextBox.Text += edgeClassifierService;
+                            OutputTextBox.Text += "\n\n";
                             break;
                         case OptimizationsByControlFlowGraph.opt2:
+                            OutputTextBox.Text += $"===== Определение глубины в CFG =====\n";
+                            var dstClassifier = new DstEdgeClassifier(cfg);
+                            dstClassifier.ClassificateEdges(cfg);
+                            var depth = cfg.GetDepth(dstClassifier.EdgeTypes);
+                            OutputTextBox.Text += $"Depth CFG = {depth}\n\n";
                             break;
                         case OptimizationsByControlFlowGraph.opt3:
+                            OutputTextBox.Text += $"===== Определение того, явл. ли CFG приводимым =====\n";
+                            bool isReducibility = DSTReducibility.IsReducibility(cfg);
+                            OutputTextBox.Text += "IsReducibility: " + isReducibility;
+                            OutputTextBox.Text += "\n\n";
                             break;
                         case OptimizationsByControlFlowGraph.opt4:
+                            OutputTextBox.Text += $"===== Определение всех естественных циклов в CFG с информ. об их вложенности =====\n";
+                            var cycles = new CFGNaturalCycles(cfg);
+                            OutputTextBox.Text += cycles.NestedLoopsText();
+                            OutputTextBox.Text += "\n\n";
                             break;
                         case OptimizationsByControlFlowGraph.opt5:
-                            break;
-                        case OptimizationsByControlFlowGraph.opt6:
-                            break;
-                        case OptimizationsByControlFlowGraph.opt7:
+                            OutputTextBox.Text += $"===== Построение глубинного остовного дерева с соотв. нумерацией вершин =====\n";
+                            var dstree = new DepthSpanningTree(cfg);
+                            OutputTextBox.Text += dstree;
+                            OutputTextBox.Text += "\n\n";
                             break;
                     }
                 }
