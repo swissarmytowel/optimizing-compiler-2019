@@ -24,9 +24,7 @@ namespace SimpleLang.Optimizations
             {
                 if (!(entry is TacAssignmentNode assignmentEntry)) continue;
 
-                if (assignmentEntry.LeftPartIdentifier == operand &&
-                    assignmentEntry.SecondOperand == null &&
-                    Utility.Utility.IsNum(assignmentEntry.FirstOperand))
+                if (assignmentEntry.LeftPartIdentifier == operand)
                 {
                     reachedDefinitions.Add(assignmentEntry);
                 }
@@ -37,9 +35,12 @@ namespace SimpleLang.Optimizations
             var tmpValue = (reachedDefinitions.First() as TacAssignmentNode);
 
             if (reachedDefinitions.Count == 1 || reachedDefinitions.All(entry =>
-                    tmpValue != null && (entry as TacAssignmentNode)?.FirstOperand == tmpValue.FirstOperand))
+                    (entry as TacAssignmentNode)?.FirstOperand == tmpValue.FirstOperand
+                    && (entry as TacAssignmentNode)?.SecondOperand == tmpValue.SecondOperand
+                    && (entry as TacAssignmentNode)?.Operation == tmpValue.Operation))
             {
-                return tmpValue;
+                if(tmpValue.SecondOperand == null && Utility.Utility.IsNum(tmpValue.FirstOperand))
+                    return tmpValue;
             }
 
             return null;
@@ -75,7 +76,7 @@ namespace SimpleLang.Optimizations
 
                     var firstOperand = assignmentNode.FirstOperand;
                     var secondOperand = assignmentNode.SecondOperand;
-
+                    
                     if (firstOperand != null && Utility.Utility.IsVariable(firstOperand))
                     {
                         var tmpValue = Routine(inData, firstOperand);
@@ -83,9 +84,7 @@ namespace SimpleLang.Optimizations
                         {
                             var encounteredRedefinition = traversedNodesInBlock.FirstOrDefault(entry =>
                                                               string.Equals(tmpValue.LeftPartIdentifier,
-                                                                  entry.LeftPartIdentifier)
-                                                              && !string.Equals(tmpValue.FirstOperand,
-                                                                  entry.FirstOperand)) != null;
+                                                                  entry.LeftPartIdentifier)) != null;
    
                             if (!encounteredRedefinition)
                             {
@@ -102,8 +101,7 @@ namespace SimpleLang.Optimizations
                         {
                             var encounteredRedefinition = traversedNodesInBlock.FirstOrDefault(entry =>
                                                               string.Equals(tmpValue.LeftPartIdentifier,
-                                                                  entry.LeftPartIdentifier) && !string.Equals(tmpValue.FirstOperand,
-                                                                  entry.FirstOperand)) != null;
+                                                                  entry.LeftPartIdentifier)) != null;
                             if (!encounteredRedefinition)
                             {
                                 assignmentNode.SecondOperand = tmpValue.FirstOperand;
@@ -123,7 +121,7 @@ namespace SimpleLang.Optimizations
                 }
             }
             
-            return wasApplied || defUsePropagated;
+            return wasApplied;
         }
     }
 }
