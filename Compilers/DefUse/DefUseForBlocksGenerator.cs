@@ -11,6 +11,7 @@ namespace SimpleLang.DefUse
 {
     public static class DefUseForBlocksGenerator
     {
+  
         static private bool IsValidVariable(string val)
         {
             return val != null && Utility.Utility.IsVariable(val);
@@ -34,15 +35,21 @@ namespace SimpleLang.DefUse
                     {
                         string leftPartIdentifier = assignmentNode.LeftPartIdentifier;
                         TacNodeVarDecorator tacNode1 = CreateVarTacNode(leftPartIdentifier);
-                        if (IsValidVariable(leftPartIdentifier) && !defUseContainer.use.Contains(tacNode1))
+                        bool defAdd = false;
+                        if (IsValidVariable(leftPartIdentifier) && !defUseContainer.def.Contains(tacNode1) 
+                            && !defUseContainer.use.Contains(tacNode1)) {
+                            defAdd = true;
                             defUseContainer.def.Add(tacNode1);
+                        }
                         string firstOperand = assignmentNode.FirstOperand;
                         TacNodeVarDecorator tacNode2 = CreateVarTacNode(firstOperand);
-                        if (IsValidVariable(firstOperand) && (!defUseContainer.def.Contains(tacNode2) || leftPartIdentifier == firstOperand))
+                        if (IsValidVariable(firstOperand) && (!defUseContainer.def.Contains(tacNode2) ||
+                            (leftPartIdentifier == firstOperand && defAdd)))
                             defUseContainer.use.Add(tacNode2);
                         string secondOperand = assignmentNode.SecondOperand;
                         TacNodeVarDecorator tacNode3 = CreateVarTacNode(secondOperand);
-                        if (IsValidVariable(secondOperand) && (!defUseContainer.def.Contains(tacNode3) || leftPartIdentifier == secondOperand))
+                        if (IsValidVariable(secondOperand) && (!defUseContainer.def.Contains(tacNode3) ||
+                            (leftPartIdentifier == secondOperand && defAdd)))
                             defUseContainer.use.Add(tacNode3);
                     }
                 }
