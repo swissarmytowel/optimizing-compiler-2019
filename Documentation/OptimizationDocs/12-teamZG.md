@@ -37,7 +37,21 @@ class AlwaysElseVisitor: ChangeVisitor
 ```
 
 ## Тесты
-&mdash;
+INPUT:
+```
+if (false) {
+  a = 5;
+}
+else {
+  b = 7;
+}
+```
+OUTPUT:
+```
+{
+  b = 7;
+}
+```
 
 ## Вывод
 Используя метод, описанный выше, реализован визитор, заменяющий выражения вида `if (false) st1; else st2;` на `st2`.
