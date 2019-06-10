@@ -343,11 +343,17 @@ namespace IntegratedApp
                         {
                             case OptimizationsByIterationAlgorithm.opt1:
                                 var defUseContainers = DefUseForBlocksGenerator.Execute(cfg.SourceBasicBlocks);
+                                defUseString.Append("===== Input Def-Use =====\n\n");
+                                defUseString.Append(DefUseForBlocksPrinter.ExecutePrint(defUseContainers));
+                                defUseString.Append("\n");
                                 var ita1 = new ActiveVariablesITA(cfg, defUseContainers);
                                 isOptimized = new DeadCodeOptimizationWithITA().Optimize(ita1);
                                 inOutString.Append("===== Active Var ======\n\n");
                                 inOutString.AppendLine(ita1.InOut.ToString());
                                 typeOpt = "Dead code optimization";
+                                defUseString.Append("===== Output Def-Use =====\n\n");
+                                defUseString.Append(DefUseForBlocksPrinter.ExecutePrint(defUseContainers));
+                                defUseString.Append("\n");
                                 break;
                             case OptimizationsByIterationAlgorithm.opt3:
                                 GenKillVisitor genKillVisitor = new GenKillVisitor();

@@ -20,6 +20,18 @@ namespace SimpleLang.DefUse
             }
         }
 
+        static public StringBuilder ExecutePrint(Dictionary<ThreeAddressCode, IExpressionSetsContainer> defUseForBlocks)
+        {
+            StringBuilder text = new StringBuilder();
+            text.Append("DefUseForBlocksPrinter:\n\n");
+            foreach (KeyValuePair<ThreeAddressCode, IExpressionSetsContainer> entry in defUseForBlocks) {
+                text.Append("block: " + TACodeLinesToString(entry.Key.TACodeLines) + "\n");
+                text.Append("     def: " + ContainerSetToString(entry.Value.GetSecondSet()) + "\n");
+                text.Append("     use: " + ContainerSetToString(entry.Value.GetFirstSet()) + "\n");
+            }
+            return text;
+        }
+
         static private string TACodeLinesToString(LinkedList<TacNode> codeLines)
         {
             var s = new StringBuilder();
