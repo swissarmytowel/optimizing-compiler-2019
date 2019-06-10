@@ -755,7 +755,7 @@ return (int)Tokens.ASSIGNMINUS;
 return (int)Tokens.EQUAL;
             break;
         case 33:
-yylval.dVal = double.Parse(yytext); 
+yylval.dVal = double.Parse(yytext, CultureInfo.InvariantCulture); 
   return (int)Tokens.RNUM;
             break;
         default:

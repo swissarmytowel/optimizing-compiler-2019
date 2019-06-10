@@ -46,6 +46,11 @@ namespace SimpleLang.Visitors
         {
             Text += num.Num.ToString();
         }
+
+        public override void VisitDoubleNumNode(DoubleNumNode num)
+        {
+            Text += num.Num.ToString();
+        }
         public override void VisitBinOpNode(BinOpNode binop) 
         {
             if (!isUnOp) Text += "(";
