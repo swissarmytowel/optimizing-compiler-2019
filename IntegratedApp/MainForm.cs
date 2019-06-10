@@ -268,7 +268,9 @@ namespace IntegratedApp
             cfgString.AppendLine("===== Input control flow graph =====\n");
             cfgString.AppendLine(cfg.ToString());
 
-            #region Optimizations by Basic blocks
+            var availiableExprOptimization = new AvailableExprOptimization();
+
+#region Optimizations by Basic blocks
             var isopted = true;
             while (isopted)
             {
@@ -373,8 +375,7 @@ namespace IntegratedApp
                                 E_GenKillVisitor availExprVisitor = new E_GenKillVisitor();
                                 var availExprContainers = availExprVisitor.GenerateAvailableExpressionForBlocks(cfg.SourceBasicBlocks);
                                 var availableExpressionsITA = new AvailableExpressionsITA(cfg, availExprContainers);
-                                var availableExprOptimization = new AvailableExprOptimization();
-                                isOptimized = availableExprOptimization.Optimize(availableExpressionsITA);
+                                isOptimized = availiableExprOptimization.Optimize(availableExpressionsITA);
                                 inOutString.Append("===== Avaliable Expr ======\n\n");
                                 inOutString.AppendLine(availableExpressionsITA.InOut.ToString());
                                 typeOpt = "Available expr optimization";
