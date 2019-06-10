@@ -81,26 +81,15 @@ public class IntersectCollectionOperator<TacNode> : ICollectionOperator<TacNode>
 ```
 ## Тесты
 ```csharp
-IN:
-x = b;
-x = a;
-if (1==1)
-{
-    x = b;
-    y = x;
-} 
-x = 1;
-v = x;
+Block:
+a = x + z;
+b = x + y;
+z = c + a;
 
-OUT:
-if (1==1)
-{
-    x = b;
-    y = x;
-} 
-x = 1;
-v = x;
-
+IN = {}
+e_genB = {x+y, c+a}
+e_killB = {x+z}
+OUT = {x+y, c+a}
 ```
 ## Вывод
 Используя метод, описанные выше, нам удалось реализовать алгоритм заполнения множеств e_genB и e_killB.

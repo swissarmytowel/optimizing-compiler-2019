@@ -52,7 +52,7 @@ namespace UnitTests.Optimizations
         {
             /*
             x = b;
-            x = a; --> Should be deleted despite of it's latest operation in block
+            x = a; 
             if (1==1)
             {
             x = b;
