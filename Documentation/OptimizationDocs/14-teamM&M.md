@@ -1,5 +1,4 @@
-
-# Замена `while (false) st;` на `null`.
+# Замена while (false) st; на null.
 
 ## Постановка задачи
 Заменить выражения вида `while (false) st;` на `null` с помощью визитора.
