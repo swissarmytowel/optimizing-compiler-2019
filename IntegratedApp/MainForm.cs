@@ -159,16 +159,16 @@ namespace IntegratedApp
         /// Выбранные оптимизации, связанные с ИТА
         /// </summary>
         private List<OptimizationsByIterationAlgorithm> checkedOptimizationsBlock3 = new List<OptimizationsByIterationAlgorithm>();
-        private Dictionary<OptimizationsByIterationAlgorithm, IIterativeAlgorithmOptimizer<TacNode>> optimizationsBlock3TacNode = new Dictionary<OptimizationsByIterationAlgorithm, IIterativeAlgorithmOptimizer<TacNode>>() {
+        //private Dictionary<OptimizationsByIterationAlgorithm, IIterativeAlgorithmOptimizer<TacNode>> optimizationsBlock3TacNode = new Dictionary<OptimizationsByIterationAlgorithm, IIterativeAlgorithmOptimizer<TacNode>>() {
            
-            { OptimizationsByIterationAlgorithm.opt1, new DeadCodeOptimizationWithITA() },
-            { OptimizationsByIterationAlgorithm.opt3, new ReachingDefinitionsConstPropagation() },
-            { OptimizationsByIterationAlgorithm.opt5, new AvailableExprOptimization() },
-        };
+        //    { OptimizationsByIterationAlgorithm.opt1, new DeadCodeOptimizationWithITA() },
+        //    { OptimizationsByIterationAlgorithm.opt3, new ReachingDefinitionsConstPropagation() },
+        //    { OptimizationsByIterationAlgorithm.opt5, new AvailableExprOptimization() },
+        //};
 
-        private Dictionary<OptimizationsByIterationAlgorithm, IIterativeAlgorithmOptimizer<SemilatticeStreamValue>> optimizationsBlock3SemilatticeStreamValue = new Dictionary<OptimizationsByIterationAlgorithm, IIterativeAlgorithmOptimizer<SemilatticeStreamValue>>() {
-            { OptimizationsByIterationAlgorithm.opt7, new ConstDistributionOptimization() },
-        };
+        //private Dictionary<OptimizationsByIterationAlgorithm, IIterativeAlgorithmOptimizer<SemilatticeStreamValue>> optimizationsBlock3SemilatticeStreamValue = new Dictionary<OptimizationsByIterationAlgorithm, IIterativeAlgorithmOptimizer<SemilatticeStreamValue>>() {
+        //    { OptimizationsByIterationAlgorithm.opt7, new ConstDistributionOptimization() },
+        //};
 
         /// <summary>
         /// Выбранные оптимизации, связанные с CFG
@@ -263,7 +263,7 @@ namespace IntegratedApp
                 var printv = new PrettyPrintVisitor(true);
                 parser.root.Visit(printv);
                 OutputTextBox.Text += printv.Text;
-                OutputTextBox.Text += "\n";
+                OutputTextBox.Text += "\n\n";
             }
             
 #endregion
@@ -271,6 +271,7 @@ namespace IntegratedApp
             parser.root.Visit(threeAddressCodeVisitor);
             threeAddressCodeVisitor.Postprocess();
 
+            tacString.AppendLine("===== Input three address code =====\n");
             tacString.AppendLine(threeAddressCodeVisitor.TACodeContainer.ToString());
           
             var cfg = new ControlFlowGraph(threeAddressCodeVisitor.TACodeContainer);
@@ -283,21 +284,9 @@ namespace IntegratedApp
 
                 if (checkedOptimizationsBlock2.Count != 0)
                 {
-                    OutputTextBox.Text += "=== BEFORE BBlocks OPTIMIZATIONS === \n" + cfg.SourceCode;
-
-                    var s = "=== BEFORE BBlocks OPTIMIZATIONS === \n" + cfg.SourceCode;
-                    using (StreamWriter sw = new StreamWriter(tacFile, false, System.Text.Encoding.Default))
-                    {
-                        sw.WriteLine(s);
-                    }
-
+                    OutputTextBox.Text += "=== BEFORE BBlocks OPTIMIZATIONS === \n\n" + cfg.SourceCode + "\n";
                     for (int i = 0; i < cfg.SourceBasicBlocks.BasicBlockItems.Count; ++i)
                     {
-
-                        var str = string.Format("===== Three address code for Block #{0} =====\n", i)
-                            + cfg.SourceBasicBlocks.BasicBlockItems[i].ToString()
-                            + "\n";
-
                         OutputTextBox.Text += string.Format("===== Three address code for Block #{0} =====\n", i);
                         OutputTextBox.Text += cfg.SourceBasicBlocks.BasicBlockItems[i].ToString();
                         OutputTextBox.Text += "\n";
@@ -318,13 +307,7 @@ namespace IntegratedApp
                                 ind = -1;
                                 continue;
                             }
-
-                            str += string.Format("===== Block #{0} Optimization {1} iteration #{2} =====\n\n", i, optimizationsBlock2[opt].GetType(), iteration)
-                                + (isOnWholeTac
-                                                  ? cfg.SourceCode.ToString()
-                                                  : cfg.SourceBasicBlocks.BasicBlockItems[i].ToString())
-                                                  + "\n";
-
+                            
                             if (opt == OptimizationsByBasicBlocks.opt0)
                             {
                                 var tmp = string.Format("===== Block #{0} Optimization {1} iteration #{2} =====\n\n", i, optimizationsBlock2[opt].GetType(), iteration);
@@ -341,31 +324,16 @@ namespace IntegratedApp
                                                   ? cfg.SourceCode.ToString()
                                                   : cfg.SourceBasicBlocks.BasicBlockItems[i].ToString();
                             OutputTextBox.Text += "\n";
-
-                            tacString.Append(str);
-                            using (StreamWriter sw = new StreamWriter(tacFile, true, System.Text.Encoding.Default))
-                            {
-                                sw.WriteLine(str);
-                            }
                         }
                     }
                     cfg.Rebuild(GetTacFromBBlocks(cfg.SourceBasicBlocks));
-                    s = "=== AFTER BBlocks OPTIMIZATIONS === \n" + cfg.SourceCode;
-                    OutputTextBox.Text += "=== AFTER BBlocks OPTIMIZATIONS === \n";
-                    tacString.Append(s);
-
+                    
+                    OutputTextBox.Text += "=== AFTER BBlocks OPTIMIZATIONS === \n\n";
                     OutputTextBox.Text += cfg.SourceCode;
-
-                    using (StreamWriter sw = new StreamWriter(tacFile, true, System.Text.Encoding.Default))
-                    {
-                        sw.WriteLine(s);
-                    }
-
                 }
-                #endregion
+#endregion
 
-                #region Optimizations by Iteration Algorithm
-
+ #region Optimizations by Iteration Algorithm
                 if (checkedOptimizationsBlock3.Count != 0)
                 {
                     var counter = 0;
@@ -427,17 +395,13 @@ namespace IntegratedApp
                         OutputTextBox.Text += GetTacFromBBlocks(cfg.SourceBasicBlocks).ToString();
                         OutputTextBox.Text += "\n";
                     }
-
                 }
-
-                #endregion
+#endregion
             }
             cfg.Rebuild(threeAddressCodeVisitor.TACodeContainer);
 
-            #region Optimizations by CFG
-
+#region Optimizations by CFG
             if (checkedOptimizationsBlock4.Count != 0) {
-
                 OutputTextBox.Text += string.Format("===== Three address code =====\n");
                 OutputTextBox.Text += threeAddressCodeVisitor.TACodeContainer;
                 OutputTextBox.Text += "\n";
@@ -487,7 +451,9 @@ namespace IntegratedApp
                 }
             }
 
-            #endregion
+#endregion
+            tacString.AppendLine("===== Output three address code =====\n");
+            tacString.AppendLine(threeAddressCodeVisitor.TACodeContainer.ToString());
 
             // false - файл перезаписывается, true - файл дозаписывается
             using (StreamWriter sw = new StreamWriter(tacFile, false, System.Text.Encoding.Default))
