@@ -86,6 +86,8 @@
     <Compile Include="Visitors\AstOptimizationsTests.cs" />
     <Compile Include="Visitors\CompareToItselfFalseOptVisitorTests.cs" />
     <Compile Include="Visitors\ThreeAddressCodeTests.cs" />
+    <Compile Include="Visitors\SameMinusOptVisitorTests.cs" />
+    <Compile Include="Visitors\WhileFalseOptVisitorTests.cs" />
     <Compile Include="Visitors\ZeroMulOptVisitorTests.cs" />
   </ItemGroup>
   <ItemGroup>
