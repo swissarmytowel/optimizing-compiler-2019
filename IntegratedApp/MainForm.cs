@@ -320,15 +320,14 @@ namespace IntegratedApp
                             typeOpt = "Const distribution";
                             break;
                     }
-
-                    if(isOptimized)
+                    counter += 1;
+                    if (isOptimized)
                     {
                         ind = -1;
                         continue;
                     }
-
-                    OutputTextBox.Text += $"===== Optimization {typeOpt} iteration #{counter++} =====\n\n";
-                    OutputTextBox.Text += cfg.SourceCode.ToString();
+                    OutputTextBox.Text += $"===== Optimization {typeOpt} iteration #{counter} =====\n\n";
+                    OutputTextBox.Text += GetTacFromBBlocks(cfg.SourceBasicBlocks).ToString();
                     OutputTextBox.Text += "\n";
                 }
 

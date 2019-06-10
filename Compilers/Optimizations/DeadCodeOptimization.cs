@@ -13,13 +13,17 @@ namespace SimpleLang.Optimizations
     public class DeadCodeOptimization : IOptimizer
     {
         public Dictionary<string, bool> variables; // Tkey = varName, Tvalue = isAlive
+        private bool _wasInitializedByIta = false;
+
         public DeadCodeOptimization()
         {
             variables = new Dictionary<string, bool>();
+            _wasInitializedByIta = false;
         }
         public DeadCodeOptimization(Dictionary<string, bool> variablesInfo)
         {
             variables = new Dictionary<string, bool>(variablesInfo);
+            _wasInitializedByIta = true;
         }
         public bool IsVariable(string val)
         {
@@ -72,7 +76,6 @@ namespace SimpleLang.Optimizations
                 {
                     string leftIdent = ((TacAssignmentNode)block.TACodeLines.ElementAt(i)).LeftPartIdentifier;
 
-
                     if (!this.variables[leftIdent])
                     {
                         toDeleteList.AddLast(block.TACodeLines.ElementAt(i));
@@ -99,12 +102,25 @@ namespace SimpleLang.Optimizations
 
         public bool Optimize(ThreeAddressCode block)
         {
-            while (true)
+            LinkedList<TacNode> deadCodeList = GetDeadCode(block);
+            if (deadCodeList.Count == 0)
             {
-                LinkedList<TacNode> deadCodeList = GetDeadCode(block);
-                if (deadCodeList.Count == 0)
-                    break;
-                block.RemoveNodes(deadCodeList);
+                return false;
+            }
+            foreach(var deadLine in deadCodeList)
+            {
+                if (deadLine.Label == null)
+                {
+                    block.RemoveNode(deadLine);
+                }
+                else
+                {
+                    block.TACodeLines.AddBefore(block.TACodeLines.Find(deadLine), new TacEmptyNode()
+                    {
+                        Label = deadLine.Label
+                    });
+                    block.RemoveNode(deadLine);
+                }
             }
             return true;
         }

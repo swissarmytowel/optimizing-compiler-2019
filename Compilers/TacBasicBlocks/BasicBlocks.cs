@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Text;
 using SimpleLang.TACode;
 using SimpleLang.TACode.TacNodes;
 
@@ -50,6 +51,16 @@ namespace SimpleLang.TacBasicBlocks
                 basicBlock.PushNode(currentElement);
             }
             if (basicBlock.TACodeLines.Count > 0) BasicBlockItems.Add(basicBlock);
+        }
+
+        public override string ToString()
+        {
+            var builder = new StringBuilder();
+            foreach(var block in BasicBlockItems)
+            {
+                builder.Append(block.ToString());
+            }
+            return builder.ToString();
         }
 
         public IEnumerator<ThreeAddressCode> GetEnumerator()

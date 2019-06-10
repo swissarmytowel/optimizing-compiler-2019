@@ -63,15 +63,19 @@ namespace SimpleLang.Optimizations
 
         public bool Optimize(IterationAlgorithm<TacNode> ita)
         {
+            var initialTAC = ita.controlFlowGraph.SourceBasicBlocks.ToString();
             foreach (var basicBlock in ita.controlFlowGraph.SourceBasicBlocks)
             {
                 var inData = ita.InOut.In[basicBlock];
                 var outData = ita.InOut.Out[basicBlock];
                 DeadCodeOptimization dcOpt = new DeadCodeOptimization(InitializeVariables(basicBlock, outData));
-                dcOpt.Optimize(basicBlock);
-                
+                var wasApplied = dcOpt.Optimize(basicBlock);
+                while(wasApplied)
+                {
+                    wasApplied = dcOpt.Optimize(basicBlock);
+                }
             }
-            return true;
+            return string.Equals(initialTAC, ita.controlFlowGraph.SourceBasicBlocks.ToString());
         }
     }
 }
