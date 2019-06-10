@@ -57,33 +57,21 @@ class DefUseContainer : IExpressionSetsContainer
 
 ## Тесты
 
-```csharp
-[TestMethod]
-public void DefUse_Test1()
-{
-    var tacContainer = new ThreeAddressCode();
-    Utils.AddAssignmentNode(tacContainer, null, "a", "b", "+", "c");
-    Utils.AddAssignmentNode(tacContainer, null, "b", "a", "-", "d");
-    Utils.AddAssignmentNode(tacContainer, null, "v", "l", "+", "c");
-    Utils.AddAssignmentNode(tacContainer, null, "d", "a", "-", "d");
-    var cfg = new ControlFlowGraph(tacContainer);
-    var defUseContainers = DefUseForBlocksGenerator.Execute(cfg.SourceBasicBlocks);
-    var container = defUseContainers.First().Value;
-    Assert.IsTrue(
-        container.GetSecondSet().SetEquals(new HashSet<TacNode>() {
-            new TacNodeVarDecorator { VarName = "a" },
-            new TacNodeVarDecorator { VarName = "v" }
-        })
-    );
-    Assert.IsTrue(
-        container.GetFirstSet().SetEquals(new HashSet<TacNode>() {
-            new TacNodeVarDecorator { VarName = "b" },
-            new TacNodeVarDecorator { VarName = "c" },
-            new TacNodeVarDecorator { VarName = "d" },
-            new TacNodeVarDecorator { VarName = "l" }
-    })
-    );
-}
+Трехадресный код:
+```
+a = b + c
+b = a - d
+v = l + c
+d = a - d
+```
+Множество use:
+```
+{ a, v }
+```
+
+Множество def:
+```
+{ b, c, d, l }
 ```
 
 ## Вывод
