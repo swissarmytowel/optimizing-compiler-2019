@@ -219,6 +219,14 @@ namespace IntegratedApp
                 return;
             }
 
+            var tacString = new StringBuilder();
+            var cfgString = new StringBuilder();
+            var basicBlocksString = new StringBuilder();
+            var inOutString = new StringBuilder();
+            var genKillString = new StringBuilder();
+            var defUseString = new StringBuilder();
+            var defUseBasicBlocksString = new StringBuilder();
+
             OutputTextBox.Text = "";
             TmpNameManager.Instance.Drop();
 
@@ -248,11 +256,8 @@ namespace IntegratedApp
             parser.root.Visit(threeAddressCodeVisitor);
             threeAddressCodeVisitor.Postprocess();
 
-            // false - файл перезаписывается, true - файл дозаписывается
-            using (StreamWriter sw = new StreamWriter(tacFile, false, System.Text.Encoding.Default)) {
-                sw.WriteLine(threeAddressCodeVisitor.TACodeContainer);
-            }
-
+            tacString.AppendLine(threeAddressCodeVisitor.TACodeContainer.ToString());
+          
             var cfg = new ControlFlowGraph(threeAddressCodeVisitor.TACodeContainer);
 
   #region Optimizations by Basic blocks
@@ -336,6 +341,7 @@ namespace IntegratedApp
                             var defUseContainers = DefUseForBlocksGenerator.Execute(cfg.SourceBasicBlocks);
                             var ita1 = new ActiveVariablesITA(cfg, defUseContainers);
                             isOptimized = new DeadCodeOptimizationWithITA().Optimize(ita1);
+                            inOutString.AppendLine(ita1.InOut.ToString());
                             typeOpt = "Dead code optimization";
                             break;
                         case OptimizationsByIterationAlgorithm.opt3:
@@ -344,6 +350,7 @@ namespace IntegratedApp
                             var ita3 = new ReachingDefinitionsITA(cfg, genKillContainers);
                             isOptimized = new ReachingDefinitionsConstPropagation().Optimize(ita3);
                             typeOpt = "Const propagation by reaching definition";
+                            inOutString.AppendLine(ita3.InOut.ToString());
                             break;
                         case OptimizationsByIterationAlgorithm.opt5:
                             E_GenKillVisitor availExprVisitor = new E_GenKillVisitor();
@@ -351,12 +358,14 @@ namespace IntegratedApp
                             var availableExpressionsITA = new AvailableExpressionsITA(cfg, availExprContainers);
                             var availableExprOptimization = new AvailableExprOptimization();
                             isOptimized = availableExprOptimization.Optimize(availableExpressionsITA);
+                            inOutString.AppendLine(availableExpressionsITA.InOut.ToString());
                             typeOpt = "Available expr optimization";
                             break;
                         case OptimizationsByIterationAlgorithm.opt7:
                             var constDistITA = new ConstDistributionITA(cfg);
                             var constDistOpt = new ConstDistributionOptimization();
                             isOptimized = constDistOpt.Optimize(constDistITA);
+                            inOutString.AppendLine(constDistITA.InOut.ToString());
                             typeOpt = "Const distribution";
                             break;
                     }
@@ -430,7 +439,38 @@ namespace IntegratedApp
                 }
             }
 
-#endregion
+            #endregion
+
+            // false - файл перезаписывается, true - файл дозаписывается
+            using (StreamWriter sw = new StreamWriter(tacFile, false, System.Text.Encoding.Default))
+            {
+                sw.WriteLine(tacString);
+            }
+            using (StreamWriter sw = new StreamWriter(cfgFile, false, System.Text.Encoding.Default))
+            {
+                sw.WriteLine(cfgString);
+            }
+            using (StreamWriter sw = new StreamWriter(basicBlocksFile, false, System.Text.Encoding.Default))
+            {
+                sw.WriteLine(basicBlocksString);
+            }
+            using (StreamWriter sw = new StreamWriter(inOutFile, false, System.Text.Encoding.Default))
+            {
+                sw.WriteLine(inOutString);
+            }
+            using (StreamWriter sw = new StreamWriter(genKillFile, false, System.Text.Encoding.Default))
+            {
+                sw.WriteLine(genKillString);
+            }
+            using (StreamWriter sw = new StreamWriter(defUseFile, false, System.Text.Encoding.Default))
+            {
+                sw.WriteLine(defUseString);
+            }
+            using (StreamWriter sw = new StreamWriter(defUseBasicBlocksFile, false, System.Text.Encoding.Default))
+            {
+                sw.WriteLine(defUseBasicBlocksString);
+            }
+
         }
         
         private void ResetButton_Click(object sender, EventArgs e)

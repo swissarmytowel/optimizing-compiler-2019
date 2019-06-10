@@ -10,6 +10,11 @@ namespace SimpleLang.ConstDistrib
         public SemilatticeValueEnum TypeValue { get; private set; }
         public string ConstValue { get; private set; }
 
+        public override string ToString()
+        {
+            return $"type={TypeValue} value={ConstValue}";
+        }
+
         public SemilatticeValue(string value)
         {
             if (String.IsNullOrEmpty(value))
