@@ -132,6 +132,15 @@ namespace IntegratedApp
             return _optimizationsOnWholeTac.Contains(optimizationId);
         } 
 
+        private static ThreeAddressCode GetTacFromBBlocks(BasicBlocks bblocks)
+        {
+            var tac = new ThreeAddressCode();
+            foreach(var block in bblocks)
+            {
+                tac.PushNodes(block.TACodeLines);
+            }
+            return tac;
+        }
         /// <summary>
         /// Выбранные оптимизации, связанные с ИТА
         /// </summary>
@@ -235,6 +244,7 @@ namespace IntegratedApp
 
   #region Optimizations by Basic blocks
             if (checkedOptimizationsBlock2.Count != 0) {
+                OutputTextBox.Text += "=== BEFORE BBlocks OPTIMIZATIONS === \n" + cfg.SourceCode;
                 for (int i = 0; i < cfg.SourceBasicBlocks.BasicBlockItems.Count; ++i) {
                     OutputTextBox.Text += string.Format("===== Three address code for Block #{0} =====\n", i);
                     OutputTextBox.Text += cfg.SourceBasicBlocks.BasicBlockItems[i].ToString();
@@ -262,10 +272,13 @@ namespace IntegratedApp
                         Console.WriteLine("sosi");
                     }
                 }
+                OutputTextBox.Text += "=== AFTER BBlocks OPTIMIZATIONS === \n";
+
+                cfg.Rebuild(GetTacFromBBlocks(cfg.SourceBasicBlocks));
+                OutputTextBox.Text += cfg.SourceCode;
+
             }
             #endregion
-
-            //cfg.Rebuild(threeAddressCodeVisitor.TACodeContainer);
 
             #region Optimizations by Iteration Algorithm
 
@@ -321,11 +334,11 @@ namespace IntegratedApp
 
             }
 
-#endregion
+            #endregion
 
-            //cfg.Rebuild(threeAddressCodeVisitor.TACodeContainer);
+            cfg.Rebuild(threeAddressCodeVisitor.TACodeContainer);
 
-#region Optimizations by CFG
+            #region Optimizations by CFG
 
             if (checkedOptimizationsBlock4.Count != 0) {
                 foreach(var item in checkedOptimizationsBlock4) {
