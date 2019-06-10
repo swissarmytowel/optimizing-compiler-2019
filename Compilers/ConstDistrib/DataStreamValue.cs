@@ -13,6 +13,11 @@ namespace SimpleLang.ConstDistrib
             VarName = varName;
             Value = value;
         }
+
+        public override string ToString()
+        {
+            return $"var={VarName} => {Value}";
+        }
     }
 
     public class DataStreamValue

@@ -219,6 +219,14 @@ namespace IntegratedApp
                 return;
             }
 
+            var tacString = new StringBuilder();
+            var cfgString = new StringBuilder();
+            var basicBlocksString = new StringBuilder();
+            var inOutString = new StringBuilder();
+            var genKillString = new StringBuilder();
+            var defUseString = new StringBuilder();
+            var defUseBasicBlocksString = new StringBuilder();
+
             OutputTextBox.Text = "";
             TmpNameManager.Instance.Drop();
 
@@ -248,135 +256,153 @@ namespace IntegratedApp
             parser.root.Visit(threeAddressCodeVisitor);
             threeAddressCodeVisitor.Postprocess();
 
-            // false - файл перезаписывается, true - файл дозаписывается
-            using (StreamWriter sw = new StreamWriter(tacFile, false, System.Text.Encoding.Default)) {
-                sw.WriteLine(threeAddressCodeVisitor.TACodeContainer);
-            }
-
+            tacString.AppendLine(threeAddressCodeVisitor.TACodeContainer.ToString());
+          
             var cfg = new ControlFlowGraph(threeAddressCodeVisitor.TACodeContainer);
 
-  #region Optimizations by Basic blocks
-            if (checkedOptimizationsBlock2.Count != 0) {
-                OutputTextBox.Text += "=== BEFORE BBlocks OPTIMIZATIONS === \n" + cfg.SourceCode;
+            #region Optimizations by Basic blocks
+            var isopted = true;
+            while (isopted)
+            {
+                isopted = false;
 
-                var s = "=== BEFORE BBlocks OPTIMIZATIONS === \n" + cfg.SourceCode;
-                using (StreamWriter sw = new StreamWriter(tacFile, true, System.Text.Encoding.Default)) {
-                    sw.WriteLine(s);
+                if (checkedOptimizationsBlock2.Count != 0)
+                {
+                    OutputTextBox.Text += "=== BEFORE BBlocks OPTIMIZATIONS === \n" + cfg.SourceCode;
+
+                    var s = "=== BEFORE BBlocks OPTIMIZATIONS === \n" + cfg.SourceCode;
+                    using (StreamWriter sw = new StreamWriter(tacFile, true, System.Text.Encoding.Default))
+                    {
+                        sw.WriteLine(s);
+                    }
+
+                    for (int i = 0; i < cfg.SourceBasicBlocks.BasicBlockItems.Count; ++i)
+                    {
+
+                        var str = string.Format("===== Three address code for Block #{0} =====\n", i)
+                            + cfg.SourceBasicBlocks.BasicBlockItems[i].ToString()
+                            + "\n";
+
+                        OutputTextBox.Text += string.Format("===== Three address code for Block #{0} =====\n", i);
+                        OutputTextBox.Text += cfg.SourceBasicBlocks.BasicBlockItems[i].ToString();
+                        OutputTextBox.Text += "\n";
+
+                        int ind, iteration = 0;
+                        for (ind = 0; ind < checkedOptimizationsBlock2.Count; ind++)
+                        {
+                            var opt = checkedOptimizationsBlock2[ind];
+                            var isOnWholeTac = CheckIfOptimizationIsOnWholeTac(opt);
+                            var result = optimizationsBlock2[opt].Optimize(isOnWholeTac
+                                                                           ? cfg.SourceCode
+                                                                           : cfg.SourceBasicBlocks.BasicBlockItems[i]);
+
+                            if (ind == 0) isopted = false;
+                            if (result)
+                            {
+                                isopted = true;
+                                ind = -1;
+                                continue;
+                            }
+
+                            str += string.Format("===== Block #{0} Optimization {1} iteration #{2} =====\n\n", i, optimizationsBlock2[opt].GetType(), iteration)
+                                + (isOnWholeTac
+                                                  ? cfg.SourceCode.ToString()
+                                                  : cfg.SourceBasicBlocks.BasicBlockItems[i].ToString())
+                                                  + "\n";
+
+                            OutputTextBox.Text += string.Format("===== Block #{0} Optimization {1} iteration #{2} =====\n\n", i, optimizationsBlock2[opt].GetType(), iteration++);
+                            OutputTextBox.Text += isOnWholeTac
+                                                  ? cfg.SourceCode.ToString()
+                                                  : cfg.SourceBasicBlocks.BasicBlockItems[i].ToString();
+                            OutputTextBox.Text += "\n";
+
+                            Console.WriteLine("test");
+
+                            using (StreamWriter sw = new StreamWriter(tacFile, true, System.Text.Encoding.Default))
+                            {
+                                sw.WriteLine(str);
+                            }
+                        }
+                    }
+
+                    s = "=== AFTER BBlocks OPTIMIZATIONS === \n" + cfg.SourceCode;
+                    OutputTextBox.Text += "=== AFTER BBlocks OPTIMIZATIONS === \n";
+
+                    cfg.Rebuild(GetTacFromBBlocks(cfg.SourceBasicBlocks));
+                    OutputTextBox.Text += cfg.SourceCode;
+
+                    using (StreamWriter sw = new StreamWriter(tacFile, true, System.Text.Encoding.Default))
+                    {
+                        sw.WriteLine(s);
+                    }
+
                 }
+                #endregion
 
-                for (int i = 0; i < cfg.SourceBasicBlocks.BasicBlockItems.Count; ++i) {
+                #region Optimizations by Iteration Algorithm
 
-                    var str = string.Format("===== Three address code for Block #{0} =====\n", i) 
-                        + cfg.SourceBasicBlocks.BasicBlockItems[i].ToString()
-                        + "\n";
+                if (checkedOptimizationsBlock3.Count != 0)
+                {
+                    var counter = 0;
+                    var ind = 0;
+                    OutputTextBox.Text += "=== BEFORE ITA OPTIMIZATIONS === \n" + cfg.SourceCode;
+                    for (ind = 0; ind < checkedOptimizationsBlock3.Count; ind++)
+                    {
+                        if (ind == 0) isopted = false;
 
-                    OutputTextBox.Text += string.Format("===== Three address code for Block #{0} =====\n", i);
-                    OutputTextBox.Text += cfg.SourceBasicBlocks.BasicBlockItems[i].ToString();
-                    OutputTextBox.Text += "\n";
-
-                    int ind, iteration = 0;
-                    for (ind = 0; ind < checkedOptimizationsBlock2.Count; ind++) {
-                        var opt = checkedOptimizationsBlock2[ind];
-                        var isOnWholeTac = CheckIfOptimizationIsOnWholeTac(opt);
-                        var result = optimizationsBlock2[opt].Optimize(isOnWholeTac
-                                                                       ? cfg.SourceCode 
-                                                                       : cfg.SourceBasicBlocks.BasicBlockItems[i]);
-
-
-                        if (result) {
+                        var opt = checkedOptimizationsBlock3[ind];
+                        string typeOpt = "";
+                        bool isOptimized = false;
+                        switch (opt)
+                        {
+                            case OptimizationsByIterationAlgorithm.opt1:
+                                var defUseContainers = DefUseForBlocksGenerator.Execute(cfg.SourceBasicBlocks);
+                                var ita1 = new ActiveVariablesITA(cfg, defUseContainers);
+                                isOptimized = new DeadCodeOptimizationWithITA().Optimize(ita1);
+                                inOutString.AppendLine(ita1.InOut.ToString());
+                                typeOpt = "Dead code optimization";
+                                break;
+                            case OptimizationsByIterationAlgorithm.opt3:
+                                GenKillVisitor genKillVisitor = new GenKillVisitor();
+                                var genKillContainers = genKillVisitor.GenerateReachingDefinitionForBlocks(cfg.SourceBasicBlocks);
+                                var ita3 = new ReachingDefinitionsITA(cfg, genKillContainers);
+                                isOptimized = new ReachingDefinitionsConstPropagation().Optimize(ita3);
+                                typeOpt = "Const propagation by reaching definition";
+                                inOutString.AppendLine(ita3.InOut.ToString());
+                                break;
+                            case OptimizationsByIterationAlgorithm.opt5:
+                                E_GenKillVisitor availExprVisitor = new E_GenKillVisitor();
+                                var availExprContainers = availExprVisitor.GenerateAvailableExpressionForBlocks(cfg.SourceBasicBlocks);
+                                var availableExpressionsITA = new AvailableExpressionsITA(cfg, availExprContainers);
+                                var availableExprOptimization = new AvailableExprOptimization();
+                                isOptimized = availableExprOptimization.Optimize(availableExpressionsITA);
+                                inOutString.AppendLine(availableExpressionsITA.InOut.ToString());
+                                typeOpt = "Available expr optimization";
+                                break;
+                            case OptimizationsByIterationAlgorithm.opt7:
+                                var constDistITA = new ConstDistributionITA(cfg);
+                                var constDistOpt = new ConstDistributionOptimization();
+                                isOptimized = constDistOpt.Optimize(constDistITA);
+                                inOutString.AppendLine(constDistITA.InOut.ToString());
+                                typeOpt = "Const distribution";
+                                break;
+                        }
+                        counter += 1;
+                        if (isOptimized)
+                        {
+                            isopted = true;
                             ind = -1;
                             continue;
                         }
-                        
-                        str += string.Format("===== Block #{0} Optimization {1} iteration #{2} =====\n\n", i, optimizationsBlock2[opt].GetType(), iteration)
-                            + (isOnWholeTac
-                                              ? cfg.SourceCode.ToString()
-                                              : cfg.SourceBasicBlocks.BasicBlockItems[i].ToString())
-                                              + "\n";
-
-                        OutputTextBox.Text += string.Format("===== Block #{0} Optimization {1} iteration #{2} =====\n\n", i, optimizationsBlock2[opt].GetType(), iteration++);
-                        OutputTextBox.Text += isOnWholeTac
-                                              ? cfg.SourceCode.ToString()
-                                              : cfg.SourceBasicBlocks.BasicBlockItems[i].ToString();
+                        OutputTextBox.Text += $"===== Optimization {typeOpt} iteration #{counter} =====\n\n";
+                        OutputTextBox.Text += GetTacFromBBlocks(cfg.SourceBasicBlocks).ToString();
                         OutputTextBox.Text += "\n";
-
-                        Console.WriteLine("test");
-
-                        using (StreamWriter sw = new StreamWriter(tacFile, true, System.Text.Encoding.Default)) {
-                            sw.WriteLine(str);
-                        }
                     }
+
                 }
 
-                s = "=== AFTER BBlocks OPTIMIZATIONS === \n" + cfg.SourceCode;
-                OutputTextBox.Text += "=== AFTER BBlocks OPTIMIZATIONS === \n";
-
-                cfg.Rebuild(GetTacFromBBlocks(cfg.SourceBasicBlocks));
-                OutputTextBox.Text += cfg.SourceCode;
-
-                using (StreamWriter sw = new StreamWriter(tacFile, true, System.Text.Encoding.Default)) {
-                    sw.WriteLine(s);
-                }
-
+                #endregion
             }
-            #endregion
-
-            #region Optimizations by Iteration Algorithm
-
-            if (checkedOptimizationsBlock3.Count != 0) {
-                var counter = 0;
-                var ind = 0;
-                OutputTextBox.Text += "=== BEFORE ITA OPTIMIZATIONS === \n" + cfg.SourceCode;
-                for (ind = 0; ind < checkedOptimizationsBlock3.Count; ind++)
-                {
-                    var opt = checkedOptimizationsBlock3[ind];
-                    string typeOpt = "";
-                    bool isOptimized = false;
-                    switch(opt)
-                    {
-                        case OptimizationsByIterationAlgorithm.opt1:
-                            var defUseContainers = DefUseForBlocksGenerator.Execute(cfg.SourceBasicBlocks);
-                            var ita1 = new ActiveVariablesITA(cfg, defUseContainers);
-                            isOptimized = new DeadCodeOptimizationWithITA().Optimize(ita1);
-                            typeOpt = "Dead code optimization";
-                            break;
-                        case OptimizationsByIterationAlgorithm.opt3:
-                            GenKillVisitor genKillVisitor = new GenKillVisitor();
-                            var genKillContainers = genKillVisitor.GenerateReachingDefinitionForBlocks(cfg.SourceBasicBlocks);
-                            var ita3 = new ReachingDefinitionsITA(cfg, genKillContainers);
-                            isOptimized = new ReachingDefinitionsConstPropagation().Optimize(ita3);
-                            typeOpt = "Const propagation by reaching definition";
-                            break;
-                        case OptimizationsByIterationAlgorithm.opt5:
-                            E_GenKillVisitor availExprVisitor = new E_GenKillVisitor();
-                            var availExprContainers = availExprVisitor.GenerateAvailableExpressionForBlocks(cfg.SourceBasicBlocks);
-                            var availableExpressionsITA = new AvailableExpressionsITA(cfg, availExprContainers);
-                            var availableExprOptimization = new AvailableExprOptimization();
-                            isOptimized = availableExprOptimization.Optimize(availableExpressionsITA);
-                            typeOpt = "Available expr optimization";
-                            break;
-                        case OptimizationsByIterationAlgorithm.opt7:
-                            var constDistITA = new ConstDistributionITA(cfg);
-                            var constDistOpt = new ConstDistributionOptimization();
-                            isOptimized = constDistOpt.Optimize(constDistITA);
-                            typeOpt = "Const distribution";
-                            break;
-                    }
-                    counter += 1;
-                    if (isOptimized)
-                    {
-                        ind = -1;
-                        continue;
-                    }
-                    OutputTextBox.Text += $"===== Optimization {typeOpt} iteration #{counter} =====\n\n";
-                    OutputTextBox.Text += GetTacFromBBlocks(cfg.SourceBasicBlocks).ToString();
-                    OutputTextBox.Text += "\n";
-                }
-
-            }
-
-            #endregion
-
             cfg.Rebuild(threeAddressCodeVisitor.TACodeContainer);
 
             #region Optimizations by CFG
@@ -432,7 +458,38 @@ namespace IntegratedApp
                 }
             }
 
-#endregion
+            #endregion
+
+            // false - файл перезаписывается, true - файл дозаписывается
+            using (StreamWriter sw = new StreamWriter(tacFile, false, System.Text.Encoding.Default))
+            {
+                sw.WriteLine(tacString);
+            }
+            using (StreamWriter sw = new StreamWriter(cfgFile, false, System.Text.Encoding.Default))
+            {
+                sw.WriteLine(cfgString);
+            }
+            using (StreamWriter sw = new StreamWriter(basicBlocksFile, false, System.Text.Encoding.Default))
+            {
+                sw.WriteLine(basicBlocksString);
+            }
+            using (StreamWriter sw = new StreamWriter(inOutFile, false, System.Text.Encoding.Default))
+            {
+                sw.WriteLine(inOutString);
+            }
+            using (StreamWriter sw = new StreamWriter(genKillFile, false, System.Text.Encoding.Default))
+            {
+                sw.WriteLine(genKillString);
+            }
+            using (StreamWriter sw = new StreamWriter(defUseFile, false, System.Text.Encoding.Default))
+            {
+                sw.WriteLine(defUseString);
+            }
+            using (StreamWriter sw = new StreamWriter(defUseBasicBlocksFile, false, System.Text.Encoding.Default))
+            {
+                sw.WriteLine(defUseBasicBlocksString);
+            }
+
         }
         
         private void ResetButton_Click(object sender, EventArgs e)
