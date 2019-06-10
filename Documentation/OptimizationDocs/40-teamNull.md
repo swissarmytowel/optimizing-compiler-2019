@@ -51,7 +51,7 @@ Null
 ## Реализация
 Алгоритм реализован в соответствии со схемой, приведенной выше.
 
-```
+```csharp
 public class ReachingDefinitionsITA : IterationAlgorithm<TacNode>
 {
 	public ReachingDefinitionsITA(

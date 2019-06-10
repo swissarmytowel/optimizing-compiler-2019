@@ -93,74 +93,6 @@
 1. [Построение глубинного остовного дерева с соответствующей нумерацией вершин.](#Построение-глубинного-остовного-дерева-с-соответствующей-нумерацией-вершин.)
 
 1. [Ускорение итерационного алгоритма для задачи о достигающих определениях, засчет перенумерации базовых блоков.](#Ускорение-итерационного-алгоритма-для-задачи-о-достигающих-определениях,-засчет-перенумерации-базовых-блоков.)
-# Задачи
-# Cвёртка констант в AST-дереве.
-
-## Постановка задачи
-Заменить алгебраические выражения вида "2 * 3" их рассчитанным ответом "6" с помощью визитора.
-## Команда — исполнитель
-Null
-
-## Зависимости
-Зависит от:
-- Базовые визиторы
-- PrettyPrinter
-
-## Теория
-Данная оптимизация заключается в свёртке констант в AST-дереве.
-
-Пример:
-```
-x = 2 * 3; ==> x = 6;
-```
-## Реализация
-Для решения поставленной задачи был реализован визитор "ConstFoldingVisitor", наследуемый от ChangeVisitor.
-
-```csharp
-public class ConstFoldingVisitor : ChangeVisitor
-    {
-        public override void VisitBinOpNode(BinOpNode binop)
-        {
-            base.VisitBinOpNode(binop);
-            if (binop.Left is IntNumNode left && binop.Right is IntNumNode right)
-            {
-                var num = 0;
-
-                switch (binop.Op)
-                {
-                    case "+":
-                        num = left.Num + right.Num;
-                        break;
-                    case "-":
-                        num = left.Num - right.Num;
-                        break;
-                    case "*":
-                        num = left.Num * right.Num;
-                        break;
-                    case "/":
-                        num = left.Num / right.Num;
-                        break;
-                }
-
-                var newInt = new IntNumNode(num);
-                ReplaceExpr(binop, newInt);
-            }
-        }
-	}
-```
-
-## Тесты
-#### INPUT: 
-```
-x = 50 * 10;
-```
-#### OUTPUT:
-```
-x = 500;
-```
-
-## Вывод
-Используя метод, описанный выше, мы получили визитор, производящий свертку констант.
 # Парсер языка и построение AST-дерева.
 ## Постановка задачи
 Написать парсер языка на языке C# с использованием GPLex и Yacc. Реализовать построение синтаксического дерева программы.
@@ -348,46 +280,6 @@ public class WhileNode : StatementNode
 ## Вывод
 Был реализован парсер языка и построено AST-дерево.
 
-# Замена выражения вида 0 * expr, expr * 0 на 0.
-
-## Постановка задачи
-Заменить выражения вида `0 * expr`, `expr * 0` на `0` с помощью визитора.
-
-## Команда — исполнитель
-Kt
-
-## Зависимости
-Зависит от:
-- Базовые визиторы
-- PrettyPrinter
-
-## Теория
-&mdash;
-
-## Реализация
-Для решения поставленной задачи был реализован визитор, наследуемый от ChangeVisitor.
-
-```csharp
-class ZeroMulOptVisitor : ChangeVisitor
-    {
-
-        public override void VisitBinOpNode(BinOpNode binop)
-        {
-            var isZeroLeft = binop.Left is IntNumNode && (binop.Left as IntNumNode).Num == 0;
-            var isZeroRight = binop.Right is IntNumNode && (binop.Right as IntNumNode).Num == 0;
-
-            if (string.Equals(binop.Op, "*") && (isZeroRight || isZeroLeft))
-                ReplaceExpr(binop, new IntNumNode(0));
-            else base.VisitBinOpNode(binop);
-        }
-    }
-```
-
-## Тесты
-Узнать как должны выглядить тесты в докуметации.
-
-## Вывод
-Используя метод, описанный выше, мы получили визитор, заменяющий выражения вида `0 * expr`, `expr * 0` на `0`.
 # Замена выражения вида 1 * expr, expr * 1, expr / 1 на expr.
 
 ## Постановка задачи
@@ -444,6 +336,113 @@ class SimplifyMultDivisionByOneVisitor : ChangeVisitor
 
 ## Вывод
 Используя метод, описанный выше, мы получили визитор, заменяющий выражения вида `1 * expr`, `expr * 1`, `expr / 1` на `expr`.
+# Замена выражения вида 0 * expr, expr * 0 на 0.
+
+## Постановка задачи
+Заменить выражения вида `0 * expr`, `expr * 0` на `0` с помощью визитора.
+
+## Команда — исполнитель
+Kt
+
+## Зависимости
+Зависит от:
+- Базовые визиторы
+- PrettyPrinter
+
+## Теория
+&mdash;
+
+## Реализация
+Для решения поставленной задачи был реализован визитор, наследуемый от ChangeVisitor.
+
+```csharp
+class ZeroMulOptVisitor : ChangeVisitor
+    {
+
+        public override void VisitBinOpNode(BinOpNode binop)
+        {
+            var isZeroLeft = binop.Left is IntNumNode && (binop.Left as IntNumNode).Num == 0;
+            var isZeroRight = binop.Right is IntNumNode && (binop.Right as IntNumNode).Num == 0;
+
+            if (string.Equals(binop.Op, "*") && (isZeroRight || isZeroLeft))
+                ReplaceExpr(binop, new IntNumNode(0));
+            else base.VisitBinOpNode(binop);
+        }
+    }
+```
+
+## Тесты
+Узнать как должны выглядить тесты в докуметации.
+
+## Вывод
+Используя метод, описанный выше, мы получили визитор, заменяющий выражения вида `0 * expr`, `expr * 0` на `0`.
+# Cвёртка констант в AST-дереве.
+
+## Постановка задачи
+Заменить алгебраические выражения вида "2 * 3" их рассчитанным ответом "6" с помощью визитора.
+## Команда — исполнитель
+Null
+
+## Зависимости
+Зависит от:
+- Базовые визиторы
+- PrettyPrinter
+
+## Теория
+Данная оптимизация заключается в свёртке констант в AST-дереве.
+
+Пример:
+```
+x = 2 * 3; ==> x = 6;
+```
+## Реализация
+Для решения поставленной задачи был реализован визитор "ConstFoldingVisitor", наследуемый от ChangeVisitor.
+
+```csharp
+public class ConstFoldingVisitor : ChangeVisitor
+    {
+        public override void VisitBinOpNode(BinOpNode binop)
+        {
+            base.VisitBinOpNode(binop);
+            if (binop.Left is IntNumNode left && binop.Right is IntNumNode right)
+            {
+                var num = 0;
+
+                switch (binop.Op)
+                {
+                    case "+":
+                        num = left.Num + right.Num;
+                        break;
+                    case "-":
+                        num = left.Num - right.Num;
+                        break;
+                    case "*":
+                        num = left.Num * right.Num;
+                        break;
+                    case "/":
+                        num = left.Num / right.Num;
+                        break;
+                }
+
+                var newInt = new IntNumNode(num);
+                ReplaceExpr(binop, newInt);
+            }
+        }
+	}
+```
+
+## Тесты
+#### INPUT: 
+```
+x = 50 * 10;
+```
+#### OUTPUT:
+```
+x = 500;
+```
+
+## Вывод
+Используя метод, описанный выше, мы получили визитор, производящий свертку констант.
 # Замена выражения вида 0 + expr (expr + 0) на expr.
 
 ## Постановка задачи
@@ -503,7 +502,7 @@ x = ((42 * a) - (13 * y));
 
 ## Вывод
 Используя метод, описанный выше, мы получили визитор, заменяющий выражения вида `0 + expr` (`expr + 0`) на `expr`.
-# Замена выражения вида `a - a` на `0`.
+# Замена выражения вида a - a на 0.
 
 ## Постановка задачи
 Заменить выражения вида `a - a` на `0` с помощью визитора.
@@ -557,7 +556,7 @@ x = 0;
 
 ## Вывод
 Используя метод, описанный выше, мы получили визитор, заменяющий выражения вида `a - a` на `0`.
-# Замена выражений вида 2 < 3 на true (false)
+# Замена выражений вида 2 < 3 на true (false).
 
 ## Постановка задачи
 Заменить выражения вида `2 < 3` на `true (false)` с помощью визитора.
@@ -619,7 +618,7 @@ if (true)
 
 ## Вывод
 Используя метод, описанный выше, реализован визитор, заменяющий выражения вида `2 < 3` на `true (false)`.
-# Оптимизация по дереву вида a > a, a != a
+# Оптимизация по дереву вида a > a, a != a.
 
 ## Постановка задачи
 Задача состояла в реализации оптимизаций AST-дерева вида `a > a` и `a != a`
@@ -919,75 +918,6 @@ class AlwaysElseVisitor: ChangeVisitor
 
 ## Вывод
 Используя метод, описанный выше, мы получили визитор, заменяющий выражения вида `if (false) expr1 else expr2` на `expr2`.
-# Удаление мертвых ветвлений.
-
-## Постановка задачи
-Заменить выражения вида `if (ex) null; else null;` на `null` с помощью визитора.
-
-## Команда — исполнитель
-Null
-
-## Зависимости
-Зависит от:
-- Базовые визиторы
-- PrettyPrinter
-
-## Теория
-Данная оптимизация заключается в том, чтобы заменять любой условный оператор вида
-``` 
-if(expression)
-	null;
-else
-	null;
-```
-на выражение *null* так как при любом *expression* в условном операторе будет получен *null*.
-
-## Реализация
-Для решения поставленной задачи был реализован визитор _DelOfDeadConditionsVisitor_, наследуемый от ChangeVisitor.
-
-```csharp
-  public class DelOfDeadConditionsVisitor : ChangeVisitor
-    {
-        public override void VisitBlockNode(BlockNode bl)
-        {
-            for (int i = 0; i < bl.StList.Count; i++)
-                if (bl.StList[i] is IfNode ifn)
-                {
-                    var stlist1 = ifn.Stat1 as BlockNode;
-                    var stlist2 = ifn.Stat2 as BlockNode;
-                    bool null1, null2;
-                    null1 = null2 = false;
-                    if (stlist1.StList.Count == 1 & stlist1.StList[0] is EmptyNode)
-                        null1 = true;
-                    if (stlist2.StList.Count == 1 & stlist2.StList[0] is EmptyNode)
-                        null2 = true;
-
-                    if (null1 && null2)
-                        bl.StList[i] = new EmptyNode();
-                    else
-                        base.VisitIfNode(ifn);
-                }
-        }
-    }
-```
-
-## Тесты
-
-#### INPUT:
-```
-if(a == b)
-	{;}
-else
-	{;}
-```
-
-#### OUTPUT:
-```
-null
-```
-
-## Вывод
-Используя метод, описанный выше, мы получили визитор, производящий удаление мертвых ветвлений.
 # Замена while (false) st; на null.
 
 ## Постановка задачи
@@ -1003,7 +933,14 @@ M&M
 -   PrettyPrinter
 
 ## Теория
-&mdash;
+
+Данная оптимизация заключается в том, чтобы заменять любой оператор *while* вида
+``` 
+while (false)
+	st;
+```
+на выражение *null*, так как при любом *expression* в условном операторе будет получен *null*.
+
 ## Реализация
 
 Для решения поставленной задачи был реализован визитор, наследуемый от ChangeVisitor.
@@ -1073,6 +1010,75 @@ x = b;
 
 ## Вывод
 Используя метод, описанный выше, мы получили визитор, заменяющий выражения вида `while (false) st;` на `null`.
+# Удаление мертвых ветвлений.
+
+## Постановка задачи
+Заменить выражения вида `if (ex) null; else null;` на `null` с помощью визитора.
+
+## Команда — исполнитель
+Null
+
+## Зависимости
+Зависит от:
+- Базовые визиторы
+- PrettyPrinter
+
+## Теория
+Данная оптимизация заключается в том, чтобы заменять любой условный оператор вида
+``` 
+if(expression)
+	null;
+else
+	null;
+```
+на выражение *null* так как при любом *expression* в условном операторе будет получен *null*.
+
+## Реализация
+Для решения поставленной задачи был реализован визитор _DelOfDeadConditionsVisitor_, наследуемый от ChangeVisitor.
+
+```csharp
+  public class DelOfDeadConditionsVisitor : ChangeVisitor
+    {
+        public override void VisitBlockNode(BlockNode bl)
+        {
+            for (int i = 0; i < bl.StList.Count; i++)
+                if (bl.StList[i] is IfNode ifn)
+                {
+                    var stlist1 = ifn.Stat1 as BlockNode;
+                    var stlist2 = ifn.Stat2 as BlockNode;
+                    bool null1, null2;
+                    null1 = null2 = false;
+                    if (stlist1.StList.Count == 1 & stlist1.StList[0] is EmptyNode)
+                        null1 = true;
+                    if (stlist2.StList.Count == 1 & stlist2.StList[0] is EmptyNode)
+                        null2 = true;
+
+                    if (null1 && null2)
+                        bl.StList[i] = new EmptyNode();
+                    else
+                        base.VisitIfNode(ifn);
+                }
+        }
+    }
+```
+
+## Тесты
+
+#### INPUT:
+```
+if(a == b)
+	{;}
+else
+	{;}
+```
+
+#### OUTPUT:
+```
+null
+```
+
+## Вывод
+Используя метод, описанный выше, мы получили визитор, производящий удаление мертвых ветвлений.
 # Структура для представления трехадресного кода и его генерация.
 
 ## Постановка задачи
@@ -2502,7 +2508,7 @@ public class BooleanOptimizer : IOptimizer
 ```
 
 ## Тесты
-Узнать как должны выглядить тесты в докуметации.
+&mdash;
 
 ## Вывод
 Используя метод, описанные выше, мы смогли выполнить задачу. 
@@ -2780,32 +2786,33 @@ class  GotoOptimization : IOptimizer
 ```
 ## Тесты
 
-```csharp
-[TestMethod]
-public void Optimize_RightOptimized()
-{
-    var tacContainer = new ThreeAddressCode();
-    Utils.AddAssignmentNode(tacContainer, null, "t1", "m" , ">", "2");
-    Utils.AddIfGotoNode(tacContainer, null, "L1", "t1");
-    Utils.AddGotoNode(tacContainer, null, "L2");
-    Utils.AddAssignmentNode(tacContainer, "L1", "c", "3");
-    Utils.AddAssignmentNode(tacContainer, "L2", null, null);
-
-    var expectedResult = new ThreeAddressCodeVisitor();
-    Utils.AddAssignmentNode(expectedResult, null, "t1", "m", ">", "2");
-    Utils.AddAssignmentNode(expectedResult, null, "t5", null, "!", "t1");
-    Utils.AddIfGotoNode(expectedResult, null, "L2", "t5");
-    Utils.AddAssignmentNode(expectedResult, "L1", "c", "3");
-    Utils.AddAssignmentNode(expectedResult, "L2", null, null);
-
-    var optimization = new GotoOptimization();
-    var isOptimized = optimization.Optimize(tacContainer);
-
-    Assert.AreEqual(tacContainer.ToString(), expectedResult.ToString());
-    Assert.IsTrue(isOptimized);
-}
+Трехадресный код до применения оптимизации:
+```
+   t1 = m > 2
+   if t1 goto l1
+   goto l2
+l1: c = 3
+l2:
+```
+Трехадресный код после применения оптимизации:
+```
+   t1 = m > 2
+   t2 = !t1
+   if t2 goto l2
+   c = 3
+l2:
 ```
 
+Трехадресный код до применения оптимизации:
+```
+l1: 
+   x = a + b
+```
+
+Трехадресный код после применения оптимизации:
+```
+l1: x = a + b
+```
 ## Вывод
 Используя методы, описанные выше, мы получили оптимизации: очистка от пустых операторов и устранение переходов через переходы.
 # Устранение недостижимого кода.
@@ -3740,7 +3747,7 @@ public class TFByCommonWay : ITransmissionFunction<TacNode>
 ```
 
 ## Тесты
-Узнать как должны выглядить тесты в докуметации.
+&mdash;
 
 ## Вывод
 Используя методы, описанные выше, мы смогли выполнить задачу. 
@@ -3804,33 +3811,21 @@ class DefUseContainer : IExpressionSetsContainer
 
 ## Тесты
 
-```csharp
-[TestMethod]
-public void DefUse_Test1()
-{
-    var tacContainer = new ThreeAddressCode();
-    Utils.AddAssignmentNode(tacContainer, null, "a", "b", "+", "c");
-    Utils.AddAssignmentNode(tacContainer, null, "b", "a", "-", "d");
-    Utils.AddAssignmentNode(tacContainer, null, "v", "l", "+", "c");
-    Utils.AddAssignmentNode(tacContainer, null, "d", "a", "-", "d");
-    var cfg = new ControlFlowGraph(tacContainer);
-    var defUseContainers = DefUseForBlocksGenerator.Execute(cfg.SourceBasicBlocks);
-    var container = defUseContainers.First().Value;
-    Assert.IsTrue(
-        container.GetSecondSet().SetEquals(new HashSet<TacNode>() {
-            new TacNodeVarDecorator { VarName = "a" },
-            new TacNodeVarDecorator { VarName = "v" }
-        })
-    );
-    Assert.IsTrue(
-        container.GetFirstSet().SetEquals(new HashSet<TacNode>() {
-            new TacNodeVarDecorator { VarName = "b" },
-            new TacNodeVarDecorator { VarName = "c" },
-            new TacNodeVarDecorator { VarName = "d" },
-            new TacNodeVarDecorator { VarName = "l" }
-    })
-    );
-}
+Трехадресный код:
+```
+a = b + c
+b = a - d
+v = l + c
+d = a - d
+```
+Множество use:
+```
+{ a, v }
+```
+
+Множество def:
+```
+{ b, c, d, l }
 ```
 
 ## Вывод
@@ -3962,10 +3957,8 @@ AW
         // Если строка не является оператором присваивания - пропускаем ее анализ
         if (!(entry is TacAssignmentNode assignmentEntry)) continue;
         // Если имя переменной найденного оператора присваивания совпадает с
-        // ее использованием (operand) и оно является определением константы
-        if (assignmentEntry.LeftPartIdentifier == operand &&
-            assignmentEntry.SecondOperand == null &&
-            Utility.Utility.IsNum(assignmentEntry.FirstOperand))
+        // ее использованием (operand)
+        if (assignmentEntry.LeftPartIdentifier == operand)
         {
             // Добавляем оператор присваивания в множество достигающих определений этой константы
             reachedDefinitions.Add(assignmentEntry);
@@ -3978,10 +3971,14 @@ AW
     // Если нашли единственное определение, либо все найденные определения равны
     // Возвращаем найденный оператор присваивания, в котором определяется константа
     if (reachedDefinitions.Count == 1 || reachedDefinitions.All(entry =>
-            tmpValue != null && (entry as TacAssignmentNode)?.FirstOperand == tmpValue.FirstOperand))
-    {
-        return tmpValue;
-    }
+                    (entry as TacAssignmentNode)?.FirstOperand == tmpValue.FirstOperand
+                    && (entry as TacAssignmentNode)?.SecondOperand == tmpValue.SecondOperand
+                    && (entry as TacAssignmentNode)?.Operation == tmpValue.Operation))
+            {
+                // Если это -- определение константы
+                if(tmpValue.SecondOperand == null && Utility.Utility.IsNum(tmpValue.FirstOperand))
+                    return tmpValue;
+            }
 
     return null;
 }
@@ -4006,11 +4003,12 @@ foreach (var basicBlock in ita.controlFlowGraph.SourceBasicBlocks)
         var firstOperand = assignmentNode.FirstOperand;
         var secondOperand = assignmentNode.SecondOperand;
         // Если присутствует первый операнд
-        if (firstOperand != null)
+        if (firstOperand != null && Utility.Utility.IsVariable(firstOperand))
         {
             // Находим определение константы, достигнутое использованием FirstOperand
-            var tmpValue = Routine(inData, outData, firstOperand);
-            if (tmpValue != null) // Если нашли определение и оно -- определение константы
+            var tmpValue = Routine(inData, firstOperand);
+            // Если нашли определение и оно -- определение константы
+            if (tmpValue != null) 
             {
                 // Проверка того, что не произошло переопределения строками ранее в блоке
                 var encounteredRedefinition = traversedNodesInBlock.FirstOrDefault(entry =>
@@ -4018,13 +4016,10 @@ foreach (var basicBlock in ita.controlFlowGraph.SourceBasicBlocks)
                                                         entry.LeftPartIdentifier)) != null;
                 // Проверка того, что это первый блок. 
                 // В таком случае нам необходимо переопределение строками ранее, так как IN_0 пуст
-                if (isFirstBlock) 
+                if (!encounteredRedefinition)
                 {
-                    if (!encounteredRedefinition) continue;
-                }
-                else
-                {
-                    if (encounteredRedefinition) continue;
+                    assignmentNode.FirstOperand = tmpValue.FirstOperand;
+                    wasApplied = true;
                 }
                 // Протягиваем константу в рассматриваемый операнд
                 assignmentNode.FirstOperand = tmpValue.FirstOperand;
@@ -4034,7 +4029,16 @@ foreach (var basicBlock in ita.controlFlowGraph.SourceBasicBlocks)
         // Аналогично для второго операнда выражения -- SecondOperand
         ...
     }
-    ...
+    // C помощью Def-Use для базового блока протягиваем константы, которые не можем протянуть 
+    // с помощью IN-OUT (определена в том же блоке, в котором используется)
+    if (!wasApplied)
+    {
+        defUsePropagated = optimizer.Optimize(basicBlock);
+        while (defUsePropagated)
+        {
+            defUsePropagated = optimizer.Optimize(basicBlock);
+        }
+    }
 }
 ```
 ## Тесты
@@ -4217,7 +4221,8 @@ if t5 goto L3
 TZ
 
 ## Зависимости
-Данная задача зависит от задачи команды ЗГ - ИТА для активных переменных.
+Зависит от:
+ - ИТА для активных переменных.
 
 ## Теория
 Алгоритм удаления мертвого кода на основе ИТА для активных переменных позволяет избавиться от допущения, принимаемого в алгоритме удаления мертвого кода для произвольного блока. А именно то, что все переменные на выходе блока считаются живыми.
@@ -4320,7 +4325,7 @@ Null
 ## Реализация
 Алгоритм реализован в соответствии со схемой, приведенной выше.
 
-```
+```csharp
 public class ReachingDefinitionsITA : IterationAlgorithm<TacNode>
 {
 	public ReachingDefinitionsITA(
@@ -4594,49 +4599,47 @@ for (int blockInd = 0; blockInd < bb.BasicBlockItems.Count(); blockInd++)
 ```
 
 ## Тесты
-```csharp
-[TestMethod]
-public void Optimize_RightOptimized1()
-{
-var tacContainer = new ThreeAddressCode();
-            Utils.AddAssignmentNode(tacContainer, null, "t1", "4", "*", "i");
-            Utils.AddAssignmentNode(tacContainer, null, "a1", "t1");
-            Utils.AddAssignmentNode(tacContainer, null, "t2", "b");
-            Utils.AddIfGotoNode(tacContainer, null, "L1", "t2");
-            Utils.AddGotoNode(tacContainer, null, "L2");
-            Utils.AddAssignmentNode(tacContainer, "L1", "t3", "4", "*", "i");
-            Utils.AddAssignmentNode(tacContainer, null, "a3", "t3");
-            Utils.AddAssignmentNode(tacContainer, "L2", "t4", "4", "*", "i");
-            Utils.AddAssignmentNode(tacContainer, null, "a2", "t4");
 
-            var expectedResult = new ThreeAddressCode();
-            Utils.AddAssignmentNode(expectedResult, null, "t2", "4", "*", "i");
-            Utils.AddAssignmentNode(expectedResult, null, "t1", "t2");
-            Utils.AddAssignmentNode(expectedResult, null, "a1", "t1");
-            Utils.AddAssignmentNode(expectedResult, null, "t2", "b");
-            Utils.AddIfGotoNode(expectedResult, null, "L1", "t2");
-            Utils.AddGotoNode(expectedResult, null, "L2");
-            Utils.AddAssignmentNode(expectedResult, "L1", "t3", "t2");
-            Utils.AddAssignmentNode(expectedResult, null, "a3", "t3");
-            Utils.AddAssignmentNode(expectedResult, "L2", "t4", "t2");
-            Utils.AddAssignmentNode(expectedResult, null, "a2", "t4");
+Source Code:
+```
+a1 = 4 * i; 
+if (b) { 
+  a3 = 4 * i;
+} 
+a2 = 4 * i;         
+```
+Before AvailableExprOptimization
 
-            var cfg = new ControlFlowGraph(tacContainer);
-            var expectedResultcfg = new ControlFlowGraph(expectedResult);
-            E_GenKillVisitor availExprVisitor = new E_GenKillVisitor();
-            var availExprContainers = availExprVisitor.GenerateAvailableExpressionForBlocks(cfg.SourceBasicBlocks);
+```
+BLOCK0:
+t1 = 4 * i
+a1 = t1
+if t4 goto L2
+BLOCK1:
+goto L2
+BLOCK2:
+L1: t2 = 4 * i
+a3 = t2
+BLOCK3:
+L2: t3 = 4 * i
+a2 = t3
+```
+After AvailableExprOptimization
 
-            var availableExpressionsITA = new AvailableExpressionsITA(cfg, availExprContainers);
-
-            var availableExprOptimization = new AvailableExprOptimization();
-            bool isOptimized = availableExprOptimization.Optimize(availableExpressionsITA);
-            var basicBlockItems = cfg.SourceBasicBlocks.BasicBlockItems;
-            var codeText = cfg.SourceBasicBlocks.BasicBlockItems
-                .Select(bl => bl.ToString()).Aggregate((b1, b2) => b1 + b2);
-
-            Assert.IsTrue(isOptimized);
-            Assert.AreEqual(cfg.ToString(), expectedResultcfg.ToString());
-}
+```
+BLOCK0:
+t5 = 4 * i
+t1 = t5
+a1 = t1
+if t4 goto L2
+BLOCK1:
+goto L2
+BLOCK2:
+L1: t2 = t5
+a3 = t2
+BLOCK3:
+L2: t3 = t5
+a2 = t3
 ```
 ## Вывод
 Используя методы, описанные выше, мы получили оптимизации на основе анализа доступных выражений
@@ -4723,43 +4726,26 @@ public class IntersectCollectionOperator<TacNode> : ICollectionOperator<TacNode>
 ```
 ## Тесты
 ```csharp
-[TestMethod]
-        public void Optimize_CombinationOfBlocks()
-        {
-            /*
-            x = b;
-            x = a; --> Should be deleted despite of it's latest operation in block
-            if (1==1)
-            {
-            x = b;
-            y = x;
-            }
-            x = 1;
-            v = x;
-             */
-            TmpNameManager.Instance.Drop();
-            var tacVisitor = new ThreeAddressCodeVisitor();
+IN:
+x = b;
+x = a;
+if (1==1)
+{
+    x = b;
+    y = x;
+} 
+x = 1;
+v = x;
 
-            var expectedResult = "t1 = 1 == 1\nif t1 goto L1\n";
-            var source = "x = b;\nx = a;\nif (1==1){\nx = b;\n y = x;\n}\n x = 1;\n v = x;\n";
+OUT:
+if (1==1)
+{
+    x = b;
+    y = x;
+} 
+x = 1;
+v = x;
 
-            var scanner = new Scanner();
-            scanner.SetSource(source, 0);
-            var parser = new Parser(scanner);
-            parser.Parse();
-            var root = parser.root;
-
-            root.Visit(tacVisitor);
-            tacVisitor.Postprocess();
-
-            var cfg = new ControlFlowGraph(tacVisitor.TACodeContainer);
-            var defUseContainers = DefUseForBlocksGenerator.Execute(cfg.SourceBasicBlocks);
-            var activeVariablesITA = new ActiveVariablesITA(cfg, defUseContainers);
-            DeadCodeOptimizationWithITA optimization = new DeadCodeOptimizationWithITA();
-            var isOptimized = optimization.Optimize(activeVariablesITA);
-            Assert.AreEqual(expectedResult, activeVariablesITA.controlFlowGraph.SourceBasicBlocks.BasicBlockItems[0].ToString());
-
-        }
 ```
 ## Вывод
 Используя метод, описанные выше, нам удалось реализовать алгоритм заполнения множеств e_genB и e_killB.
@@ -6145,7 +6131,7 @@ Null
 
 ## Зависимости
 Зависит от:
--  CFG (Null)
+-  CFG
 
 ## Теория
 
@@ -6243,8 +6229,8 @@ Null
 ## Зависимости
 Зависит от:
 - DST
-- Обобщенный итерационный алгоритм (ЗГ)
-- Построение глубинного остовного дерева с соответствующей нумерацией вершин (Null)
+- Обобщенный итерационный алгоритм 
+- Построение глубинного остовного дерева с соответствующей нумерацией вершин
 
 ## Теория
 

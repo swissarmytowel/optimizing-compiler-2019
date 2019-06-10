@@ -81,43 +81,26 @@ public class IntersectCollectionOperator<TacNode> : ICollectionOperator<TacNode>
 ```
 ## Тесты
 ```csharp
-[TestMethod]
-        public void Optimize_CombinationOfBlocks()
-        {
-            /*
-            x = b;
-            x = a; --> Should be deleted despite of it's latest operation in block
-            if (1==1)
-            {
-            x = b;
-            y = x;
-            }
-            x = 1;
-            v = x;
-             */
-            TmpNameManager.Instance.Drop();
-            var tacVisitor = new ThreeAddressCodeVisitor();
+IN:
+x = b;
+x = a;
+if (1==1)
+{
+    x = b;
+    y = x;
+} 
+x = 1;
+v = x;
 
-            var expectedResult = "t1 = 1 == 1\nif t1 goto L1\n";
-            var source = "x = b;\nx = a;\nif (1==1){\nx = b;\n y = x;\n}\n x = 1;\n v = x;\n";
+OUT:
+if (1==1)
+{
+    x = b;
+    y = x;
+} 
+x = 1;
+v = x;
 
-            var scanner = new Scanner();
-            scanner.SetSource(source, 0);
-            var parser = new Parser(scanner);
-            parser.Parse();
-            var root = parser.root;
-
-            root.Visit(tacVisitor);
-            tacVisitor.Postprocess();
-
-            var cfg = new ControlFlowGraph(tacVisitor.TACodeContainer);
-            var defUseContainers = DefUseForBlocksGenerator.Execute(cfg.SourceBasicBlocks);
-            var activeVariablesITA = new ActiveVariablesITA(cfg, defUseContainers);
-            DeadCodeOptimizationWithITA optimization = new DeadCodeOptimizationWithITA();
-            var isOptimized = optimization.Optimize(activeVariablesITA);
-            Assert.AreEqual(expectedResult, activeVariablesITA.controlFlowGraph.SourceBasicBlocks.BasicBlockItems[0].ToString());
-
-        }
 ```
 ## Вывод
 Используя метод, описанные выше, нам удалось реализовать алгоритм заполнения множеств e_genB и e_killB.
