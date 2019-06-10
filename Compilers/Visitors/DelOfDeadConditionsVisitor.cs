@@ -15,10 +15,12 @@ namespace SimpleLang.Visitors
                     null1 = null2 = false;
                     if (stlist1.StList.Count == 1 & stlist1.StList[0] is EmptyNode)
                         null1 = true;
-                    if (stlist2.StList.Count == 1 & stlist2.StList[0] is EmptyNode)
-                        null2 = true;
+                    if (stlist2 != null) {
+                        if (stlist2.StList.Count == 1 & stlist2.StList[0] is EmptyNode)
+                            null2 = true;
+                    }
 
-                    if (null1 && null2)
+                    if ((null1 && null2) || (null1 && stlist2 == null))
                         bl.StList[i] = new EmptyNode();
                     else
                         base.VisitIfNode(ifn);

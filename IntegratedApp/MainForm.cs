@@ -159,16 +159,6 @@ namespace IntegratedApp
         /// Выбранные оптимизации, связанные с ИТА
         /// </summary>
         private List<OptimizationsByIterationAlgorithm> checkedOptimizationsBlock3 = new List<OptimizationsByIterationAlgorithm>();
-        //private Dictionary<OptimizationsByIterationAlgorithm, IIterativeAlgorithmOptimizer<TacNode>> optimizationsBlock3TacNode = new Dictionary<OptimizationsByIterationAlgorithm, IIterativeAlgorithmOptimizer<TacNode>>() {
-           
-        //    { OptimizationsByIterationAlgorithm.opt1, new DeadCodeOptimizationWithITA() },
-        //    { OptimizationsByIterationAlgorithm.opt3, new ReachingDefinitionsConstPropagation() },
-        //    { OptimizationsByIterationAlgorithm.opt5, new AvailableExprOptimization() },
-        //};
-
-        //private Dictionary<OptimizationsByIterationAlgorithm, IIterativeAlgorithmOptimizer<SemilatticeStreamValue>> optimizationsBlock3SemilatticeStreamValue = new Dictionary<OptimizationsByIterationAlgorithm, IIterativeAlgorithmOptimizer<SemilatticeStreamValue>>() {
-        //    { OptimizationsByIterationAlgorithm.opt7, new ConstDistributionOptimization() },
-        //};
 
         /// <summary>
         /// Выбранные оптимизации, связанные с CFG
@@ -332,6 +322,7 @@ namespace IntegratedApp
                     
                     OutputTextBox.Text += "=== AFTER BBlocks OPTIMIZATIONS === \n\n";
                     OutputTextBox.Text += cfg.SourceCode;
+                    OutputTextBox.Text += "\n";
                 }
 #endregion
 
@@ -340,7 +331,7 @@ namespace IntegratedApp
                 {
                     var counter = 0;
                     var ind = 0;
-                    OutputTextBox.Text += "=== BEFORE ITA OPTIMIZATIONS === \n" + cfg.SourceCode;
+                    OutputTextBox.Text += "=== BEFORE ITA OPTIMIZATIONS === \n\n" + cfg.SourceCode;
                     for (ind = 0; ind < checkedOptimizationsBlock3.Count; ind++)
                     {
                         if (ind == 0) isopted = false;
@@ -535,13 +526,6 @@ namespace IntegratedApp
             AdditionalWindow cfgWindow = new AdditionalWindow("CFG Window", cfgFile);
             cfgWindow.Show();
         }
-
-
-        //private void BasicBlocksItem_Click(object sender, EventArgs e)
-        //{
-        //    AdditionalWindow cfgWindow = new AdditionalWindow("Basic blocks Window", basicBlocksFile);
-        //    cfgWindow.Show();
-        //}
 
         private void InOutItem_Click(object sender, EventArgs e)
         {
