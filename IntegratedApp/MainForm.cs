@@ -562,7 +562,24 @@ namespace IntegratedApp
             AdditionalWindow cfgWindow = new AdditionalWindow("Def-Use for basic blocks Window", defUseBasicBlocksFile);
             cfgWindow.Show();
         }
-        #endregion
+
+        
+        private void CheckAllButton_Click(object sender, EventArgs e)
+        {
+            for (int i = 0; i < checkedListBox1.Items.Count; ++i) {
+                checkedListBox1.SetItemCheckState(i, CheckState.Checked);
+            }
+            for (int i = 0; i < checkedListBox2.Items.Count; ++i) {
+                checkedListBox2.SetItemCheckState(i, CheckState.Checked);
+            }
+            for (int i = 0; i < checkedListBox3.Items.Count; ++i) {
+                checkedListBox3.SetItemCheckState(i, CheckState.Checked);
+            }
+            for (int i = 0; i < checkedListBox4.Items.Count; ++i) {
+                checkedListBox4.SetItemCheckState(i, CheckState.Checked);
+            }
+        }
+#endregion
 
 #region Item Check
         private void OptimizationsByAstTree_ItemCheck(object sender, ItemCheckEventArgs e)
@@ -601,6 +618,5 @@ namespace IntegratedApp
             }
         }
 #endregion
-
     }
 }

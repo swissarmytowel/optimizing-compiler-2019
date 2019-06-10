@@ -57,6 +57,7 @@
             this.OutputTextBox = new System.Windows.Forms.RichTextBox();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.InputTextBox = new System.Windows.Forms.RichTextBox();
+            this.CheckAllButton = new System.Windows.Forms.Button();
             this.menuStrip1.SuspendLayout();
             this.panel1.SuspendLayout();
             this.groupBox3.SuspendLayout();
@@ -252,19 +253,20 @@
             // 
             // panel2
             // 
+            this.panel2.Controls.Add(this.CheckAllButton);
             this.panel2.Controls.Add(this.ClearOutButton);
             this.panel2.Controls.Add(this.ResetButton);
             this.panel2.Controls.Add(this.ClearInButton);
             this.panel2.Controls.Add(this.RunButton);
             this.panel2.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.panel2.Location = new System.Drawing.Point(3, 312);
+            this.panel2.Location = new System.Drawing.Point(3, 273);
             this.panel2.Name = "panel2";
-            this.panel2.Size = new System.Drawing.Size(178, 58);
+            this.panel2.Size = new System.Drawing.Size(178, 97);
             this.panel2.TabIndex = 3;
             // 
             // ClearOutButton
             // 
-            this.ClearOutButton.Location = new System.Drawing.Point(89, 26);
+            this.ClearOutButton.Location = new System.Drawing.Point(92, 71);
             this.ClearOutButton.Margin = new System.Windows.Forms.Padding(2);
             this.ClearOutButton.Name = "ClearOutButton";
             this.ClearOutButton.Size = new System.Drawing.Size(83, 23);
@@ -275,7 +277,7 @@
             // 
             // ResetButton
             // 
-            this.ResetButton.Location = new System.Drawing.Point(2, 26);
+            this.ResetButton.Location = new System.Drawing.Point(5, 71);
             this.ResetButton.Margin = new System.Windows.Forms.Padding(2);
             this.ResetButton.Name = "ResetButton";
             this.ResetButton.Size = new System.Drawing.Size(83, 23);
@@ -286,7 +288,7 @@
             // 
             // ClearInButton
             // 
-            this.ClearInButton.Location = new System.Drawing.Point(89, 3);
+            this.ClearInButton.Location = new System.Drawing.Point(92, 45);
             this.ClearInButton.Margin = new System.Windows.Forms.Padding(2);
             this.ClearInButton.Name = "ClearInButton";
             this.ClearInButton.Size = new System.Drawing.Size(83, 23);
@@ -297,7 +299,7 @@
             // 
             // RunButton
             // 
-            this.RunButton.Location = new System.Drawing.Point(3, 3);
+            this.RunButton.Location = new System.Drawing.Point(5, 45);
             this.RunButton.Name = "RunButton";
             this.RunButton.Size = new System.Drawing.Size(83, 23);
             this.RunButton.TabIndex = 3;
@@ -428,6 +430,17 @@
             this.InputTextBox.TabIndex = 1;
             this.InputTextBox.Text = "";
             // 
+            // CheckAllButton
+            // 
+            this.CheckAllButton.BackColor = System.Drawing.Color.Yellow;
+            this.CheckAllButton.Location = new System.Drawing.Point(5, 17);
+            this.CheckAllButton.Name = "CheckAllButton";
+            this.CheckAllButton.Size = new System.Drawing.Size(170, 23);
+            this.CheckAllButton.TabIndex = 6;
+            this.CheckAllButton.Text = "Выделить все оптимизации";
+            this.CheckAllButton.UseVisualStyleBackColor = false;
+            this.CheckAllButton.Click += new System.EventHandler(this.CheckAllButton_Click);
+            // 
             // IntegratedApp
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -491,6 +504,7 @@
         private System.Windows.Forms.GroupBox groupBox1;
         private System.Windows.Forms.RichTextBox InputTextBox;
         private System.Windows.Forms.Button ClearOutButton;
+        private System.Windows.Forms.Button CheckAllButton;
     }
 }
 
