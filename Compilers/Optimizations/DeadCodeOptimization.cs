@@ -99,14 +99,14 @@ namespace SimpleLang.Optimizations
 
         public bool Optimize(ThreeAddressCode block)
         {
-            while (true)
+            LinkedList<TacNode> deadCodeList = GetDeadCode(block);
+            if (deadCodeList.Count == 0)
+                return false;
+            else
             {
-                LinkedList<TacNode> deadCodeList = GetDeadCode(block);
-                if (deadCodeList.Count == 0)
-                    break;
                 block.RemoveNodes(deadCodeList);
+                return true;
             }
-            return true;
         }
     }
 }

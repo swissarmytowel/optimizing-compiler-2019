@@ -12,7 +12,7 @@ using System.Text.RegularExpressions;
 
 namespace SimpleLang.Optimizations
 {
-    class DeadCodeOptimizationWithITA : IIterativeAlgorithmOptimizer<TacNode>
+    public class DeadCodeOptimizationWithITA : IIterativeAlgorithmOptimizer<TacNode>
     {
         public bool IsVariable(string val)
         {
@@ -44,7 +44,6 @@ namespace SimpleLang.Optimizations
                     string leftIdent = ((TacAssignmentNode)line).LeftPartIdentifier;
                     if (IsVariable(leftIdent) && !result.ContainsKey(leftIdent))
                     {
-                       // if(outData.Contains)
                         result.Add(leftIdent, false);
                     }
                     else
@@ -63,15 +62,23 @@ namespace SimpleLang.Optimizations
 
         public bool Optimize(IterationAlgorithm<TacNode> ita)
         {
+            bool wasApplied = false;
             foreach (var basicBlock in ita.controlFlowGraph.SourceBasicBlocks)
             {
                 var inData = ita.InOut.In[basicBlock];
                 var outData = ita.InOut.Out[basicBlock];
                 DeadCodeOptimization dcOpt = new DeadCodeOptimization(InitializeVariables(basicBlock, outData));
-                dcOpt.Optimize(basicBlock);
-                
+
+                while (true)
+                {
+                    if (!dcOpt.Optimize(basicBlock))
+                        break;
+                    else
+                        wasApplied = true;
+                }
+
             }
-            return true;
+            return wasApplied;
         }
     }
 }
