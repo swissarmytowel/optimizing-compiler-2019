@@ -42,7 +42,21 @@ class CheckTruthVisitor: ChangeVisitor
 ```
 
 ## Тесты
-&mdash;
+INPUT:
+```
+a = 2 < 3;
+if (5 < 10) {
+  a = 0 < 2;
+}
+```
+OUTPUT:
+```
+a = true;
+if (true)
+{
+  a = true;
+}
+```
 
 ## Вывод
 Используя метод, описанный выше, реализован визитор, заменяющий выражения вида `2 < 3` на `true (false)`.
