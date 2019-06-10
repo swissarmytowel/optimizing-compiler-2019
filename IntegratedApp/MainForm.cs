@@ -79,11 +79,9 @@ namespace IntegratedApp
             opt0 = 0,   //Дерево доминаторов
             opt1 = 1,   //Классификация ребер в CFG
             opt2 = 2,   //Определение глубины в CFG
-           // opt3 = 3,   //Определение того, явл. ли ребро обратимым
-            opt4 = 3,   //Определение того, явл. ли CFG приводимым
-            opt5 = 4,   //Определение всех естественных циклов в CFG с информ. об их вложенности
-            opt6 = 5,   //Построение глубинного остовного дерева с соотв. нумерацией вершин
-            //opt7 = 7,   //Ускорение ИТА для задачи о достигающих определениях засчет перенумерации ББЛ
+            opt3 = 3,   //Определение того, явл. ли CFG приводимым
+            opt4 = 4,   //Определение всех естественных циклов в CFG с информ. об их вложенности
+            opt5 = 5,   //Построение глубинного остовного дерева с соотв. нумерацией вершин
         }
 
         /// <summary>
@@ -368,19 +366,19 @@ namespace IntegratedApp
                             var depth = cfg.GetDepth(dstClassifier.EdgeTypes);
                             OutputTextBox.Text += $"Depth CFG = {depth}\n\n";
                             break;
-                        case OptimizationsByControlFlowGraph.opt4:
+                        case OptimizationsByControlFlowGraph.opt3:
                             OutputTextBox.Text += $"===== Определение того, явл. ли CFG приводимым =====\n";
                             bool isReducibility = DSTReducibility.IsReducibility(cfg);
                             OutputTextBox.Text += "IsReducibility: " + isReducibility;
                             OutputTextBox.Text += "\n\n";
                             break;
-                        case OptimizationsByControlFlowGraph.opt5:
+                        case OptimizationsByControlFlowGraph.opt4:
                             OutputTextBox.Text += $"===== Определение всех естественных циклов в CFG с информ. об их вложенности =====\n";
                             var cycles = new CFGNaturalCycles(cfg);
                             OutputTextBox.Text += cycles.NestedLoopsText();
                             OutputTextBox.Text += "\n\n";
                             break;
-                        case OptimizationsByControlFlowGraph.opt6:
+                        case OptimizationsByControlFlowGraph.opt5:
                             OutputTextBox.Text += $"===== Построение глубинного остовного дерева с соотв. нумерацией вершин =====\n";
                             var dstree = new DepthSpanningTree(cfg);
                             OutputTextBox.Text += dstree;
