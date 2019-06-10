@@ -2207,6 +2207,20 @@ public bool Optimize(ThreeAddressCode block)
             }
         }
 ```
+## Тесты
+```csharp
+IN:
+x = a;
+x = b;
+y = x + 1;
+
+OUT:
+x = a;
+y = x + 1;
+
+```				
+				
+
 
 ## Вывод
 Используя метод, описанные выше, мы смогли определять "живые" переменные и удалять "мертвый" код.
@@ -3020,7 +3034,7 @@ l7: g = 44
 
 ## Вывод
 В результате работы была написана функция, которая устраняет переходы к переходам. Его работоспособность была успешно протестирована.
-# Local Value Numbering (LVN).
+# Local Value Numbering (LVN)
 
 ## Постановка задачи
 Реализовать алгоритм LVN.
@@ -3114,8 +3128,57 @@ assigned.Operation = null;
 assigned.SecondOperand = null;
 ```  
 ## Тесты
-&mdash;
-
+INPUT:
+```
+a = b + c;
+b = a - d;
+c = b + c;
+d = a - d;
+```
+TAC:
+```
+t1 = b + c
+a = t1
+t2 = a - d
+b = t2
+t3 = b + c
+c = t3
+t4 = a - d
+d = t4
+```
+OUTPUT:
+```
+t1 = b + c
+a = t1
+t2 = a - d
+b = t2
+t3 = b + c
+c = t3
+t4 = b
+d = t4
+```
+INPUT:
+```
+a = (b * c);
+d = b;
+e = (d * c);
+```
+TAC:
+```
+t1 = b * c
+a = t1
+d = b
+t2 = d * c
+e = t2
+```
+OUTPUT:
+```
+t1 = b * c
+a = t1
+d = b
+t2 = t1
+e = t2
+```
 ## Вывод
 Реализован алгоритм LVN для замены избыточных выражений.
 # Разбиение CFG (Control FlowGraph).
@@ -3674,9 +3737,13 @@ kt
 ## Зависимости
 Зависит от:
 - Трехадресный код
+- Данная задача зависит от задачи генерации базовых блоков.
 
 ## Теория
-&mdash;
+Определение `d` достигает точки p, если существует путь от точки, непосредственно следующей за `d`, к точке p, такой, что `d` не уничтожается вдоль этого пути. 
+GenB – множество определений, генерируемых и не переопределённых базовым блоком B.
+KillB – множество остальных определений переменных, определяемых в определениях genB, в других базовых блоках.
+Анализ присваиваний должен быть консервативным, то есть если неизвестно, существует ли другое присваивание на пути, то алгоритм должен считать что оно существует.
 
 ## Реализация
 
@@ -3747,7 +3814,82 @@ public class TFByCommonWay : ITransmissionFunction<TacNode>
 ```
 
 ## Тесты
-&mdash;
+Входные блоки:
+```
+B1:
+    i=m-1
+    j=n
+    a=u1
+B2:
+    i=i+1
+    j=j-1
+B3:
+    a=u2
+B4:
+    i=u3
+```
+Сгенерированные genB и killB:
+```
+B1 gen:
+    i=m-1
+    j=n
+    a=u1
+B1 kill:
+    i=i+1
+    j=j-1
+    a=u2
+    i=u3
+B2 gen:
+    i=i+1
+    j=j-1
+B2 kill:
+    i=m-1
+    j=n
+    i=u3
+B3 gen:
+    a=u2
+B3 kill:
+    a=u1
+B4 gen:
+    i=u3
+B4 kill:
+    i=m-1
+    i=i+1
+```
+
+Входные блоки:
+```
+B1:
+    a=b-2
+    c=d+1
+B2:
+    c=a-1
+B3:
+    a=d+3
+B4:
+    b=i
+```
+Сгенерированные genB и killB:
+```
+B1 gen:
+    a=b-2
+    c=d+1
+B1 kill:
+    c=a-1
+    a=d+3
+B2 gen:
+    c=a-1
+B2 kill:
+    c=d+1
+B3 gen:
+    a=d+3
+B3 kill:
+    a=b-2
+B4 gen:
+    b=i
+B4 kill:
+
+```
 
 ## Вывод
 Используя методы, описанные выше, мы смогли выполнить задачу. 
@@ -4238,37 +4380,25 @@ foreach (var item in outData)
 ```
 ## Тесты
 ```csharp
-public void Optimize_SimpleBlock()
-        {
-            TmpNameManager.Instance.Drop();
-            /*
-             *  
-	            x = a;  To be removed
-                x = b;
-                y = x + 1;
-            */
+IN:
+x = b;
+x = a;
+if (1==1)
+{
+x = b;
+y = x;
+}
+x = 1;
+v = x;
 
-            var tacContainer = new ThreeAddressCode();
-            Utils.AddAssignmentNode(tacContainer, null, "x", "a");
-            Utils.AddAssignmentNode(tacContainer, null, "x", "b");
-            Utils.AddAssignmentNode(tacContainer, null, "y", "x", "+", "1");
-            Utils.AddAssignmentNode(tacContainer, null, "e", "d", "*", "a");
-
-            var expectedResult = new ThreeAddressCode();
-            Utils.AddAssignmentNode(expectedResult, null, "x", "b");
-            Utils.AddAssignmentNode(expectedResult, null, "y", "x", "+", "1");
-            Utils.AddAssignmentNode(expectedResult, null, "e", "d", "*", "a");
-
-            var optimization = new DeadCodeOptimization();
-
-            var isOptimized = optimization.Optimize(tacContainer);
-
-            Assert.IsTrue(isOptimized);
-            Assert.AreEqual(tacContainer.ToString(), expectedResult.ToString());
-            isOptimized = optimization.Optimize(tacContainer);
-            Assert.IsFalse(isOptimized);
-
-        }
+OUT:
+if (1==1)
+{
+x = b;
+y = x;
+}
+x = 1;
+v = x;
 ```
 ## Вывод
 Используя метод, описанные выше, мы смогли использовать удаление мертвого кода на основе ИТА для активных переменных. Что позволило удалять мертвый код, находящийся в конце блока.
@@ -4726,26 +4856,15 @@ public class IntersectCollectionOperator<TacNode> : ICollectionOperator<TacNode>
 ```
 ## Тесты
 ```csharp
-IN:
-x = b;
-x = a;
-if (1==1)
-{
-    x = b;
-    y = x;
-} 
-x = 1;
-v = x;
+Block:
+a = x + z;
+b = x + y;
+z = c + a;
 
-OUT:
-if (1==1)
-{
-    x = b;
-    y = x;
-} 
-x = 1;
-v = x;
-
+IN = {}
+e_genB = {x+y, c+a}
+e_killB = {x+z}
+OUT = {x+y, c+a}
 ```
 ## Вывод
 Используя метод, описанные выше, нам удалось реализовать алгоритм заполнения множеств e_genB и e_killB.
@@ -4995,21 +5114,21 @@ visited[currentBlock] = true;
 VERTICES
 #0:
 c = 123  
-t4 = 1 + c
-t5 = t4 + y
+t1 = 1 + c
+t2 = t1 + y
 m = t5  
-t6 = m > 2
-if t6 goto L3
+t3 = m > 2
+if t3 goto L1
 
 #1:
 c = 456  
-goto L4
+goto L2
 
 #2:
-L3: c = 3  
+L1: c = 3  
 
 #3:
-L4: a = 11  
+L2: a = 11  
 
 EDGES
 0 -> [ 1 2 ]
