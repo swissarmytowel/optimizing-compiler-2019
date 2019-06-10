@@ -271,7 +271,7 @@ namespace IntegratedApp
                     OutputTextBox.Text += "=== BEFORE BBlocks OPTIMIZATIONS === \n" + cfg.SourceCode;
 
                     var s = "=== BEFORE BBlocks OPTIMIZATIONS === \n" + cfg.SourceCode;
-                    using (StreamWriter sw = new StreamWriter(tacFile, true, System.Text.Encoding.Default))
+                    using (StreamWriter sw = new StreamWriter(tacFile, false, System.Text.Encoding.Default))
                     {
                         sw.WriteLine(s);
                     }
@@ -295,7 +295,7 @@ namespace IntegratedApp
                             var result = optimizationsBlock2[opt].Optimize(isOnWholeTac
                                                                            ? cfg.SourceCode
                                                                            : cfg.SourceBasicBlocks.BasicBlockItems[i]);
-
+    
                             if (ind == 0) isopted = false;
                             if (result)
                             {
@@ -310,25 +310,35 @@ namespace IntegratedApp
                                                   : cfg.SourceBasicBlocks.BasicBlockItems[i].ToString())
                                                   + "\n";
 
+                            if (opt == OptimizationsByBasicBlocks.opt0)
+                            {
+                                var tmp = string.Format("===== Block #{0} Optimization {1} iteration #{2} =====\n\n", i, optimizationsBlock2[opt].GetType(), iteration);
+                                defUseBasicBlocksString.Append(tmp + (optimizationsBlock2[opt] as DefUseConstPropagation)._detector);
+                            }
+                            if (opt == OptimizationsByBasicBlocks.opt1)
+                            {
+                                var tmp = string.Format("===== Block #{0} Optimization {1} iteration #{2} =====\n\n", i, optimizationsBlock2[opt].GetType(), iteration);
+                                defUseBasicBlocksString.Append(tmp + (optimizationsBlock2[opt] as DefUseCopyPropagation)._detector);
+                            }
+
                             OutputTextBox.Text += string.Format("===== Block #{0} Optimization {1} iteration #{2} =====\n\n", i, optimizationsBlock2[opt].GetType(), iteration++);
                             OutputTextBox.Text += isOnWholeTac
                                                   ? cfg.SourceCode.ToString()
                                                   : cfg.SourceBasicBlocks.BasicBlockItems[i].ToString();
                             OutputTextBox.Text += "\n";
 
-                            Console.WriteLine("test");
-
+                            tacString.Append(str);
                             using (StreamWriter sw = new StreamWriter(tacFile, true, System.Text.Encoding.Default))
                             {
                                 sw.WriteLine(str);
                             }
                         }
                     }
-
+                    cfg.Rebuild(GetTacFromBBlocks(cfg.SourceBasicBlocks));
                     s = "=== AFTER BBlocks OPTIMIZATIONS === \n" + cfg.SourceCode;
                     OutputTextBox.Text += "=== AFTER BBlocks OPTIMIZATIONS === \n";
+                    tacString.Append(s);
 
-                    cfg.Rebuild(GetTacFromBBlocks(cfg.SourceBasicBlocks));
                     OutputTextBox.Text += cfg.SourceCode;
 
                     using (StreamWriter sw = new StreamWriter(tacFile, true, System.Text.Encoding.Default))
@@ -359,6 +369,7 @@ namespace IntegratedApp
                                 var defUseContainers = DefUseForBlocksGenerator.Execute(cfg.SourceBasicBlocks);
                                 var ita1 = new ActiveVariablesITA(cfg, defUseContainers);
                                 isOptimized = new DeadCodeOptimizationWithITA().Optimize(ita1);
+                                inOutString.Append("===== Active Var ======\n\n");
                                 inOutString.AppendLine(ita1.InOut.ToString());
                                 typeOpt = "Dead code optimization";
                                 break;
@@ -368,6 +379,7 @@ namespace IntegratedApp
                                 var ita3 = new ReachingDefinitionsITA(cfg, genKillContainers);
                                 isOptimized = new ReachingDefinitionsConstPropagation().Optimize(ita3);
                                 typeOpt = "Const propagation by reaching definition";
+                                inOutString.Append("===== Reaching Def ======\n\n");
                                 inOutString.AppendLine(ita3.InOut.ToString());
                                 break;
                             case OptimizationsByIterationAlgorithm.opt5:
@@ -376,6 +388,7 @@ namespace IntegratedApp
                                 var availableExpressionsITA = new AvailableExpressionsITA(cfg, availExprContainers);
                                 var availableExprOptimization = new AvailableExprOptimization();
                                 isOptimized = availableExprOptimization.Optimize(availableExpressionsITA);
+                                inOutString.Append("===== Avaliable Expr ======\n\n");
                                 inOutString.AppendLine(availableExpressionsITA.InOut.ToString());
                                 typeOpt = "Available expr optimization";
                                 break;
@@ -383,6 +396,7 @@ namespace IntegratedApp
                                 var constDistITA = new ConstDistributionITA(cfg);
                                 var constDistOpt = new ConstDistributionOptimization();
                                 isOptimized = constDistOpt.Optimize(constDistITA);
+                                inOutString.Append("===== On Semilattice ======\n\n");
                                 inOutString.AppendLine(constDistITA.InOut.ToString());
                                 typeOpt = "Const distribution";
                                 break;

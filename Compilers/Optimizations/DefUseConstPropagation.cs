@@ -8,7 +8,7 @@ namespace SimpleLang.Optimizations
 {
     public class DefUseConstPropagation : IOptimizer
     {
-        private DefUseDetector _detector;
+        public DefUseDetector _detector;
 
         public bool Optimize(ThreeAddressCode tac)
         {
