@@ -1,6 +1,6 @@
 # optimizing-compiler-2019
 Project for Optimizing Compilers Development course, IMM&amp;CS, spring 2019
-## [Оценка Участников] (https://docs.google.com/spreadsheets/d/1tEciVaoeI-FXBvAdy_KYwVrTRH5w7fDd52ZzW0DfRT0/edit#gid=0)
+## [Оценка вклада участников](https://docs.google.com/spreadsheets/d/1tEciVaoeI-FXBvAdy_KYwVrTRH5w7fDd52ZzW0DfRT0/edit#gid=0)
 
 ## [Reference to the course page](https://goo.gl/tLTYmW)
 
