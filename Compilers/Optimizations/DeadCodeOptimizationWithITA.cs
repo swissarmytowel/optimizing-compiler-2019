@@ -74,7 +74,7 @@ namespace SimpleLang.Optimizations
                     wasApplied = dcOpt.Optimize(basicBlock);
                 }
             }
-            return string.Equals(initialTAC, ita.controlFlowGraph.SourceBasicBlocks.ToString());
+            return !string.Equals(initialTAC, ita.controlFlowGraph.SourceBasicBlocks.ToString());
         }
     }
 }
