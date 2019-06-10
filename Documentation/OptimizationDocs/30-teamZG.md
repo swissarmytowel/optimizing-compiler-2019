@@ -1,4 +1,4 @@
-# Local Value Numbering (LVN).
+# Local Value Numbering (LVN)
 
 ## Постановка задачи
 Реализовать алгоритм LVN.
@@ -92,7 +92,56 @@ assigned.Operation = null;
 assigned.SecondOperand = null;
 ```  
 ## Тесты
-&mdash;
-
+INPUT:
+```
+a = b + c;
+b = a - d;
+c = b + c;
+d = a - d;
+```
+TAC:
+```
+t1 = b + c
+a = t1
+t2 = a - d
+b = t2
+t3 = b + c
+c = t3
+t4 = a - d
+d = t4
+```
+OUTPUT:
+```
+t1 = b + c
+a = t1
+t2 = a - d
+b = t2
+t3 = b + c
+c = t3
+t4 = b
+d = t4
+```
+INPUT:
+```
+a = (b * c);
+d = b;
+e = (d * c);
+```
+TAC:
+```
+t1 = b * c
+a = t1
+d = b
+t2 = d * c
+e = t2
+```
+OUTPUT:
+```
+t1 = b * c
+a = t1
+d = b
+t2 = t1
+e = t2
+```
 ## Вывод
 Реализован алгоритм LVN для замены избыточных выражений.
