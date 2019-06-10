@@ -122,7 +122,6 @@ namespace SimpleLang.Optimizations
                     block.RemoveNode(deadLine);
                 }
             }
-            return true;
         }
     }
 }

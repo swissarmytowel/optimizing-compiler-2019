@@ -52,10 +52,36 @@ namespace UnitTests.CFG
             Assert.AreEqual(cfg.ExitBlock.ToString(), basicBlocks.BasicBlockItems.Last().ToString());
 
             /*
+             * a = 1;
+             * for (i = 1 to 10)
+             *     for (j = 1 to 10)
+             *         a = a + 1;
+             *
+             * VERTICES
+             * #0:
+             * a = 1  
+             * i = 1  
+             * 
+             * #1:
+             * L1: j = 1  
+             * 
+             * #2:
+             * L2: t1 = a + 1
+             * a = t1  
+             * j = j + 1
+             * t2 = j < 10
+             * if t2 goto L2
+             * 
+             * #3:
+             * i = i + 1
+             * t3 = i < 10
+             * if t3 goto L1
+             * 
+             * EDGES
              * 0 -> [ 1 ]
              * 1 -> [ 2 ]
              * 2 -> [ 3 2 ]
-             * 3 -> [ 1 ]  
+             * 3 -> [ 1 ]
              */
 
             Assert.IsTrue(Utils.IsContainsEdge(cfg, cfg[0], cfg[1]));
@@ -120,12 +146,13 @@ namespace UnitTests.CFG
             Assert.AreEqual(cfg.Edges.Count(), 0);
             Assert.AreEqual(cfg.Vertices.Count(), 0);
 
-            Assert.IsNull(cfg.SourceBasicBlocks);
             Assert.IsNull(cfg.EntryBlock);
             Assert.IsNull(cfg.ExitBlock);
 
             if (cfg.SourceCode != null)
                 Assert.AreEqual(cfg.SourceCode.TACodeLines.Count, 0);
+
+            Assert.AreEqual(cfg.ToString(), "Empty graph.");
         }
     }
 }

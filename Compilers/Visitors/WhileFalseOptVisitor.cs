@@ -12,7 +12,7 @@ namespace SimpleLang.Visitors
         {
             if (c.Expr is BoolNode bn && bn.Value == false)
             {
-                ReplaceStatement(c, new EmptyNode());
+                ReplaceStatement(c, new EmptyNode() );
             }
         }
     }

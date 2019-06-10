@@ -11,7 +11,7 @@ using System.Linq;
 namespace UnitTests.Optimizations
 {
     [TestClass]
-    public class AvailableExprTest
+    public class AvailableExprTests
     {
         [TestMethod]
         public void Optimize_RightOptimized1()

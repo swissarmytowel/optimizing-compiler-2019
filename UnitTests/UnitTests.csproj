@@ -64,20 +64,33 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CFG\ControlFlowGraphTests.cs" />
+    <Compile Include="CFG\DepthSpanningTreeTests.cs" />
     <Compile Include="ConstDistrib\ConstDistribTests.cs" />
     <Compile Include="ConstDistrib\SemilatticeTests.cs" />
+    <Compile Include="DefUse\DefUseTests.cs" />
+    <Compile Include="GenKill\Implementations\TFByCompositionTests.cs" />
+    <Compile Include="IterationAlgorithms\ActiveVariablesTests.cs" />
+    <Compile Include="IterationAlgorithms\ConstDistributionTests.cs" />
     <Compile Include="IterationAlgorithms\ReachingDefinitionsSortedTests.cs" />
     <Compile Include="IterationAlgorithms\ReachingDefinitionsTests.cs" />
+    <Compile Include="MOP\MOPTests.cs" />
     <Compile Include="Optimizations\CommonSubexprTests.cs" />
     <Compile Include="Optimizations\ConvConstTests.cs" />
     <Compile Include="Optimizations\CopyPropagationTests.cs" />
     <Compile Include="Optimizations\LocalValueNumberingTests.cs" />
     <Compile Include="Optimizations\AvailableExprTest.cs" />
     <Compile Include="Optimizations\GotoTest.cs" />
+    <Compile Include="Optimizations\DefUseBBlocksTests.cs" />
+    <Compile Include="Optimizations\DeadCodeOptimizationWithITATest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="TacBasicBlocks\BasicBlocksTests.cs" />
     <Compile Include="Utils.cs" />
     <Compile Include="Visitors\AstOptimizationsTests.cs" />
+    <Compile Include="Visitors\CompareToItselfFalseOptVisitorTests.cs" />
     <Compile Include="Visitors\ThreeAddressCodeTests.cs" />
+    <Compile Include="Visitors\SameMinusOptVisitorTests.cs" />
+    <Compile Include="Visitors\WhileFalseOptVisitorTests.cs" />
+    <Compile Include="Visitors\ZeroMulOptVisitorTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
@@ -88,6 +101,7 @@
       <Name>SimpleLang2</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets" Condition="Exists('$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets')" />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">

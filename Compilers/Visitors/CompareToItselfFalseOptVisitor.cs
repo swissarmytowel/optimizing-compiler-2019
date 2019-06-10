@@ -1,5 +1,4 @@
-﻿using System;
-using ProgramTree;
+﻿using ProgramTree;
 
 namespace SimpleLang.Visitors
 {

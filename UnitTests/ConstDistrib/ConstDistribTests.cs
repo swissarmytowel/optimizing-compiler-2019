@@ -10,7 +10,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text;
 
-namespace UnitTests.Optimizations
+namespace UnitTests.ConstDistrib
 {
     [TestClass]
     public class ConstDistribTests
