@@ -275,6 +275,8 @@ namespace IntegratedApp
             tacString.AppendLine(threeAddressCodeVisitor.TACodeContainer.ToString());
           
             var cfg = new ControlFlowGraph(threeAddressCodeVisitor.TACodeContainer);
+            cfgString.AppendLine("===== Input control flow graph =====\n");
+            cfgString.AppendLine(cfg.ToString());
 
             #region Optimizations by Basic blocks
             var isopted = true;
@@ -400,7 +402,10 @@ namespace IntegratedApp
             }
             cfg.Rebuild(threeAddressCodeVisitor.TACodeContainer);
 
-#region Optimizations by CFG
+            cfgString.AppendLine("===== Output control flow graph =====\n");
+            cfgString.AppendLine(cfg.ToString());
+
+            #region Optimizations by CFG
             if (checkedOptimizationsBlock4.Count != 0) {
                 OutputTextBox.Text += string.Format("===== Three address code =====\n");
                 OutputTextBox.Text += threeAddressCodeVisitor.TACodeContainer;
