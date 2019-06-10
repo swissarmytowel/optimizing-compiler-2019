@@ -30,6 +30,16 @@ namespace IntegratedApp
 {
     public partial class IntegratedApp : Form
     {
+#region Files name
+        string tacFile = @"TacInfo.txt";
+        string cfgFile = @"CfgInfo.txt";
+        string basicBlocksFile = @"BasicBlocksInfo.txt";
+        string inOutFile = @"InOutInfo.txt";
+        string genKillFile = @"GenKillInfo.txt";
+        string defUseFile = @"DefUseInfo.txt";
+        string defUseBasicBlocksFile = @"DefUseBasicBlocksInfo.txt";
+#endregion
+
 #region Init data
         enum OptimizationsByAstTree
         {
@@ -194,7 +204,7 @@ namespace IntegratedApp
             tacWindow.Show();
         }
         #endregion
-
+        
 #region callback Buttons
         private void RunButton_Click(object sender, EventArgs e)
         {
@@ -238,12 +248,28 @@ namespace IntegratedApp
             parser.root.Visit(threeAddressCodeVisitor);
             threeAddressCodeVisitor.Postprocess();
 
+            // false - файл перезаписывается, true - файл дозаписывается
+            using (StreamWriter sw = new StreamWriter(tacFile, false, System.Text.Encoding.Default)) {
+                sw.WriteLine(threeAddressCodeVisitor.TACodeContainer);
+            }
+
             var cfg = new ControlFlowGraph(threeAddressCodeVisitor.TACodeContainer);
 
   #region Optimizations by Basic blocks
             if (checkedOptimizationsBlock2.Count != 0) {
                 OutputTextBox.Text += "=== BEFORE BBlocks OPTIMIZATIONS === \n" + cfg.SourceCode;
+
+                var s = "=== BEFORE BBlocks OPTIMIZATIONS === \n" + cfg.SourceCode;
+                using (StreamWriter sw = new StreamWriter(tacFile, true, System.Text.Encoding.Default)) {
+                    sw.WriteLine(s);
+                }
+
                 for (int i = 0; i < cfg.SourceBasicBlocks.BasicBlockItems.Count; ++i) {
+
+                    var str = string.Format("===== Three address code for Block #{0} =====\n", i) 
+                        + cfg.SourceBasicBlocks.BasicBlockItems[i].ToString()
+                        + "\n";
+
                     OutputTextBox.Text += string.Format("===== Three address code for Block #{0} =====\n", i);
                     OutputTextBox.Text += cfg.SourceBasicBlocks.BasicBlockItems[i].ToString();
                     OutputTextBox.Text += "\n";
@@ -262,18 +288,34 @@ namespace IntegratedApp
                             continue;
                         }
                         
+                        str += string.Format("===== Block #{0} Optimization {1} iteration #{2} =====\n\n", i, optimizationsBlock2[opt].GetType(), iteration)
+                            + (isOnWholeTac
+                                              ? cfg.SourceCode.ToString()
+                                              : cfg.SourceBasicBlocks.BasicBlockItems[i].ToString())
+                                              + "\n";
+
                         OutputTextBox.Text += string.Format("===== Block #{0} Optimization {1} iteration #{2} =====\n\n", i, optimizationsBlock2[opt].GetType(), iteration++);
                         OutputTextBox.Text += isOnWholeTac
                                               ? cfg.SourceCode.ToString()
                                               : cfg.SourceBasicBlocks.BasicBlockItems[i].ToString();
                         OutputTextBox.Text += "\n";
-                        Console.WriteLine("sosi");
+                        Console.WriteLine("test");
+
+                        using (StreamWriter sw = new StreamWriter(tacFile, true, System.Text.Encoding.Default)) {
+                            sw.WriteLine(str);
+                        }
                     }
                 }
+
+                s = "=== AFTER BBlocks OPTIMIZATIONS === \n" + cfg.SourceCode;
                 OutputTextBox.Text += "=== AFTER BBlocks OPTIMIZATIONS === \n";
 
                 cfg.Rebuild(GetTacFromBBlocks(cfg.SourceBasicBlocks));
                 OutputTextBox.Text += cfg.SourceCode;
+
+                using (StreamWriter sw = new StreamWriter(tacFile, true, System.Text.Encoding.Default)) {
+                    sw.WriteLine(s);
+                }
 
             }
             #endregion
@@ -425,18 +467,49 @@ namespace IntegratedApp
 #region callback Windows
         private void TacItem_Click(object sender, EventArgs e)
         {
-            AdditionalWindow tacWindow = new AdditionalWindow("TAC Window");
+            AdditionalWindow tacWindow = new AdditionalWindow("TAC Window", tacFile);
             tacWindow.Show();
         }
 
         private void CfgItem_Click(object sender, EventArgs e)
         {
-            AdditionalWindow cfgWindow = new AdditionalWindow("CFG Window");
+            AdditionalWindow cfgWindow = new AdditionalWindow("CFG Window", cfgFile);
             cfgWindow.Show();
         }
-#endregion
 
-#region Item Check
+
+        private void BasicBlocksItem_Click(object sender, EventArgs e)
+        {
+            AdditionalWindow cfgWindow = new AdditionalWindow("Basic blocks Window", basicBlocksFile);
+            cfgWindow.Show();
+        }
+
+        private void InOutItem_Click(object sender, EventArgs e)
+        {
+            AdditionalWindow cfgWindow = new AdditionalWindow("In-Out Window", inOutFile);
+            cfgWindow.Show();
+        }
+
+        private void GenKillItem_Click(object sender, EventArgs e)
+        {
+            AdditionalWindow cfgWindow = new AdditionalWindow("Gen-Kill Window", genKillFile);
+            cfgWindow.Show();
+        }
+
+        private void DefUseItem_Click(object sender, EventArgs e)
+        {
+            AdditionalWindow cfgWindow = new AdditionalWindow("Def-Use Window", defUseFile);
+            cfgWindow.Show();
+        }
+
+        private void DefUseBasicBlocksItem_Click(object sender, EventArgs e)
+        {
+            AdditionalWindow cfgWindow = new AdditionalWindow("Def-Use for basic blocks Window", defUseBasicBlocksFile);
+            cfgWindow.Show();
+        }
+        #endregion
+
+        #region Item Check
         private void OptimizationsByAstTree_ItemCheck(object sender, ItemCheckEventArgs e)
         {
             if (e.NewValue == CheckState.Checked) {
@@ -472,7 +545,7 @@ namespace IntegratedApp
                 checkedOptimizationsBlock4.Remove((OptimizationsByControlFlowGraph)e.Index);
             }
         }
-#endregion
+        #endregion
 
     }
 }

@@ -35,6 +35,7 @@
             this.ConsoleTextBox.Dock = System.Windows.Forms.DockStyle.Fill;
             this.ConsoleTextBox.Location = new System.Drawing.Point(0, 0);
             this.ConsoleTextBox.Name = "ConsoleTextBox";
+            this.ConsoleTextBox.ReadOnly = true;
             this.ConsoleTextBox.Size = new System.Drawing.Size(284, 261);
             this.ConsoleTextBox.TabIndex = 0;
             this.ConsoleTextBox.Text = "";

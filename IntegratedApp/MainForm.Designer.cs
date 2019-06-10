@@ -49,10 +49,10 @@
             this.TacItem = new System.Windows.Forms.ToolStripMenuItem();
             this.CfgItem = new System.Windows.Forms.ToolStripMenuItem();
             this.BasicBlocksItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.inoutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.genBKillBToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.defUseToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.defUseДляББлToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.InOutItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.GenKillItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.DefUseItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.DefUseBasicBlocksItem = new System.Windows.Forms.ToolStripMenuItem();
             this.tableLayoutPanel2 = new System.Windows.Forms.TableLayoutPanel();
             this.groupBox4 = new System.Windows.Forms.GroupBox();
             this.OutputTextBox = new System.Windows.Forms.RichTextBox();
@@ -314,10 +314,10 @@
             this.TacItem,
             this.CfgItem,
             this.BasicBlocksItem,
-            this.inoutToolStripMenuItem,
-            this.genBKillBToolStripMenuItem,
-            this.defUseToolStripMenuItem,
-            this.defUseДляББлToolStripMenuItem});
+            this.InOutItem,
+            this.GenKillItem,
+            this.DefUseItem,
+            this.DefUseBasicBlocksItem});
             this.menuStrip2.LayoutStyle = System.Windows.Forms.ToolStripLayoutStyle.VerticalStackWithOverflow;
             this.menuStrip2.Location = new System.Drawing.Point(3, 16);
             this.menuStrip2.Name = "menuStrip2";
@@ -344,30 +344,35 @@
             this.BasicBlocksItem.Name = "BasicBlocksItem";
             this.BasicBlocksItem.Size = new System.Drawing.Size(171, 19);
             this.BasicBlocksItem.Text = "Базовые блоки";
+            this.BasicBlocksItem.Click += new System.EventHandler(this.BasicBlocksItem_Click);
             // 
-            // inoutToolStripMenuItem
+            // InOutItem
             // 
-            this.inoutToolStripMenuItem.Name = "inoutToolStripMenuItem";
-            this.inoutToolStripMenuItem.Size = new System.Drawing.Size(171, 19);
-            this.inoutToolStripMenuItem.Text = "In-Out";
+            this.InOutItem.Name = "InOutItem";
+            this.InOutItem.Size = new System.Drawing.Size(171, 19);
+            this.InOutItem.Text = "In-Out";
+            this.InOutItem.Click += new System.EventHandler(this.InOutItem_Click);
             // 
-            // genBKillBToolStripMenuItem
+            // GenKillItem
             // 
-            this.genBKillBToolStripMenuItem.Name = "genBKillBToolStripMenuItem";
-            this.genBKillBToolStripMenuItem.Size = new System.Drawing.Size(171, 19);
-            this.genBKillBToolStripMenuItem.Text = "Gen_B / Kill_B";
+            this.GenKillItem.Name = "GenKillItem";
+            this.GenKillItem.Size = new System.Drawing.Size(171, 19);
+            this.GenKillItem.Text = "Gen_B / Kill_B";
+            this.GenKillItem.Click += new System.EventHandler(this.GenKillItem_Click);
             // 
-            // defUseToolStripMenuItem
+            // DefUseItem
             // 
-            this.defUseToolStripMenuItem.Name = "defUseToolStripMenuItem";
-            this.defUseToolStripMenuItem.Size = new System.Drawing.Size(171, 19);
-            this.defUseToolStripMenuItem.Text = "Def - Use";
+            this.DefUseItem.Name = "DefUseItem";
+            this.DefUseItem.Size = new System.Drawing.Size(171, 19);
+            this.DefUseItem.Text = "Def - Use";
+            this.DefUseItem.Click += new System.EventHandler(this.DefUseItem_Click);
             // 
-            // defUseДляББлToolStripMenuItem
+            // DefUseBasicBlocksItem
             // 
-            this.defUseДляББлToolStripMenuItem.Name = "defUseДляББлToolStripMenuItem";
-            this.defUseДляББлToolStripMenuItem.Size = new System.Drawing.Size(171, 19);
-            this.defUseДляББлToolStripMenuItem.Text = "Def - Use для ББл";
+            this.DefUseBasicBlocksItem.Name = "DefUseBasicBlocksItem";
+            this.DefUseBasicBlocksItem.Size = new System.Drawing.Size(171, 19);
+            this.DefUseBasicBlocksItem.Text = "Def - Use для ББл";
+            this.DefUseBasicBlocksItem.Click += new System.EventHandler(this.DefUseBasicBlocksItem_Click);
             // 
             // tableLayoutPanel2
             // 
@@ -486,10 +491,10 @@
         private System.Windows.Forms.Button ClearInButton;
         private System.Windows.Forms.Button ResetButton;
         private System.Windows.Forms.ToolStripMenuItem BasicBlocksItem;
-        private System.Windows.Forms.ToolStripMenuItem inoutToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem genBKillBToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem defUseToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem defUseДляББлToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem InOutItem;
+        private System.Windows.Forms.ToolStripMenuItem GenKillItem;
+        private System.Windows.Forms.ToolStripMenuItem DefUseItem;
+        private System.Windows.Forms.ToolStripMenuItem DefUseBasicBlocksItem;
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel2;
         private System.Windows.Forms.GroupBox groupBox4;
         private System.Windows.Forms.RichTextBox OutputTextBox;
