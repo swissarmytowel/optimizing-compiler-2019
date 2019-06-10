@@ -1,3 +1,4 @@
+# Протяжка const на основе итеративного алгоритма для достигающих определений.
 # Протяжка const на основе итеративного алгоритма для достигающих определений
 
 ## Постановка задачи
@@ -48,10 +49,8 @@ AW
         // Если строка не является оператором присваивания - пропускаем ее анализ
         if (!(entry is TacAssignmentNode assignmentEntry)) continue;
         // Если имя переменной найденного оператора присваивания совпадает с
-        // ее использованием (operand) и оно является определением константы
-        if (assignmentEntry.LeftPartIdentifier == operand &&
-            assignmentEntry.SecondOperand == null &&
-            Utility.Utility.IsNum(assignmentEntry.FirstOperand))
+        // ее использованием (operand)
+        if (assignmentEntry.LeftPartIdentifier == operand)
         {
             // Добавляем оператор присваивания в множество достигающих определений этой константы
             reachedDefinitions.Add(assignmentEntry);
@@ -64,10 +63,14 @@ AW
     // Если нашли единственное определение, либо все найденные определения равны
     // Возвращаем найденный оператор присваивания, в котором определяется константа
     if (reachedDefinitions.Count == 1 || reachedDefinitions.All(entry =>
-            tmpValue != null && (entry as TacAssignmentNode)?.FirstOperand == tmpValue.FirstOperand))
-    {
-        return tmpValue;
-    }
+                    (entry as TacAssignmentNode)?.FirstOperand == tmpValue.FirstOperand
+                    && (entry as TacAssignmentNode)?.SecondOperand == tmpValue.SecondOperand
+                    && (entry as TacAssignmentNode)?.Operation == tmpValue.Operation))
+            {
+                // Если это -- определение константы
+                if(tmpValue.SecondOperand == null && Utility.Utility.IsNum(tmpValue.FirstOperand))
+                    return tmpValue;
+            }
 
     return null;
 }
@@ -92,11 +95,12 @@ foreach (var basicBlock in ita.controlFlowGraph.SourceBasicBlocks)
         var firstOperand = assignmentNode.FirstOperand;
         var secondOperand = assignmentNode.SecondOperand;
         // Если присутствует первый операнд
-        if (firstOperand != null)
+        if (firstOperand != null && Utility.Utility.IsVariable(firstOperand))
         {
             // Находим определение константы, достигнутое использованием FirstOperand
-            var tmpValue = Routine(inData, outData, firstOperand);
-            if (tmpValue != null) // Если нашли определение и оно -- определение константы
+            var tmpValue = Routine(inData, firstOperand);
+            // Если нашли определение и оно -- определение константы
+            if (tmpValue != null) 
             {
                 // Проверка того, что не произошло переопределения строками ранее в блоке
                 var encounteredRedefinition = traversedNodesInBlock.FirstOrDefault(entry =>
@@ -104,13 +108,10 @@ foreach (var basicBlock in ita.controlFlowGraph.SourceBasicBlocks)
                                                         entry.LeftPartIdentifier)) != null;
                 // Проверка того, что это первый блок. 
                 // В таком случае нам необходимо переопределение строками ранее, так как IN_0 пуст
-                if (isFirstBlock) 
+                if (!encounteredRedefinition)
                 {
-                    if (!encounteredRedefinition) continue;
-                }
-                else
-                {
-                    if (encounteredRedefinition) continue;
+                    assignmentNode.FirstOperand = tmpValue.FirstOperand;
+                    wasApplied = true;
                 }
                 // Протягиваем константу в рассматриваемый операнд
                 assignmentNode.FirstOperand = tmpValue.FirstOperand;
@@ -120,7 +121,16 @@ foreach (var basicBlock in ita.controlFlowGraph.SourceBasicBlocks)
         // Аналогично для второго операнда выражения -- SecondOperand
         ...
     }
-    ...
+    // C помощью Def-Use для базового блока протягиваем константы, которые не можем протянуть 
+    // с помощью IN-OUT (определена в том же блоке, в котором используется)
+    if (!wasApplied)
+    {
+        defUsePropagated = optimizer.Optimize(basicBlock);
+        while (defUsePropagated)
+        {
+            defUsePropagated = optimizer.Optimize(basicBlock);
+        }
+    }
 }
 ```
 ## Тесты

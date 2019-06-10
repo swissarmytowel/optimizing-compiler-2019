@@ -1,4 +1,4 @@
-# Local Value Numbering (LVN)
+# Local Value Numbering (LVN).
 
 ## Постановка задачи
 Реализовать алгоритм LVN.

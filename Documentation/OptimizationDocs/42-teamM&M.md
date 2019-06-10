@@ -1,4 +1,4 @@
-# Провести оптимизации на основе анализа доступных выражений
+# Провести оптимизации на основе анализа доступных выражений.
 
 ## Постановка задачи
 Реализовать оптимизации на основе анализа доступных выражений.
@@ -88,49 +88,47 @@ for (int blockInd = 0; blockInd < bb.BasicBlockItems.Count(); blockInd++)
 ```
 
 ## Тесты
-```csharp
-[TestMethod]
-public void Optimize_RightOptimized1()
-{
-var tacContainer = new ThreeAddressCode();
-            Utils.AddAssignmentNode(tacContainer, null, "t1", "4", "*", "i");
-            Utils.AddAssignmentNode(tacContainer, null, "a1", "t1");
-            Utils.AddAssignmentNode(tacContainer, null, "t2", "b");
-            Utils.AddIfGotoNode(tacContainer, null, "L1", "t2");
-            Utils.AddGotoNode(tacContainer, null, "L2");
-            Utils.AddAssignmentNode(tacContainer, "L1", "t3", "4", "*", "i");
-            Utils.AddAssignmentNode(tacContainer, null, "a3", "t3");
-            Utils.AddAssignmentNode(tacContainer, "L2", "t4", "4", "*", "i");
-            Utils.AddAssignmentNode(tacContainer, null, "a2", "t4");
 
-            var expectedResult = new ThreeAddressCode();
-            Utils.AddAssignmentNode(expectedResult, null, "t2", "4", "*", "i");
-            Utils.AddAssignmentNode(expectedResult, null, "t1", "t2");
-            Utils.AddAssignmentNode(expectedResult, null, "a1", "t1");
-            Utils.AddAssignmentNode(expectedResult, null, "t2", "b");
-            Utils.AddIfGotoNode(expectedResult, null, "L1", "t2");
-            Utils.AddGotoNode(expectedResult, null, "L2");
-            Utils.AddAssignmentNode(expectedResult, "L1", "t3", "t2");
-            Utils.AddAssignmentNode(expectedResult, null, "a3", "t3");
-            Utils.AddAssignmentNode(expectedResult, "L2", "t4", "t2");
-            Utils.AddAssignmentNode(expectedResult, null, "a2", "t4");
+Source Code:
+```
+a1 = 4 * i; 
+if (b) { 
+  a3 = 4 * i;
+} 
+a2 = 4 * i;         
+```
+Before AvailableExprOptimization
 
-            var cfg = new ControlFlowGraph(tacContainer);
-            var expectedResultcfg = new ControlFlowGraph(expectedResult);
-            E_GenKillVisitor availExprVisitor = new E_GenKillVisitor();
-            var availExprContainers = availExprVisitor.GenerateAvailableExpressionForBlocks(cfg.SourceBasicBlocks);
+```
+BLOCK0:
+t1 = 4 * i
+a1 = t1
+if t4 goto L2
+BLOCK1:
+goto L2
+BLOCK2:
+L1: t2 = 4 * i
+a3 = t2
+BLOCK3:
+L2: t3 = 4 * i
+a2 = t3
+```
+After AvailableExprOptimization
 
-            var availableExpressionsITA = new AvailableExpressionsITA(cfg, availExprContainers);
-
-            var availableExprOptimization = new AvailableExprOptimization();
-            bool isOptimized = availableExprOptimization.Optimize(availableExpressionsITA);
-            var basicBlockItems = cfg.SourceBasicBlocks.BasicBlockItems;
-            var codeText = cfg.SourceBasicBlocks.BasicBlockItems
-                .Select(bl => bl.ToString()).Aggregate((b1, b2) => b1 + b2);
-
-            Assert.IsTrue(isOptimized);
-            Assert.AreEqual(cfg.ToString(), expectedResultcfg.ToString());
-}
+```
+BLOCK0:
+t5 = 4 * i
+t1 = t5
+a1 = t1
+if t4 goto L2
+BLOCK1:
+goto L2
+BLOCK2:
+L1: t2 = t5
+a3 = t2
+BLOCK3:
+L2: t3 = t5
+a2 = t3
 ```
 ## Вывод
 Используя методы, описанные выше, мы получили оптимизации на основе анализа доступных выражений
