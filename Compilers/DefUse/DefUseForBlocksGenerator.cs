@@ -11,31 +11,9 @@ namespace SimpleLang.DefUse
 {
     public static class DefUseForBlocksGenerator
     {
-        static private bool IsVariable(string val)
-        {
-            if (val != null)
-            {
-                Regex numb = new Regex(@"^[0-9](\w*)");
-                if ((val != "true") && (val != "false") && numb.Matches(val).Count == 0 && val[0] != 't' && val[0] != '\"')
-                    return true;
-            }
-            return false;
-        }
-
-        static private bool IsTempVariable(string val)
-        {
-            if (val != null)
-            {
-                Regex numb = new Regex(@"^[0-9](\w*)");
-                if ((val != "true") && (val != "false") && numb.Matches(val).Count == 0 && val[0] == 't' && val[0] != '\"')
-                    return true;
-            }
-            return false;
-        }
-
         static private bool IsValidVariable(string val)
         {
-            return IsVariable(val) && !IsTempVariable(val);
+            return val != null && Utility.Utility.IsVariable(val);
         }
 
         static private TacNodeVarDecorator CreateVarTacNode(string varName)
@@ -60,11 +38,11 @@ namespace SimpleLang.DefUse
                             defUseContainer.def.Add(tacNode1);
                         string firstOperand = assignmentNode.FirstOperand;
                         TacNodeVarDecorator tacNode2 = CreateVarTacNode(firstOperand);
-                        if (IsValidVariable(firstOperand) && !defUseContainer.def.Contains(tacNode2))
+                        if (IsValidVariable(firstOperand) && (!defUseContainer.def.Contains(tacNode2) || leftPartIdentifier == firstOperand))
                             defUseContainer.use.Add(tacNode2);
                         string secondOperand = assignmentNode.SecondOperand;
                         TacNodeVarDecorator tacNode3 = CreateVarTacNode(secondOperand);
-                        if (IsValidVariable(secondOperand) && !defUseContainer.def.Contains(tacNode3))
+                        if (IsValidVariable(secondOperand) && (!defUseContainer.def.Contains(tacNode3) || leftPartIdentifier == secondOperand))
                             defUseContainer.use.Add(tacNode3);
                     }
                 }
