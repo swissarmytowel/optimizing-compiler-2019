@@ -87,5 +87,91 @@ public void ClassificateEdges(ControlFlowGraph cfg)
             }
         }
 ```
+## Тесты
+
+```
+IN
+a = 1
+c = 3
+l1: t1 = a < 3
+if t1 goto L1
+t2 = 3 * c
+a = t2
+goto L2
+L1: t3 = a + 1
+a = t3
+goto l1
+L2: t4 = c < a
+if t4 goto L3
+t5 = a / 3
+a = t5
+goto L4
+L3: c = c
+L4:
+
+VERTICES cfg
+#0:
+a = 1
+c = 3
+
+#1:
+l1: t1 = a < 3
+if t1 goto L1
+
+#2:
+t2 = 3 * c
+a = t2
+goto L2
+
+#3:
+L1: t3 = a + 1
+a = t3
+goto l1
+
+#4:
+L2: t4 = c < a
+if t4 goto L3
+
+#5:
+t5 = a / 3
+a = t5
+goto L4
+
+#6:
+L3: c = c
+
+#7:
+L4:
+
+EDGES cfg
+0 -> [ 1 ]
+1 -> [ 2 3 ]
+2 -> [ 4 ]
+3 -> [ 1 ]
+4 -> [ 5 6 ]
+5 -> [ 7 ]
+6 -> [ 7 ]
+7 -> [ ]
+
+
+OUT
+ComingEdges:
+EDGE: block0 -> block1
+EDGE: block1 -> block3
+EDGE: block1 -> block2
+EDGE: block2 -> block4
+EDGE: block4 -> block6
+EDGE: block4 -> block5
+EDGE: block6 -> block7
+
+RetreatingEdges:
+EDGE: block3 -> block1
+
+CrossEdges:
+EDGE: block5 -> block7
+
+
+```
+
 ## Вывод
 Используя метод, описанные выше, мы смогли классифицировать ребра в глубинном остовном дереве. 
