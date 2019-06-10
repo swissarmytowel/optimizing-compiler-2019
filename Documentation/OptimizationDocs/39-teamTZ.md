@@ -24,37 +24,25 @@ foreach (var item in outData)
 ```
 ## Тесты
 ```csharp
-public void Optimize_SimpleBlock()
-        {
-            TmpNameManager.Instance.Drop();
-            /*
-             *  
-	            x = a;  To be removed
-                x = b;
-                y = x + 1;
-            */
+IN:
+x = b;
+x = a;
+if (1==1)
+{
+x = b;
+y = x;
+}
+x = 1;
+v = x;
 
-            var tacContainer = new ThreeAddressCode();
-            Utils.AddAssignmentNode(tacContainer, null, "x", "a");
-            Utils.AddAssignmentNode(tacContainer, null, "x", "b");
-            Utils.AddAssignmentNode(tacContainer, null, "y", "x", "+", "1");
-            Utils.AddAssignmentNode(tacContainer, null, "e", "d", "*", "a");
-
-            var expectedResult = new ThreeAddressCode();
-            Utils.AddAssignmentNode(expectedResult, null, "x", "b");
-            Utils.AddAssignmentNode(expectedResult, null, "y", "x", "+", "1");
-            Utils.AddAssignmentNode(expectedResult, null, "e", "d", "*", "a");
-
-            var optimization = new DeadCodeOptimization();
-
-            var isOptimized = optimization.Optimize(tacContainer);
-
-            Assert.IsTrue(isOptimized);
-            Assert.AreEqual(tacContainer.ToString(), expectedResult.ToString());
-            isOptimized = optimization.Optimize(tacContainer);
-            Assert.IsFalse(isOptimized);
-
-        }
+OUT:
+if (1==1)
+{
+x = b;
+y = x;
+}
+x = 1;
+v = x;
 ```
 ## Вывод
 Используя метод, описанные выше, мы смогли использовать удаление мертвого кода на основе ИТА для активных переменных. Что позволило удалять мертвый код, находящийся в конце блока.
