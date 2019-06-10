@@ -72,8 +72,11 @@ namespace SimpleLang.Optimizations
                 previuosNodes.Add(line);
                 currentNode = currentNode.Next;
             }
-            tac.RemoveNodes(linesToDelete);
+            if (linesToDelete.Count == 0)
+                return false;
 
+            tac.RemoveNodes(linesToDelete);
+            
             return isApplied;
         }
     }
