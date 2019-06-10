@@ -48,7 +48,6 @@
             this.menuStrip2 = new System.Windows.Forms.MenuStrip();
             this.TacItem = new System.Windows.Forms.ToolStripMenuItem();
             this.CfgItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.BasicBlocksItem = new System.Windows.Forms.ToolStripMenuItem();
             this.InOutItem = new System.Windows.Forms.ToolStripMenuItem();
             this.GenKillItem = new System.Windows.Forms.ToolStripMenuItem();
             this.DefUseItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -94,21 +93,21 @@
             // LoadStripMenuItem
             // 
             this.LoadStripMenuItem.Name = "LoadStripMenuItem";
-            this.LoadStripMenuItem.Size = new System.Drawing.Size(132, 22);
+            this.LoadStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.LoadStripMenuItem.Text = "Загрузить";
             this.LoadStripMenuItem.Click += new System.EventHandler(this.LoadStripMenuItem_Click);
             // 
             // SaveStripMenuItem
             // 
             this.SaveStripMenuItem.Name = "SaveStripMenuItem";
-            this.SaveStripMenuItem.Size = new System.Drawing.Size(132, 22);
+            this.SaveStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.SaveStripMenuItem.Text = "Сохранить";
             this.SaveStripMenuItem.Click += new System.EventHandler(this.SaveStripMenuItem_Click);
             // 
             // InfoStripMenuItem
             // 
             this.InfoStripMenuItem.Name = "InfoStripMenuItem";
-            this.InfoStripMenuItem.Size = new System.Drawing.Size(132, 22);
+            this.InfoStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.InfoStripMenuItem.Text = "Справка";
             this.InfoStripMenuItem.Click += new System.EventHandler(this.InfoStripMenuItem_Click);
             // 
@@ -313,7 +312,6 @@
             this.menuStrip2.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.TacItem,
             this.CfgItem,
-            this.BasicBlocksItem,
             this.InOutItem,
             this.GenKillItem,
             this.DefUseItem,
@@ -338,13 +336,6 @@
             this.CfgItem.Size = new System.Drawing.Size(171, 19);
             this.CfgItem.Text = "Control-flow graph";
             this.CfgItem.Click += new System.EventHandler(this.CfgItem_Click);
-            // 
-            // BasicBlocksItem
-            // 
-            this.BasicBlocksItem.Name = "BasicBlocksItem";
-            this.BasicBlocksItem.Size = new System.Drawing.Size(171, 19);
-            this.BasicBlocksItem.Text = "Базовые блоки";
-            this.BasicBlocksItem.Click += new System.EventHandler(this.BasicBlocksItem_Click);
             // 
             // InOutItem
             // 
@@ -490,7 +481,6 @@
         private System.Windows.Forms.CheckedListBox checkedListBox3;
         private System.Windows.Forms.Button ClearInButton;
         private System.Windows.Forms.Button ResetButton;
-        private System.Windows.Forms.ToolStripMenuItem BasicBlocksItem;
         private System.Windows.Forms.ToolStripMenuItem InOutItem;
         private System.Windows.Forms.ToolStripMenuItem GenKillItem;
         private System.Windows.Forms.ToolStripMenuItem DefUseItem;

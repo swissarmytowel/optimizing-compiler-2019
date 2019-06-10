@@ -532,11 +532,11 @@ namespace IntegratedApp
         }
 
 
-        private void BasicBlocksItem_Click(object sender, EventArgs e)
-        {
-            AdditionalWindow cfgWindow = new AdditionalWindow("Basic blocks Window", basicBlocksFile);
-            cfgWindow.Show();
-        }
+        //private void BasicBlocksItem_Click(object sender, EventArgs e)
+        //{
+        //    AdditionalWindow cfgWindow = new AdditionalWindow("Basic blocks Window", basicBlocksFile);
+        //    cfgWindow.Show();
+        //}
 
         private void InOutItem_Click(object sender, EventArgs e)
         {
