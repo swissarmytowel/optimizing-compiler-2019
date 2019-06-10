@@ -80,6 +80,7 @@
     <Compile Include="Optimizations\AvailableExprTest.cs" />
     <Compile Include="Optimizations\GotoTest.cs" />
     <Compile Include="Optimizations\DefUseBBlocksTests.cs" />
+    <Compile Include="Optimizations\DeadCodeOptimizationWithITATest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TacBasicBlocks\BasicBlocksTests.cs" />
     <Compile Include="Utils.cs" />
