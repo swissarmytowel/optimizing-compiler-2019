@@ -92,7 +92,42 @@ assigned.Operation = null;
 assigned.SecondOperand = null;
 ```  
 ## Тесты
-&mdash;
+```csharp
+[TestMethod]
+public void Optimize_RightOptimized1()
+{
+    var tacContainer = new ThreeAddressCode();
+    Utils.AddAssignmentNode(tacContainer, null, "a", "b", "+", "c");
+    Utils.AddAssignmentNode(tacContainer, null, "b", "a", "-", "d");
+    Utils.AddAssignmentNode(tacContainer, null, "c", "b", "+", "c");
+    Utils.AddAssignmentNode(tacContainer, null, "d", "a", "-", "d");
 
+    var expectedResult = new ThreeAddressCodeVisitor();
+    Utils.AddAssignmentNode(expectedResult, null, "a", "b", "+", "c");
+    Utils.AddAssignmentNode(expectedResult, null, "b", "a", "-", "d");
+    Utils.AddAssignmentNode(expectedResult, null, "c", "b", "+", "c");
+    Utils.AddAssignmentNode(expectedResult, null, "d", "b");
+
+    var optimization = new LocalValueNumberingOptimization();
+    var isOptimized = optimization.Optimize(tacContainer);
+
+    Assert.IsTrue(isOptimized);
+    Assert.AreEqual(tacContainer.ToString(), expectedResult.ToString());
+}
+
+[TestMethod]
+public void Optimize_IsNotOptimized()
+{
+    var tacContainer = new ThreeAddressCode();
+    Utils.AddAssignmentNode(tacContainer, null, "a", "b", "+", "c");
+    Utils.AddAssignmentNode(tacContainer, null, "b", "a", "-", "d");
+    Utils.AddAssignmentNode(tacContainer, null, "c", "b", "+", "c");
+
+    var optimization = new LocalValueNumberingOptimization();
+    var isOptimized = optimization.Optimize(tacContainer);
+
+    Assert.IsFalse(isOptimized);
+}
+```
 ## Вывод
 Реализован алгоритм LVN для замены избыточных выражений.
