@@ -31,13 +31,19 @@ namespace IntegratedApp
     public partial class IntegratedApp : Form
     {
 #region Files name
-        string tacFile = @"TacInfo.txt";
-        string cfgFile = @"CfgInfo.txt";
-        string basicBlocksFile = @"BasicBlocksInfo.txt";
-        string inOutFile = @"InOutInfo.txt";
-        string genKillFile = @"GenKillInfo.txt";
-        string defUseFile = @"DefUseInfo.txt";
-        string defUseBasicBlocksFile = @"DefUseBasicBlocksInfo.txt";
+        readonly string tacFile = @"TacInfo.txt";
+        readonly string cfgFile = @"CfgInfo.txt";
+        readonly string basicBlocksFile = @"BasicBlocksInfo.txt";
+        readonly string inOutFile = @"InOutInfo.txt";
+        readonly string genKillFile = @"GenKillInfo.txt";
+        readonly string defUseFile = @"DefUseInfo.txt";
+        readonly string defUseBasicBlocksFile = @"DefUseBasicBlocksInfo.txt";
+
+#endregion
+
+#region Project info
+        readonly string githubAddress = "https://github.com/swissarmytowel/optimizing-compiler-2019";
+        readonly string projectInfo = @"ProjectInfo.txt";
 #endregion
 
 #region Init data
@@ -173,6 +179,15 @@ namespace IntegratedApp
         public IntegratedApp()
         {
             InitializeComponent();
+            if (!System.IO.File.Exists(projectInfo)) {
+                var infoString = new StringBuilder();
+                infoString.AppendLine(string.Format("Project for Optimizing Compilers Development course \nIMM&CS \nSpring 2019 \n" +
+                    "You can see more information in Github: {0}", githubAddress));
+
+                using (StreamWriter sw = new StreamWriter(projectInfo, false, System.Text.Encoding.Default)) {
+                    sw.WriteLine(infoString);
+                }
+            }
         }
 
 #region callback StripMenuItems
@@ -200,7 +215,7 @@ namespace IntegratedApp
 
         private void InfoStripMenuItem_Click(object sender, EventArgs e)
         {
-            AdditionalWindow tacWindow = new AdditionalWindow("Справка");
+            AdditionalWindow tacWindow = new AdditionalWindow("Справка", projectInfo);
             tacWindow.Show();
         }
         #endregion
@@ -568,7 +583,7 @@ namespace IntegratedApp
         }
         #endregion
 
-        #region Item Check
+#region Item Check
         private void OptimizationsByAstTree_ItemCheck(object sender, ItemCheckEventArgs e)
         {
             if (e.NewValue == CheckState.Checked) {
@@ -604,7 +619,7 @@ namespace IntegratedApp
                 checkedOptimizationsBlock4.Remove((OptimizationsByControlFlowGraph)e.Index);
             }
         }
-        #endregion
+#endregion
 
     }
 }

@@ -39,6 +39,7 @@
             this.ConsoleTextBox.Size = new System.Drawing.Size(284, 261);
             this.ConsoleTextBox.TabIndex = 0;
             this.ConsoleTextBox.Text = "";
+            this.ConsoleTextBox.LinkClicked += new System.Windows.Forms.LinkClickedEventHandler(this.ConsoleTextBox_LinkClicked);
             // 
             // AdditionalWindow
             // 
@@ -47,7 +48,7 @@
             this.ClientSize = new System.Drawing.Size(284, 261);
             this.Controls.Add(this.ConsoleTextBox);
             this.Name = "AdditionalWindow";
-            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "AdditionalWindow";
             this.ResumeLayout(false);
 
