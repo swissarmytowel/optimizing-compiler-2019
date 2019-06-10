@@ -82,6 +82,14 @@ namespace SimpleLang.CFG.DominatorsTree
 
 #region All Dominators 
                     InOut.In[curBlock] = new HashSet<ThreeAddressCode>();
+
+                    if (ancestors.Count == 0) {
+                        InOut.In[curBlock] = null;
+                        InOut.Out[curBlock] = null;
+                        //ImmediateDominators[curBlock] = null;
+                        break;
+                    }
+
                     InOut.In[curBlock] = InOut.Out[ancestors[0]];
 
                     // Если несколько непосредственных предков

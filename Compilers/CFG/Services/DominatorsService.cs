@@ -47,7 +47,13 @@ namespace SimpleLang.CFG.DominatorsTree
             var dominators = dominatorsFinder.Dominators;
             if (dominators.Keys.Contains(block))
             {
-                HashSet<ThreeAddressCode> dominatorsBlocks = dominators[block];
+                HashSet<ThreeAddressCode> dominatorsBlocks = new HashSet<ThreeAddressCode>(dominators[block]);
+
+                if (dominatorsBlocks.Count == 0) {
+                    text += "no dominators\n";
+                    return text;
+                }
+
                 foreach (var code in dominatorsBlocks)
                 {
                     text += FindIndexByBlock(code) + " ";

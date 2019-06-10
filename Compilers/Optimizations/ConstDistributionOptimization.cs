@@ -27,6 +27,9 @@ namespace SimpleLang.ConstDistrib
 
                 for(var it = bblocks[i].First; true; it = it.Next)
                 {
+                    if (it == null)
+                        break;
+
                     var instuction = it.Value;
 
                     if (instuction is TacAssignmentNode tacInsruction)
