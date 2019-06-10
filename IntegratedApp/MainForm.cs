@@ -15,6 +15,7 @@ using SimpleLang.Optimizations.Interfaces;
 using SimpleLang.Optimizations;
 using SimpleLang.Optimizations.BooleanOptimization;
 using SimpleLang.TACode.TacNodes;
+using SimpleLang.TACode;
 using SimpleLang.ConstDistrib;
 using SimpleLang.TacBasicBlocks;
 using SimpleLang.CFG.DominatorsTree;
@@ -122,6 +123,15 @@ namespace IntegratedApp
             { OptimizationsByBasicBlocks.opt10, new LocalValueNumberingOptimization() },
         };
 
+        private readonly HashSet<OptimizationsByBasicBlocks> _optimizationsOnWholeTac = new HashSet<OptimizationsByBasicBlocks> {
+            OptimizationsByBasicBlocks.opt8,
+            OptimizationsByBasicBlocks.opt9 };
+
+        private bool CheckIfOptimizationIsOnWholeTac(OptimizationsByBasicBlocks optimizationId)
+        {
+            return _optimizationsOnWholeTac.Contains(optimizationId);
+        } 
+
         /// <summary>
         /// Выбранные оптимизации, связанные с ИТА
         /// </summary>
@@ -193,6 +203,7 @@ namespace IntegratedApp
             }
 
             OutputTextBox.Text = "";
+            TmpNameManager.Instance.Drop();
 
             Scanner scanner = new Scanner();
             scanner.SetSource(InputTextBox.Text, 0);
@@ -219,38 +230,44 @@ namespace IntegratedApp
             var threeAddressCodeVisitor = new ThreeAddressCodeVisitor();
             parser.root.Visit(threeAddressCodeVisitor);
             threeAddressCodeVisitor.Postprocess();
-            var bBlocks = new BasicBlocks();
-            bBlocks.SplitTACode(threeAddressCodeVisitor.TACodeContainer);
+
             var cfg = new ControlFlowGraph(threeAddressCodeVisitor.TACodeContainer);
 
-#region Optimizations by Basic blocks
+  #region Optimizations by Basic blocks
             if (checkedOptimizationsBlock2.Count != 0) {
-                for (int i = 0; i < bBlocks.BasicBlockItems.Count; ++i) {
+                for (int i = 0; i < cfg.SourceBasicBlocks.BasicBlockItems.Count; ++i) {
                     OutputTextBox.Text += string.Format("===== Three address code for Block #{0} =====\n", i);
-                    OutputTextBox.Text += bBlocks.BasicBlockItems[i].ToString();
+                    OutputTextBox.Text += cfg.SourceBasicBlocks.BasicBlockItems[i].ToString();
                     OutputTextBox.Text += "\n";
 
                     int ind, iteration = 0;
                     for (ind = 0; ind < checkedOptimizationsBlock2.Count; ind++) {
                         var opt = checkedOptimizationsBlock2[ind];
-                        var result = optimizationsBlock2[opt].Optimize(bBlocks.BasicBlockItems[i]);
+                        var isOnWholeTac = CheckIfOptimizationIsOnWholeTac(opt);
+                        var result = optimizationsBlock2[opt].Optimize(isOnWholeTac
+                                                                       ? cfg.SourceCode 
+                                                                       : cfg.SourceBasicBlocks.BasicBlockItems[i]);
+
 
                         if (result) {
                             ind = -1;
                             continue;
                         }
-
+                        
                         OutputTextBox.Text += string.Format("===== Block #{0} Optimization {1} iteration #{2} =====\n\n", i, optimizationsBlock2[opt].GetType(), iteration++);
-                        OutputTextBox.Text += bBlocks.BasicBlockItems[i].ToString();
+                        OutputTextBox.Text += isOnWholeTac
+                                              ? cfg.SourceCode.ToString()
+                                              : cfg.SourceBasicBlocks.BasicBlockItems[i].ToString();
                         OutputTextBox.Text += "\n";
+                        Console.WriteLine("sosi");
                     }
                 }
             }
             #endregion
 
-            cfg.Rebuild(threeAddressCodeVisitor.TACodeContainer);
+            //cfg.Rebuild(threeAddressCodeVisitor.TACodeContainer);
 
-#region Optimizations by Iteration Algorithm
+            #region Optimizations by Iteration Algorithm
 
             if (checkedOptimizationsBlock3.Count != 0) {
                 var counter = 0;
@@ -306,7 +323,7 @@ namespace IntegratedApp
 
 #endregion
 
-            cfg.Rebuild(threeAddressCodeVisitor.TACodeContainer);
+            //cfg.Rebuild(threeAddressCodeVisitor.TACodeContainer);
 
 #region Optimizations by CFG
 

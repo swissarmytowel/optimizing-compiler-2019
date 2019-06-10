@@ -31,9 +31,12 @@ namespace SimpleLang.Optimizations
                         {
                             foreach (var usage in _detector.Definitions[key])
                             {
+                                if (usage.Value == node.Value) continue;
+
                                 ChangeByVariable(usage.Value, assignment);
                                 var keyAdded = new VarNodePair(assignment.FirstOperand, usage);
                                 var keyDefenition = new VarNodePair(assignment.FirstOperand, node);
+
                                 _detector.Usages[keyAdded] = _detector.Usages[keyDefenition];
                                 if (_detector.Usages[keyDefenition] != null)
                                 {

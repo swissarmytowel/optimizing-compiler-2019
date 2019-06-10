@@ -8,13 +8,16 @@ using SimpleLang.TACode.TacNodes;
 using SimpleLang.TACode;
 using SimpleLang.IterationAlgorithms;
 using SimpleLang.TacBasicBlocks;
+using SimpleLang.TacBasicBlocks.DefUse;
+
 using SimpleLang.Utility;
 
 namespace SimpleLang.Optimizations
 {
     public class ReachingDefinitionsConstPropagation : IIterativeAlgorithmOptimizer<TacNode>
     {
-        private static TacAssignmentNode Routine(HashSet<TacNode> inData, HashSet<TacNode> outData, string operand)
+        //private static TacAssignmentNode Routine(HashSet<TacNode> inData, string operand)
+        private static TacAssignmentNode Routine(HashSet<TacNode> inData,  string operand)
         {
             var reachedDefinitions = new HashSet<TacNode>();
             foreach (var entry in inData)
@@ -45,19 +48,24 @@ namespace SimpleLang.Optimizations
         public bool Optimize(IterationAlgorithm<TacNode> ita)
         {
             var wasApplied = false;
-            
+            var defUsePropagated = false;
+
+            var optimizer = new DefUseConstPropagation();
+
             foreach (var basicBlock in ita.controlFlowGraph.SourceBasicBlocks)
             {
-                var isFirstBlock = false;
-
                 var traversedNodesInBlock = new HashSet<TacAssignmentNode>();
                 var inData = ita.InOut.In[basicBlock];
                 var outData = ita.InOut.Out[basicBlock];
 
-                if (inData.Count == 0)
+                if (inData.Count == 0) 
                 {
-                    inData = outData;
-                    isFirstBlock = true;
+                    defUsePropagated = optimizer.Optimize(basicBlock);
+                    while (defUsePropagated)
+                    {
+                        defUsePropagated = optimizer.Optimize(basicBlock);
+                    }
+                    continue;
                 }
 
                 foreach (var line in basicBlock)
@@ -68,51 +76,54 @@ namespace SimpleLang.Optimizations
                     var firstOperand = assignmentNode.FirstOperand;
                     var secondOperand = assignmentNode.SecondOperand;
 
-                    if (firstOperand != null)
+                    if (firstOperand != null && Utility.Utility.IsVariable(firstOperand))
                     {
-                        var tmpValue = Routine(inData, outData, firstOperand);
+                        var tmpValue = Routine(inData, firstOperand);
                         if (tmpValue != null)
                         {
                             var encounteredRedefinition = traversedNodesInBlock.FirstOrDefault(entry =>
                                                               string.Equals(tmpValue.LeftPartIdentifier,
-                                                                  entry.LeftPartIdentifier)) != null;
-                            if (isFirstBlock)
+                                                                  entry.LeftPartIdentifier)
+                                                              && !string.Equals(tmpValue.FirstOperand,
+                                                                  entry.FirstOperand)) != null;
+   
+                            if (!encounteredRedefinition)
                             {
-                                if (!encounteredRedefinition) continue;
+                                assignmentNode.FirstOperand = tmpValue.FirstOperand;
+                                wasApplied = true;
                             }
-                            else
-                            {
-                                if (encounteredRedefinition) continue;
-                            }
-                            assignmentNode.FirstOperand = tmpValue.FirstOperand;
-                            wasApplied = true;
                         }
                     }
 
-                    if (secondOperand != null)
+                    if (secondOperand != null && Utility.Utility.IsVariable(secondOperand))
                     {
-                        var tmpValue = Routine(inData, outData, secondOperand);
+                        var tmpValue = Routine(inData, secondOperand);
                         if (tmpValue != null)
                         {
                             var encounteredRedefinition = traversedNodesInBlock.FirstOrDefault(entry =>
                                                               string.Equals(tmpValue.LeftPartIdentifier,
-                                                                  entry.LeftPartIdentifier)) != null;
-                            if (isFirstBlock)
+                                                                  entry.LeftPartIdentifier) && !string.Equals(tmpValue.FirstOperand,
+                                                                  entry.FirstOperand)) != null;
+                            if (!encounteredRedefinition)
                             {
-                                if (!encounteredRedefinition) continue;
+                                assignmentNode.SecondOperand = tmpValue.FirstOperand;
+                                wasApplied = true;
                             }
-                            else
-                            {
-                                if (encounteredRedefinition) continue;
-                            }
-                            assignmentNode.SecondOperand = tmpValue.FirstOperand;
-                            wasApplied = true;
                         }
+                    }
+                }
+
+                if (!wasApplied)
+                {
+                    defUsePropagated = optimizer.Optimize(basicBlock);
+                    while (defUsePropagated)
+                    {
+                        defUsePropagated = optimizer.Optimize(basicBlock);
                     }
                 }
             }
             
-            return wasApplied;
+            return wasApplied || defUsePropagated;
         }
     }
 }

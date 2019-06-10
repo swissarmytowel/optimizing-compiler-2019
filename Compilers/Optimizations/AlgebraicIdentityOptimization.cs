@@ -19,7 +19,7 @@ namespace SimpleLang.Optimizations
             while (currentNode != null)
             {
                 var currentElement = currentNode.Value;
-                if (currentElement is TacAssignmentNode assign && assign.SecondOperand != null)
+                if (currentElement is TacAssignmentNode assign && assign.SecondOperand != null && assign.FirstOperand != null)
                 {
                     switch (assign.Operation)
                     {
@@ -28,12 +28,14 @@ namespace SimpleLang.Optimizations
                             {
                                 assign.SecondOperand = null;
                                 assign.Operation = null;
+                                isOptimized = true;
                             }
                             else if (assign.FirstOperand == "0")
                             {
                                 assign.FirstOperand = assign.SecondOperand;
                                 assign.SecondOperand = null;
                                 assign.Operation = null;
+                                isOptimized = true;
                             }
                             break;
                         case "-":
@@ -41,12 +43,14 @@ namespace SimpleLang.Optimizations
                             {
                                 assign.SecondOperand = null;
                                 assign.Operation = null;
+                                isOptimized = true;
                             }
                             else if (assign.FirstOperand == assign.SecondOperand)
                             {
                                 assign.FirstOperand = "0";
                                 assign.SecondOperand = null;
                                 assign.Operation = null;
+                                isOptimized = true;
                             }
                             break;
                         case "*":
@@ -54,18 +58,21 @@ namespace SimpleLang.Optimizations
                             {
                                 assign.SecondOperand = null;
                                 assign.Operation = null;
+                                isOptimized = true;
                             }
                             else if (assign.FirstOperand == "1")
                             {
                                 assign.FirstOperand = assign.SecondOperand;
                                 assign.SecondOperand = null;
                                 assign.Operation = null;
+                                isOptimized = true;
                             }
                             else if (assign.FirstOperand == "0" || assign.SecondOperand == "0")
                             {
                                 assign.FirstOperand = "0";
                                 assign.SecondOperand = null;
                                 assign.Operation = null;
+                                isOptimized = true;
                             }
                             break;
                         case "/":
@@ -73,16 +80,17 @@ namespace SimpleLang.Optimizations
                             {
                                 assign.SecondOperand = null;
                                 assign.Operation = null;
+                                isOptimized = true;
                             }
                             else if (assign.FirstOperand == assign.SecondOperand)
                             {
                                 assign.FirstOperand = "1";
                                 assign.SecondOperand = null;
                                 assign.Operation = null;
+                                isOptimized = true;
                             }
                             break;
                     }
-                    isOptimized = true;
                 }
                 currentNode = nextNode;
                 if (currentNode != null)
