@@ -60,7 +60,9 @@ namespace UnitTests.DefUse
             var containers = defUseContainers.Select(e => e.Value).ToList();
             Assert.IsTrue(
                 containers[0].GetSecondSet().SetEquals(new HashSet<TacNode>() {
-                    new TacNodeVarDecorator { VarName = "a1" }
+                    new TacNodeVarDecorator { VarName = "a1" },
+                    new TacNodeVarDecorator { VarName = "t1" },
+                    new TacNodeVarDecorator { VarName = "t2" }
                 })
             );
             Assert.IsTrue(
@@ -71,7 +73,11 @@ namespace UnitTests.DefUse
             );
             Assert.IsTrue(containers[1].GetSecondSet().Count == 0);
             Assert.IsTrue(containers[1].GetFirstSet().Count == 0);
-            Assert.IsTrue(containers[2].GetSecondSet().Count == 0);
+            Assert.IsTrue(
+                containers[2].GetSecondSet().SetEquals(new HashSet<TacNode>() {
+                    new TacNodeVarDecorator { VarName = "t3" }
+                })
+            );
             Assert.IsTrue(
                 containers[2].GetFirstSet().SetEquals(new HashSet<TacNode>() {
                     new TacNodeVarDecorator { VarName = "i" }
@@ -80,12 +86,14 @@ namespace UnitTests.DefUse
             Assert.IsTrue(
                 containers[3].GetSecondSet().SetEquals(new HashSet<TacNode>() {
                     new TacNodeVarDecorator { VarName = "a2" },
-                    new TacNodeVarDecorator { VarName = "a3" }
+                    new TacNodeVarDecorator { VarName = "a3" },
+                    new TacNodeVarDecorator { VarName = "t4" }
                 })
             );
             Assert.IsTrue(
                 containers[3].GetFirstSet().SetEquals(new HashSet<TacNode>() {
-                    new TacNodeVarDecorator { VarName = "i" }
+                    new TacNodeVarDecorator { VarName = "i" },
+                    new TacNodeVarDecorator { VarName = "t3" }
                 })
             );
         }
