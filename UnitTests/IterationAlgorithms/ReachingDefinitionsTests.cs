@@ -11,7 +11,7 @@ namespace UnitTests.IterationAlgorithms
     public class ReachingDefinitionsTests
     {
         [TestMethod]
-        public void Execute_NestedLoopWithCounter()
+        public void Constructor_NestedLoopWithCounter()
         {
             /*
              * a = 1;
@@ -24,7 +24,7 @@ namespace UnitTests.IterationAlgorithms
             var cfg = new ControlFlowGraph(tacContainer);
 
             var genKillVisitor = new GenKillVisitor();
-            var ita = new ReachingDefinitionsITA(cfg, 
+            var ita = new ReachingDefinitionsITA(cfg,
                 genKillVisitor.GenerateReachingDefinitionForBlocks(cfg.SourceBasicBlocks));
             var inData = ita.InOut.In;
             var outData = ita.InOut.Out;
@@ -91,7 +91,7 @@ namespace UnitTests.IterationAlgorithms
         }
 
         [TestMethod]
-        public void Execute_IfWithLoopAndNestedIf()
+        public void Constructor_IfWithNestedLoopAndNestedIf()
         {
             /* 
              * if (a < 5)
@@ -214,6 +214,44 @@ namespace UnitTests.IterationAlgorithms
             Assert.IsTrue(outData[cfg[7]].Contains(cfg[6, 2]));
             Assert.IsTrue(outData[cfg[7]].Contains(cfg[6, 3]));
             Assert.IsTrue(outData[cfg[7]].Contains(cfg[7, 0]));
+        }
+
+        [TestMethod]
+        public void Constructor_GotoWithUnreachableCode()
+        {
+            /*
+             * goto l 1:
+             * a = 7;
+             * l 1: a = 15;
+             */
+
+            var tacContainer = new ThreeAddressCode();
+
+            // basic block #0
+            Utils.AddGotoNode(tacContainer, null, "l1");
+            // basic block #1
+            Utils.AddAssignmentNode(tacContainer, null, "a", "7");
+            // basic block #2
+            Utils.AddAssignmentNode(tacContainer, "l1", "a", "15");
+
+            var cfg = new ControlFlowGraph(tacContainer);
+
+            var genKillVisitor = new GenKillVisitor();
+            var ita = new ReachingDefinitionsITA(cfg,
+                genKillVisitor.GenerateReachingDefinitionForBlocks(cfg.SourceBasicBlocks));
+            var inData = ita.InOut.In;
+            var outData = ita.InOut.Out;
+
+            Assert.AreEqual(inData[cfg[0]].Count, 0);
+            Assert.AreEqual(outData[cfg[0]].Count, 0);
+            Assert.AreEqual(inData[cfg[1]].Count, 0);
+            Assert.AreEqual(outData[cfg[1]].Count, 1);
+            Assert.AreEqual(inData[cfg[2]].Count, 1);
+            Assert.AreEqual(outData[cfg[2]].Count, 1);
+
+            Assert.IsTrue(outData[cfg[1]].Contains(cfg[1, 0]));
+            Assert.IsTrue(inData[cfg[2]].Contains(cfg[1, 0]));
+            Assert.IsTrue(outData[cfg[2]].Contains(cfg[2, 0]));
         }
     }
 }

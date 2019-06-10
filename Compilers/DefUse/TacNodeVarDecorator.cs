@@ -2,7 +2,7 @@
 
 namespace SimpleLang.DefUse
 {
-    class TacNodeVarDecorator: TacNode
+    public class TacNodeVarDecorator: TacNode
     {
         public string VarName = null;
 

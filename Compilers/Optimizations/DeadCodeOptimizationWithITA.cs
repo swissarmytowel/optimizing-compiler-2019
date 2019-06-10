@@ -44,7 +44,6 @@ namespace SimpleLang.Optimizations
                     string leftIdent = ((TacAssignmentNode)line).LeftPartIdentifier;
                     if (IsVariable(leftIdent) && !result.ContainsKey(leftIdent))
                     {
-                       // if(outData.Contains)
                         result.Add(leftIdent, false);
                     }
                     else

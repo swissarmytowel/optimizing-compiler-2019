@@ -304,6 +304,7 @@ namespace IntegratedApp
                                               ? cfg.SourceCode.ToString()
                                               : cfg.SourceBasicBlocks.BasicBlockItems[i].ToString();
                         OutputTextBox.Text += "\n";
+
                         Console.WriteLine("test");
 
                         using (StreamWriter sw = new StreamWriter(tacFile, true, System.Text.Encoding.Default)) {
@@ -330,7 +331,8 @@ namespace IntegratedApp
             if (checkedOptimizationsBlock3.Count != 0) {
                 var counter = 0;
                 var ind = 0;
-                for(ind = 0; ind < checkedOptimizationsBlock3.Count; ind++)
+                OutputTextBox.Text += "=== BEFORE ITA OPTIMIZATIONS === \n" + cfg.SourceCode;
+                for (ind = 0; ind < checkedOptimizationsBlock3.Count; ind++)
                 {
                     var opt = checkedOptimizationsBlock3[ind];
                     string typeOpt = "";

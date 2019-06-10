@@ -1,4 +1,3 @@
-
 # Вычисление множеств def и use для активных переменных
 
 ## Постановка задачи
@@ -57,7 +56,35 @@ class DefUseContainer : IExpressionSetsContainer
 ```
 
 ## Тесты
-Узнать как должны выглядить тесты в докуметации.
+
+```csharp
+[TestMethod]
+public void DefUse_Test1()
+{
+    var tacContainer = new ThreeAddressCode();
+    Utils.AddAssignmentNode(tacContainer, null, "a", "b", "+", "c");
+    Utils.AddAssignmentNode(tacContainer, null, "b", "a", "-", "d");
+    Utils.AddAssignmentNode(tacContainer, null, "v", "l", "+", "c");
+    Utils.AddAssignmentNode(tacContainer, null, "d", "a", "-", "d");
+    var cfg = new ControlFlowGraph(tacContainer);
+    var defUseContainers = DefUseForBlocksGenerator.Execute(cfg.SourceBasicBlocks);
+    var container = defUseContainers.First().Value;
+    Assert.IsTrue(
+        container.GetSecondSet().SetEquals(new HashSet<TacNode>() {
+            new TacNodeVarDecorator { VarName = "a" },
+            new TacNodeVarDecorator { VarName = "v" }
+        })
+    );
+    Assert.IsTrue(
+        container.GetFirstSet().SetEquals(new HashSet<TacNode>() {
+            new TacNodeVarDecorator { VarName = "b" },
+            new TacNodeVarDecorator { VarName = "c" },
+            new TacNodeVarDecorator { VarName = "d" },
+            new TacNodeVarDecorator { VarName = "l" }
+    })
+    );
+}
+```
 
 ## Вывод
 Используя методы, описанные выше, мы получили множества Use(B) и Def(B) для активных переменных.

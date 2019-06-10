@@ -12,7 +12,6 @@ namespace SimpleLang.CFG
         public ThreeAddressCode EntryBlock => IsVerticesEmpty ? null : Vertices.First();
         public ThreeAddressCode ExitBlock => IsVerticesEmpty ? null : Vertices.Last();
         public ThreeAddressCode SourceCode { get; private set; }
-        public BasicBlocks SourceBasicBlocks { get; private set; }
 
         public ControlFlowGraph(ThreeAddressCode tac)
         {
@@ -33,20 +32,10 @@ namespace SimpleLang.CFG
             Graph.AddEdgeRange(edges);
         }
 
-        /// <summary>
-        /// Returns a vertex at index position
-        /// </summary>
-        public ThreeAddressCode this[int index] => GetVertexAt(index);
-
-        /// <summary>
-        /// Returns a node at nodeIdx position from a vertex at nodeIdx position
-        /// </summary>
-        public TacNode this[int vertexIdx, int nodeIdx] => GetVertexAt(vertexIdx).ElementAt(nodeIdx);
-
         public ControlFlowGraph GetCFGWithSortedVertices()
         {
             var dst = new DepthSpanningTree(this);
-            return new ControlFlowGraph(SourceCode, dst.SortedBasicBlocks, dst.Vertices, Edges);
+            return new ControlFlowGraph(SourceCode, dst.SourceBasicBlocks, dst.Vertices, Edges);
         }
 
         public void Rebuild(ThreeAddressCode tac)
@@ -96,14 +85,6 @@ namespace SimpleLang.CFG
         {
             var visitedEdges = new HashSet<Edge<ThreeAddressCode>>();
             return CalcDepth(EntryBlock, visitedEdges, EdgeTypes);
-        }
-
-        private ThreeAddressCode GetVertexAt(int index)
-        {
-            if (index < 0 || index > VertexCount - 1)
-                return null;
-
-            return SourceBasicBlocks.BasicBlockItems[index];
         }
 
         private int CalcDepth(ThreeAddressCode currentBlock, HashSet<Edge<ThreeAddressCode>> visitedEdges, 

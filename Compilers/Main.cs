@@ -29,7 +29,7 @@ namespace SimpleCompiler
         public static void Main()
         {
             var DirectoryPath = Directory.GetParent(Directory.GetCurrentDirectory()).Parent.FullName;
-            string FileName = Path.Combine(DirectoryPath, "a.txt");
+            string FileName = Path.Combine(DirectoryPath, "a1.txt");
             try
             {
                 string Text = File.ReadAllText(FileName);
@@ -129,15 +129,15 @@ namespace SimpleCompiler
                     parser.root.Visit(compareFalseVisitor);
 
                     Console.WriteLine("-------------------------------");
-//
-//                    var ifNodeWithBoolExpr = new IfNodeWithBoolExprVisitor();
-//                    parser.root.Visit(ifNodeWithBoolExpr);
+                    //
+                    //                    var ifNodeWithBoolExpr = new IfNodeWithBoolExprVisitor();
+                    //                    parser.root.Visit(ifNodeWithBoolExpr);
 
                     //var plusZeroExpr = new PlusZeroExprVisitor();
                     //parser.root.Visit(plusZeroExpr);
 
-                    //var alwaysElse = new AlwaysElseVisitor();
-                    //parser.root.Visit(alwaysElse);
+                    var alwaysElse = new AlwaysElseVisitor();
+                    parser.root.Visit(alwaysElse);
 
                     //var checkTruth = new CheckTruthVisitor();
                     //parser.root.Visit(checkTruth);

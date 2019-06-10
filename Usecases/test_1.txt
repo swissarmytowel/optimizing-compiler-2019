@@ -1,0 +1,19 @@
+var = 42;
+newVar = 34;
+
+result = 0.19;
+
+if(3 * var >= newVar){
+    result = 1;
+} else{
+    result = newVar;
+}
+
+tmp = newVar == result;
+
+if(tmp && (var > 3 * newVar)){
+   while(tmp){
+        var = var - 1;
+        tmp = var == newVar;
+    }
+}

@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace SimpleLang.DefUse
 {
-    class DefUseContainer : IExpressionSetsContainer
+    public class DefUseContainer : IExpressionSetsContainer
     {
         //множество переменных, значения которых могут использоваться в B до любого их определения
         public HashSet<TacNodeVarDecorator> use = new HashSet<TacNodeVarDecorator>();
