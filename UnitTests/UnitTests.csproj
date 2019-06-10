@@ -70,6 +70,7 @@
     <Compile Include="DefUse\DefUseTests.cs" />
     <Compile Include="GenKill\Implementations\TFByCompositionTests.cs" />
     <Compile Include="IterationAlgorithms\ActiveVariablesTests.cs" />
+    <Compile Include="IterationAlgorithms\AvailableExpressionsTests.cs" />
     <Compile Include="IterationAlgorithms\ConstDistributionTests.cs" />
     <Compile Include="IterationAlgorithms\ReachingDefinitionsSortedTests.cs" />
     <Compile Include="IterationAlgorithms\ReachingDefinitionsTests.cs" />
