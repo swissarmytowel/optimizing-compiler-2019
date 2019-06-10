@@ -29,13 +29,27 @@ namespace SimpleLang.GenKill.Implementations
 
         public override string ToString()
         {
-            var resStr = "Gen";
-            foreach(var item in gen)
-                resStr += $"\n{item}";
+            var resStr = "GEN:";
+            int i = 0;
 
-            resStr += "\nKill";
-            foreach (var item in kill)
-                resStr += $"\n{item}";
+            if (gen.Count == 0) {
+                resStr += "\nnull";
+            } else {
+                foreach (var item in gen) {
+                    resStr += $"\n{i++}) {item}";
+                }
+            }
+
+            
+            resStr += "\n\nKILL:";
+            if (kill.Count == 0) {
+                resStr += "\nnull\n";
+            } else {
+                i = 0;
+                foreach (var item in kill) {
+                    resStr += $"\n{i++}) {item}";
+                }
+            }
             return resStr;
         }
     }

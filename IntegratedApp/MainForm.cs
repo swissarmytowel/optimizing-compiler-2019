@@ -343,7 +343,7 @@ namespace IntegratedApp
                         {
                             case OptimizationsByIterationAlgorithm.opt1:
                                 var defUseContainers = DefUseForBlocksGenerator.Execute(cfg.SourceBasicBlocks);
-                                defUseString.Append("===== Input Def-Use =====\n\n");
+                                defUseString.Append("===== Def-Use =====\n\n");
                                 defUseString.Append(DefUseForBlocksPrinter.ExecutePrint(defUseContainers));
                                 defUseString.Append("\n");
                                 var ita1 = new ActiveVariablesITA(cfg, defUseContainers);
@@ -351,13 +351,18 @@ namespace IntegratedApp
                                 inOutString.Append("===== Active Var ======\n\n");
                                 inOutString.AppendLine(ita1.InOut.ToString());
                                 typeOpt = "Dead code optimization";
-                                defUseString.Append("===== Output Def-Use =====\n\n");
-                                defUseString.Append(DefUseForBlocksPrinter.ExecutePrint(defUseContainers));
-                                defUseString.Append("\n");
+                                //defUseString.Append("===== Output Def-Use =====\n\n");
+                                //defUseString.Append(DefUseForBlocksPrinter.ExecutePrint(defUseContainers));
+                                //defUseString.Append("\n");
                                 break;
                             case OptimizationsByIterationAlgorithm.opt3:
                                 GenKillVisitor genKillVisitor = new GenKillVisitor();
                                 var genKillContainers = genKillVisitor.GenerateReachingDefinitionForBlocks(cfg.SourceBasicBlocks);
+                                genKillString.Append("===== Gen-Kill =====\n\n");
+                                foreach (var elem in genKillContainers) {
+                                    genKillString.Append($"BLOCK:\n{elem.Key}\n{elem.Value}\n");
+                                }
+
                                 var ita3 = new ReachingDefinitionsITA(cfg, genKillContainers);
                                 isOptimized = new ReachingDefinitionsConstPropagation().Optimize(ita3);
                                 typeOpt = "Const propagation by reaching definition";
