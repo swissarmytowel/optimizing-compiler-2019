@@ -365,6 +365,7 @@ namespace SimpleCompiler
                     var availableExpressionsITA = new AvailableExpressionsITA(cfg, availExprContainers);
                     Console.WriteLine("=== InOut после итерационного алгоритма для доступных выражений ===");
                     Console.WriteLine(availableExpressionsITA.InOut);
+                    var inData = availableExpressionsITA.InOut.In;
 
                     var availableExprOptimization = new AvailableExprOptimization();
                     bool isUsed = availableExprOptimization.Optimize(availableExpressionsITA);
