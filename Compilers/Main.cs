@@ -388,6 +388,22 @@ namespace SimpleCompiler
                     Console.WriteLine(cfg.SourceBasicBlocks
                         .BasicBlockItems.Select((bl, ind) => $"BLOCK{ind}:\n" + bl.ToString()).Aggregate((b1, b2) => b1 + b2));
                     /* -----------------------ConstDistrib END---------------------------------*/
+                    Console.WriteLine("CFG: ");
+                    Console.WriteLine(cfg);
+                    Console.WriteLine("DominationBorder: ");
+                    foreach (var vertex in cfg.Vertices)
+                    {
+                        Console.WriteLine();
+                        Console.WriteLine("vertex: \n" + vertex);
+                        var borderSet = DominationBorder.Execute(cfg, vertex);
+                        string borderStr = "";
+                        foreach (var el in borderSet)
+                            borderStr += el + "\n";
+                        if (borderSet.Count() == 0)
+                            borderStr = "Empty";
+                        Console.WriteLine("borderSet: \n\n" + borderStr);
+                        Console.WriteLine();
+                    }
                 }
             }
             catch (FileNotFoundException)
