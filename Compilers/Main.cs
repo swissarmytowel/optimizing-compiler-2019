@@ -29,7 +29,7 @@ namespace SimpleCompiler
         public static void Main()
         {
             var DirectoryPath = Directory.GetParent(Directory.GetCurrentDirectory()).Parent.FullName;
-            string FileName = Path.Combine(DirectoryPath, "a1.txt");
+            string FileName = Path.Combine(DirectoryPath, "a.txt");
             try
             {
                 string Text = File.ReadAllText(FileName);
@@ -365,6 +365,7 @@ namespace SimpleCompiler
                     var availableExpressionsITA = new AvailableExpressionsITA(cfg, availExprContainers);
                     Console.WriteLine("=== InOut после итерационного алгоритма для доступных выражений ===");
                     Console.WriteLine(availableExpressionsITA.InOut);
+                    var inData = availableExpressionsITA.InOut.In;
 
                     var availableExprOptimization = new AvailableExprOptimization();
                     bool isUsed = availableExprOptimization.Optimize(availableExpressionsITA);

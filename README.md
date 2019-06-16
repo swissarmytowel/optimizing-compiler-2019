@@ -3,7 +3,7 @@ Project for Optimizing Compilers Development course, IMM&amp;CS, spring 2019
 ## [Оценка вклада участников](https://docs.google.com/spreadsheets/d/1tEciVaoeI-FXBvAdy_KYwVrTRH5w7fDd52ZzW0DfRT0/edit#gid=0)
 
 ## [Reference to the course page](https://goo.gl/tLTYmW)
-
+## [Анкета 2019](https://forms.gle/jz5ptyAkqru4trdU8)
 ## [Lectures PDFs](https://drive.google.com/drive/folders/127Dj3_lesQxzR_1TgBZtKZEX8gE-nLcQ?usp=sharing)
 
 ## [Задания](https://github.com/swissarmytowel/optimizing-compiler-2019/tree/master/%D0%97%D0%B0%D0%B4%D0%B0%D0%BD%D0%B8%D1%8F_%D0%A4%D0%BE%D1%82%D0%BE)
