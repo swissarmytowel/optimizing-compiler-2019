@@ -59,6 +59,7 @@
     <Reference Include="nunit.framework" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CFG\DominationBorder.cs" />
     <Compile Include="CFG\DominatorsTree\DominatorsFinder.cs" />
     <Compile Include="CFG\NaturalCycles\CFGNaturalCycle.cs" />
     <Compile Include="CFG\NaturalCycles\CFGNaturalCycles.cs" />
